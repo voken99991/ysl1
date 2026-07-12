@@ -25,6 +25,9 @@
   let dirty = false;
   let applyingHistory = false;
   let toastTimer = null;
+  let dragState = null;
+  let overlayLayer = null;
+  let resizeHandle = null;
 
   const fieldMap = {
     content: $("#field-content"),
@@ -166,12 +169,54 @@
     clearSelection();
   }
 
+  function ensureOverlayLayer() {
+    if (overlayLayer && resizeHandle) return { overlayLayer, resizeHandle };
+    overlayLayer = document.getElementById("editor-overlay-layer");
+    if (!overlayLayer) {
+      overlayLayer = document.createElement("div");
+      overlayLayer.id = "editor-overlay-layer";
+      overlayLayer.className = "editor-overlay-layer";
+      document.body.appendChild(overlayLayer);
+    }
+    resizeHandle = overlayLayer.querySelector(".editor-resize-handle");
+    if (!resizeHandle) {
+      resizeHandle = document.createElement("button");
+      resizeHandle.type = "button";
+      resizeHandle.className = "editor-resize-handle";
+      resizeHandle.setAttribute("aria-label", "Resize element");
+      overlayLayer.appendChild(resizeHandle);
+    }
+    resizeHandle.onpointerdown = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      beginResize(event);
+    };
+    return { overlayLayer, resizeHandle };
+  }
+
+  function updateOverlayForSelection() {
+    if (!selected) {
+      if (overlayLayer) overlayLayer.classList.remove("visible");
+      return;
+    }
+    const { overlayLayer: layer, resizeHandle: handle } = ensureOverlayLayer();
+    const rect = selected.getBoundingClientRect();
+    layer.classList.add("visible");
+    handle.style.left = `${rect.right + window.scrollX - 12}px`;
+    handle.style.top = `${rect.bottom + window.scrollY - 12}px`;
+  }
+
+  function hideOverlay() {
+    if (overlayLayer) overlayLayer.classList.remove("visible");
+  }
+
   function clearSelection() {
     if (selected) selected.classList.remove("editor-selected");
     selected = null;
     fieldsWrap.hidden = true;
     emptyState.hidden = false;
     selectedName.textContent = "Nothing selected";
+    hideOverlay();
   }
 
   function selectElement(element) {
@@ -183,6 +228,65 @@
     emptyState.hidden = true;
     selectedName.textContent = `${element.tagName.toLowerCase()}${element.id ? "#" + element.id : ""}${element.classList.length ? "." + [...element.classList].filter(c => !c.startsWith("editor-")).slice(0, 2).join(".") : ""}`;
     fillInspector();
+    updateOverlayForSelection();
+  }
+
+  function beginMove(event, target = selected) {
+    if (!editMode || !target || event.button !== 0) return;
+    if (event.target.closest("input, textarea, select, button, a[href], .editor-resize-handle")) return;
+    dragState = {
+      type: "move",
+      startX: event.clientX,
+      startY: event.clientY,
+      startLeft: parseFloat(target.style.left || "0"),
+      startTop: parseFloat(target.style.top || "0"),
+    };
+    target.style.position = "relative";
+    target.style.zIndex = "1000";
+    target.style.touchAction = "none";
+    target.classList.add("editor-dragging");
+    event.preventDefault();
+  }
+
+  function beginResize(event) {
+    if (!editMode || !selected || event.button !== 0) return;
+    const rect = selected.getBoundingClientRect();
+    dragState = {
+      type: "resize",
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: rect.width,
+      startHeight: rect.height,
+    };
+    selected.style.position = selected.style.position || "relative";
+    selected.style.zIndex = "1000";
+    selected.style.touchAction = "none";
+    selected.classList.add("editor-dragging");
+    event.preventDefault();
+  }
+
+  function onDragMove(event) {
+    if (!dragState || !selected) return;
+    if (dragState.type === "move") {
+      const deltaX = event.clientX - dragState.startX;
+      const deltaY = event.clientY - dragState.startY;
+      selected.style.left = `${dragState.startLeft + deltaX}px`;
+      selected.style.top = `${dragState.startTop + deltaY}px`;
+    } else {
+      const width = Math.max(60, Math.round(dragState.startWidth + (event.clientX - dragState.startX)));
+      const height = Math.max(40, Math.round(dragState.startHeight + (event.clientY - dragState.startY)));
+      selected.style.width = `${width}px`;
+      selected.style.height = `${height}px`;
+    }
+    updateOverlayForSelection();
+  }
+
+  function endDrag() {
+    if (!dragState || !selected) return;
+    selected.classList.remove("editor-dragging");
+    dragState = null;
+    pushHistory();
+    updateOverlayForSelection();
   }
 
   function fillInspector() {
@@ -220,14 +324,19 @@
     fillInspector();
   }
 
-  site.addEventListener("click", (event) => {
+  site.addEventListener("pointerdown", (event) => {
     if (!editMode) return;
-    event.preventDefault();
-    event.stopPropagation();
     const target = event.target.closest("*");
     if (!target || !site.contains(target)) return;
+    if (target.closest("input, textarea, select")) return;
     selectElement(target);
+    beginMove(event, target);
   }, true);
+
+  window.addEventListener("pointermove", onDragMove);
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("scroll", updateOverlayForSelection, { passive: true });
+  window.addEventListener("resize", updateOverlayForSelection);
 
   site.addEventListener("mouseover", (event) => {
     if (!editMode) return;

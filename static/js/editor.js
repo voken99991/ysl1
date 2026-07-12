@@ -28,6 +28,7 @@
   let dragState = null;
   let overlayLayer = null;
   let resizeHandle = null;
+  let saveTimer = null;
 
   const fieldMap = {
     content: $("#field-content"),
@@ -235,57 +236,64 @@
     if (!editMode || !target || event.button !== 0) return;
     if (event.target.closest("input, textarea, select, button, a[href], .editor-resize-handle")) return;
     dragState = {
-      type: "move",
+      type: "pending",
+      mode: "move",
+      target,
       startX: event.clientX,
       startY: event.clientY,
       startLeft: parseFloat(target.style.left || "0"),
       startTop: parseFloat(target.style.top || "0"),
     };
-    target.style.position = "relative";
-    target.style.zIndex = "1000";
-    target.style.touchAction = "none";
-    target.classList.add("editor-dragging");
-    event.preventDefault();
   }
 
   function beginResize(event) {
     if (!editMode || !selected || event.button !== 0) return;
     const rect = selected.getBoundingClientRect();
     dragState = {
-      type: "resize",
+      type: "pending",
+      mode: "resize",
+      target: selected,
       startX: event.clientX,
       startY: event.clientY,
       startWidth: rect.width,
       startHeight: rect.height,
     };
-    selected.style.position = selected.style.position || "relative";
-    selected.style.zIndex = "1000";
-    selected.style.touchAction = "none";
-    selected.classList.add("editor-dragging");
-    event.preventDefault();
   }
 
   function onDragMove(event) {
     if (!dragState || !selected) return;
+    if (dragState.type === "pending") {
+      const deltaX = event.clientX - dragState.startX;
+      const deltaY = event.clientY - dragState.startY;
+      if (Math.abs(deltaX) < 4 && Math.abs(deltaY) < 4) return;
+      dragState.type = dragState.mode;
+      dragState.target.style.position = "relative";
+      dragState.target.style.zIndex = "1000";
+      dragState.target.classList.add("editor-dragging");
+      dragState.target.style.touchAction = "none";
+      event.preventDefault();
+    }
+
     if (dragState.type === "move") {
       const deltaX = event.clientX - dragState.startX;
       const deltaY = event.clientY - dragState.startY;
-      selected.style.left = `${dragState.startLeft + deltaX}px`;
-      selected.style.top = `${dragState.startTop + deltaY}px`;
+      dragState.target.style.left = `${dragState.startLeft + deltaX}px`;
+      dragState.target.style.top = `${dragState.startTop + deltaY}px`;
     } else {
       const width = Math.max(60, Math.round(dragState.startWidth + (event.clientX - dragState.startX)));
       const height = Math.max(40, Math.round(dragState.startHeight + (event.clientY - dragState.startY)));
-      selected.style.width = `${width}px`;
-      selected.style.height = `${height}px`;
+      dragState.target.style.width = `${width}px`;
+      dragState.target.style.height = `${height}px`;
     }
     updateOverlayForSelection();
   }
 
   function endDrag() {
     if (!dragState || !selected) return;
-    selected.classList.remove("editor-dragging");
+    if (dragState.target) dragState.target.classList.remove("editor-dragging");
     dragState = null;
     pushHistory();
+    scheduleSave();
     updateOverlayForSelection();
   }
 
@@ -319,9 +327,38 @@
     dirty = true;
   }
 
+  async function saveSite({ showToast = false } = {}) {
+    if (!csrf) return;
+    clearSelection();
+    const response = await fetch("/api/site", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrf,
+      },
+      body: JSON.stringify({ html: site.innerHTML, theme: getTheme() }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      if (showToast) toast(data.error || "Save failed.", true);
+      return false;
+    }
+    dirty = false;
+    if (showToast) toast("Website saved.");
+    return true;
+  }
+
+  function scheduleSave() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveSite();
+    }, 700);
+  }
+
   function commitChange() {
     pushHistory();
     fillInspector();
+    scheduleSave();
   }
 
   site.addEventListener("pointerdown", (event) => {
@@ -511,19 +548,7 @@
   };
 
   $("#save-site").onclick = async () => {
-    clearSelection();
-    const response = await fetch("/api/site", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrf,
-      },
-      body: JSON.stringify({ html: site.innerHTML, theme: getTheme() }),
-    });
-    const data = await response.json();
-    if (!response.ok) return toast(data.error || "Save failed.", true);
-    dirty = false;
-    toast("Website saved.");
+    await saveSite({ showToast: true });
   };
 
   $("#logout-editor").onclick = async () => {

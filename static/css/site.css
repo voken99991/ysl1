@@ -57,8 +57,9 @@ h1,h2{font-family:var(--font-display);letter-spacing:-.06em;line-height:.98}
 .editor-selected.editor-dragging{cursor:grabbing}
 .editor-hover{outline:1px dashed rgba(216,180,254,.85)!important;outline-offset:3px!important}
 .editor-overlay-layer{position:fixed;inset:0;pointer-events:none;z-index:1800}
-.editor-overlay-layer.visible{pointer-events:auto}
+.editor-overlay-layer.visible{pointer-events:none}
 .editor-resize-handle{position:fixed;width:18px;height:18px;border:2px solid #fff;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);box-shadow:0 8px 18px rgba(0,0,0,.26);cursor:nwse-resize;pointer-events:auto}
+.editor-locked{opacity:.6;filter:grayscale(1)}
 .editor-new-block{min-height:80px;padding:20px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.035)}
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes spinReverse{to{transform:rotate(-360deg)}}@keyframes pulseRing{50%{transform:scale(1.06);opacity:.38}}@keyframes ticker{to{transform:translateX(-50%)}}@keyframes floatNode{50%{margin-top:-9px}}@keyframes editorFloat{50%{transform:translateY(-10px)}}@keyframes editorPulse{50%{transform:scale(1.04)}}@keyframes editorGlow{50%{filter:drop-shadow(0 0 22px rgba(168,85,247,.65))}}
 @media(max-width:1020px){.nav{grid-template-columns:1fr auto}.nav nav,.nav-cta{display:none}.menu{display:block;justify-self:end;width:42px;height:42px;border:0;border-radius:12px;background:rgba(255,255,255,.07);position:relative}.menu span{position:absolute;left:12px;width:18px;height:1.5px;background:#fff}.menu span:first-child{top:16px}.menu span:last-child{top:24px}.nav nav.open{position:fixed;inset:80px 20px auto;display:flex;flex-direction:column;padding:12px;border:1px solid var(--line);border-radius:20px;background:rgba(11,7,16,.97)}.hero{grid-template-columns:1fr}.league-orbit{width:min(100%,620px);margin:auto}.grid{grid-template-columns:1fr}.standings{grid-row:auto}.about-card{grid-template-columns:70px 1fr}.about-card>div:last-child{grid-column:2}}

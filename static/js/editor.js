@@ -29,6 +29,7 @@
   let overlayLayer = null;
   let resizeHandle = null;
   let saveTimer = null;
+  let snapEnabled = true;
 
   const fieldMap = {
     content: $("#field-content"),
@@ -50,6 +51,11 @@
     opacity: $("#field-opacity"),
     shadow: $("#field-shadow"),
     animation: $("#field-animation"),
+    x: $("#field-x"),
+    y: $("#field-y"),
+    zIndex: $("#field-z-index"),
+    rotation: $("#field-rotation"),
+    scale: $("#field-scale"),
   };
 
   const themeInputs = $$("[data-theme-var]");
@@ -117,10 +123,7 @@
   }
 
   function snapshot() {
-    return {
-      html: site.innerHTML,
-      theme: getTheme(),
-    };
+    return { html: site.innerHTML, theme: getTheme() };
   }
 
   function pushHistory() {
@@ -128,7 +131,7 @@
     const shot = snapshot();
     history = history.slice(0, historyIndex + 1);
     history.push(shot);
-    if (history.length > 35) history.shift();
+    if (history.length > 50) history.shift();
     historyIndex = history.length - 1;
     dirty = true;
   }
@@ -220,8 +223,8 @@
     hideOverlay();
   }
 
-  function selectElement(element) {
-    if (!element || element === site) return;
+  function setSelection(element) {
+    if (!element || element === site || element.dataset?.editorLocked === "true") return;
     if (selected) selected.classList.remove("editor-selected");
     selected = element;
     selected.classList.add("editor-selected");
@@ -230,6 +233,56 @@
     selectedName.textContent = `${element.tagName.toLowerCase()}${element.id ? "#" + element.id : ""}${element.classList.length ? "." + [...element.classList].filter(c => !c.startsWith("editor-")).slice(0, 2).join(".") : ""}`;
     fillInspector();
     updateOverlayForSelection();
+  }
+
+  function fillInspector() {
+    if (!selected) return;
+    const computed = getComputedStyle(selected);
+    const style = selected.style;
+    fieldMap.content.value = selected.innerHTML;
+    fieldMap.link.value = selected.tagName === "A" ? selected.getAttribute("href") || "" : "";
+    fieldMap.image.value = selected.tagName === "IMG" ? selected.getAttribute("src") || "" : (style.backgroundImage || "").replace(/^url\(["']?|["']?\)$/g, "");
+    fieldMap.color.value = rgbToHex(computed.color);
+    fieldMap.bg.value = rgbToHex(computed.backgroundColor);
+    fieldMap.borderColor.value = rgbToHex(computed.borderColor);
+    fieldMap.fontSize.value = style.fontSize || computed.fontSize;
+    fieldMap.fontWeight.value = style.fontWeight || computed.fontWeight;
+    fieldMap.align.value = style.textAlign || computed.textAlign || "";
+    fieldMap.lineHeight.value = style.lineHeight || computed.lineHeight;
+    fieldMap.letterSpacing.value = style.letterSpacing || computed.letterSpacing;
+    fieldMap.padding.value = style.padding || computed.padding;
+    fieldMap.margin.value = style.margin || computed.margin;
+    fieldMap.width.value = style.width || "";
+    fieldMap.height.value = style.height || "";
+    fieldMap.radius.value = style.borderRadius || computed.borderRadius;
+    fieldMap.opacity.value = style.opacity || computed.opacity;
+    fieldMap.shadow.value = style.boxShadow || "";
+    fieldMap.animation.value = style.animation || "";
+    fieldMap.x.value = style.left || "";
+    fieldMap.y.value = style.top || "";
+    fieldMap.zIndex.value = style.zIndex || "";
+    fieldMap.rotation.value = style.transform ? (style.transform.match(/rotate\(([^)]+)\)/)?.[1] || "") : "";
+    fieldMap.scale.value = style.transform ? (style.transform.match(/scale\(([^)]+)\)/)?.[1] || "1") : "1";
+  }
+
+  function updateSelected(property, value) {
+    if (!selected) return;
+    selected.style[property] = value;
+    dirty = true;
+  }
+
+  function applyTransform() {
+    if (!selected) return;
+    const rotate = fieldMap.rotation.value || "0deg";
+    const scale = fieldMap.scale.value || "1";
+    selected.style.transform = `rotate(${rotate}) scale(${scale})`;
+    fillInspector();
+  }
+
+  function snapValue(value) {
+    if (!snapEnabled) return value;
+    const step = 8;
+    return Math.round(value / step) * step;
   }
 
   function beginMove(event, target = selected) {
@@ -277,8 +330,10 @@
     if (dragState.type === "move") {
       const deltaX = event.clientX - dragState.startX;
       const deltaY = event.clientY - dragState.startY;
-      dragState.target.style.left = `${dragState.startLeft + deltaX}px`;
-      dragState.target.style.top = `${dragState.startTop + deltaY}px`;
+      const nextX = snapValue(dragState.startLeft + deltaX);
+      const nextY = snapValue(dragState.startTop + deltaY);
+      dragState.target.style.left = `${nextX}px`;
+      dragState.target.style.top = `${nextY}px`;
     } else {
       const width = Math.max(60, Math.round(dragState.startWidth + (event.clientX - dragState.startX)));
       const height = Math.max(40, Math.round(dragState.startHeight + (event.clientY - dragState.startY)));
@@ -297,45 +352,11 @@
     updateOverlayForSelection();
   }
 
-  function fillInspector() {
-    if (!selected) return;
-    const computed = getComputedStyle(selected);
-    fieldMap.content.value = selected.innerHTML;
-    fieldMap.link.value = selected.tagName === "A" ? selected.getAttribute("href") || "" : "";
-    fieldMap.image.value = selected.tagName === "IMG" ? selected.getAttribute("src") || "" : (selected.style.backgroundImage || "").replace(/^url\(["']?|["']?\)$/g, "");
-    fieldMap.color.value = rgbToHex(computed.color);
-    fieldMap.bg.value = rgbToHex(computed.backgroundColor);
-    fieldMap.borderColor.value = rgbToHex(computed.borderColor);
-    fieldMap.fontSize.value = selected.style.fontSize || computed.fontSize;
-    fieldMap.fontWeight.value = selected.style.fontWeight || computed.fontWeight;
-    fieldMap.align.value = selected.style.textAlign || computed.textAlign || "";
-    fieldMap.lineHeight.value = selected.style.lineHeight || computed.lineHeight;
-    fieldMap.letterSpacing.value = selected.style.letterSpacing || computed.letterSpacing;
-    fieldMap.padding.value = selected.style.padding || computed.padding;
-    fieldMap.margin.value = selected.style.margin || computed.margin;
-    fieldMap.width.value = selected.style.width || "";
-    fieldMap.height.value = selected.style.height || "";
-    fieldMap.radius.value = selected.style.borderRadius || computed.borderRadius;
-    fieldMap.opacity.value = selected.style.opacity || computed.opacity;
-    fieldMap.shadow.value = selected.style.boxShadow || "";
-    fieldMap.animation.value = selected.style.animation || "";
-  }
-
-  function updateSelected(property, value) {
-    if (!selected) return;
-    selected.style[property] = value;
-    dirty = true;
-  }
-
   async function saveSite({ showToast = false } = {}) {
     if (!csrf) return;
-    clearSelection();
     const response = await fetch("/api/site", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrf,
-      },
+      headers: { "Content-Type": "application/json", "X-CSRF-Token": csrf },
       body: JSON.stringify({ html: site.innerHTML, theme: getTheme() }),
     });
     const data = await response.json().catch(() => ({}));
@@ -366,8 +387,13 @@
     const target = event.target.closest("*");
     if (!target || !site.contains(target)) return;
     if (target.closest("input, textarea, select")) return;
-    selectElement(target);
-    beginMove(event, target);
+
+    const alreadySelected = Boolean(selected && (target === selected || selected.contains(target)));
+    setSelection(target);
+
+    if (!alreadySelected) return;
+
+    beginMove(event, selected);
   }, true);
 
   window.addEventListener("pointermove", onDragMove);
@@ -411,11 +437,29 @@
     ["lineHeight", "lineHeight"], ["letterSpacing", "letterSpacing"], ["padding", "padding"],
     ["margin", "margin"], ["width", "width"], ["height", "height"], ["radius", "borderRadius"],
     ["opacity", "opacity"], ["shadow", "boxShadow"], ["animation", "animation"],
+    ["x", "left"], ["y", "top"], ["zIndex", "zIndex"],
   ];
 
   styleBindings.forEach(([field, property]) => {
-    fieldMap[field].addEventListener("input", () => updateSelected(property, fieldMap[field].value));
+    fieldMap[field].addEventListener("input", () => {
+      if (field === "x") fieldMap.x.value = snapValue(Number(fieldMap.x.value || 0));
+      if (field === "y") fieldMap.y.value = snapValue(Number(fieldMap.y.value || 0));
+      updateSelected(property, fieldMap[field].value);
+      updateOverlayForSelection();
+    });
     fieldMap[field].addEventListener("change", commitChange);
+  });
+
+  fieldMap.rotation.addEventListener("change", () => {
+    if (!selected) return;
+    applyTransform();
+    commitChange();
+  });
+
+  fieldMap.scale.addEventListener("change", () => {
+    if (!selected) return;
+    applyTransform();
+    commitChange();
   });
 
   $("#field-image-upload").addEventListener("change", async (event) => {
@@ -449,7 +493,8 @@
     selected.remove();
     clearSelection();
     pushHistory();
-    if (parent) selectElement(parent);
+    scheduleSave();
+    if (parent) setSelection(parent);
   };
 
   $("#move-element-up").onclick = () => {
@@ -461,6 +506,44 @@
   $("#move-element-down").onclick = () => {
     if (!selected?.nextElementSibling) return;
     selected.parentElement.insertBefore(selected.nextElementSibling, selected);
+    commitChange();
+  };
+
+  $("#bring-forward").onclick = () => {
+    if (!selected?.nextElementSibling) return;
+    selected.parentElement.insertBefore(selected.nextElementSibling, selected);
+    commitChange();
+  };
+
+  $("#send-backward").onclick = () => {
+    if (!selected?.previousElementSibling) return;
+    selected.parentElement.insertBefore(selected, selected.previousElementSibling);
+    commitChange();
+  };
+
+  $("#center-element").onclick = () => {
+    if (!selected) return;
+    selected.style.left = "0px";
+    selected.style.top = "0px";
+    commitChange();
+  };
+
+  $("#reset-element").onclick = () => {
+    if (!selected) return;
+    selected.style.left = "";
+    selected.style.top = "";
+    selected.style.width = "";
+    selected.style.height = "";
+    selected.style.zIndex = "";
+    selected.style.transform = "";
+    commitChange();
+  };
+
+  $("#lock-element").onclick = () => {
+    if (!selected) return;
+    const locked = selected.dataset.editorLocked === "true";
+    selected.dataset.editorLocked = String(!locked);
+    selected.classList.toggle("editor-locked", !locked);
     commitChange();
   };
 
@@ -497,7 +580,8 @@
       }
       selected.appendChild(element);
       pushHistory();
-      selectElement(element);
+      setSelection(element);
+      scheduleSave();
     };
   });
 
@@ -539,6 +623,12 @@
     if (!editMode) clearSelection();
   };
 
+  $("#toggle-snap").onclick = () => {
+    snapEnabled = !snapEnabled;
+    const active = $("#toggle-snap").classList.toggle("active", snapEnabled);
+    $("#toggle-snap").textContent = active ? "Snap on" : "Snap off";
+  };
+
   $("#undo-edit").onclick = () => {
     if (historyIndex > 0) restoreHistory(historyIndex - 1);
   };
@@ -578,6 +668,7 @@
     input.addEventListener("input", () => {
       document.documentElement.style.setProperty(input.dataset.themeVar, input.value);
       dirty = true;
+      scheduleSave();
     });
     input.addEventListener("change", pushHistory);
   });
@@ -592,14 +683,14 @@
       row.innerHTML = `<span>${section.dataset.sectionName}</span><div><button data-up>↑</button><button data-down>↓</button><button data-select>◎</button></div>`;
       $("[data-up]", row).onclick = () => {
         if (section.previousElementSibling) section.parentElement.insertBefore(section, section.previousElementSibling);
-        pushHistory(); renderSections();
+        pushHistory(); renderSections(); scheduleSave();
       };
       $("[data-down]", row).onclick = () => {
         if (section.nextElementSibling) section.parentElement.insertBefore(section.nextElementSibling, section);
-        pushHistory(); renderSections();
+        pushHistory(); renderSections(); scheduleSave();
       };
       $("[data-select]", row).onclick = () => {
-        selectElement(section);
+        setSelection(section);
         section.scrollIntoView({ behavior: "smooth", block: "center" });
       };
       list.appendChild(row);
@@ -615,8 +706,9 @@
     main.appendChild(section);
     pushHistory();
     renderSections();
-    selectElement(section);
+    setSelection(section);
     section.scrollIntoView({ behavior: "smooth" });
+    scheduleSave();
   };
 
   $("#export-design").onclick = () => {
@@ -640,6 +732,7 @@
       clearSelection();
       pushHistory();
       toast("Design imported.");
+      scheduleSave();
     } catch {
       toast("Invalid design file.", true);
     }

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/site.css">
+  <link rel="stylesheet" href="/static/css/site.css?v={{ asset_version }}">
 </head>
 <body>
   <div class="ambient ambient-a"></div>
@@ -196,6 +196,7 @@
       <button id="open-theme">Theme</button>
       <button id="open-sections">Sections</button>
       <button id="export-design">Export</button>
+      <button id="toggle-snap" class="active">Snap on</button>
       <label class="import-label">Import<input id="import-design" type="file" accept=".json,application/json"></label>
       <button id="save-site" class="save-button">Save changes</button>
       <button id="logout-editor">Log out</button>
@@ -248,6 +249,17 @@
       </section>
 
       <section class="control-group">
+        <h3>Layout & transform</h3>
+        <div class="control-grid">
+          <label>X<input id="field-x" type="number" step="1" placeholder="0"></label>
+          <label>Y<input id="field-y" type="number" step="1" placeholder="0"></label>
+          <label>Z index<input id="field-z-index" type="number" step="1" placeholder="0"></label>
+          <label>Rotation<input id="field-rotation" type="text" placeholder="0deg"></label>
+          <label>Scale<input id="field-scale" type="text" placeholder="1"></label>
+        </div>
+      </section>
+
+      <section class="control-group">
         <h3>Effects</h3>
         <label>Shadow<select id="field-shadow">
           <option value="">None / existing</option>
@@ -271,6 +283,11 @@
           <button id="duplicate-element">Duplicate</button>
           <button id="move-element-up">Move up</button>
           <button id="move-element-down">Move down</button>
+          <button id="bring-forward">Bring forward</button>
+          <button id="send-backward">Send backward</button>
+          <button id="center-element">Center</button>
+          <button id="reset-element">Reset</button>
+          <button id="lock-element">Lock</button>
           <button id="hide-element">Hide/show</button>
           <button id="delete-element" class="danger">Delete</button>
         </div>
@@ -319,7 +336,7 @@
 
   <div id="editor-toast" class="editor-toast" hidden></div>
 
-  <script src="/static/js/site.js"></script>
-  <script src="/static/js/editor.js"></script>
+  <script src="/static/js/site.js?v={{ asset_version }}"></script>
+  <script src="/static/js/editor.js?v={{ asset_version }}"></script>
 </body>
 </html>

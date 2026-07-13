@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import hmac
 import json
 import os
@@ -40,6 +41,26 @@ ALLOWED_THEME_KEYS = {
 }
 
 login_attempts: dict[str, deque[float]] = defaultdict(deque)
+
+
+def asset_version() -> str:
+    digest = hashlib.sha256()
+    for path in (
+        BASE_DIR / "templates" / "index.html",
+        BASE_DIR / "static" / "css" / "site.css",
+        BASE_DIR / "static" / "js" / "site.js",
+        BASE_DIR / "static" / "js" / "editor.js",
+    ):
+        try:
+            digest.update(path.read_bytes())
+        except FileNotFoundError:
+            continue
+    return digest.hexdigest()[:16]
+
+
+@app.context_processor
+def inject_asset_version() -> dict[str, str]:
+    return {"asset_version": asset_version()}
 
 
 def read_site() -> dict[str, Any]:
@@ -232,7 +253,7 @@ def api_upload():
 
 @app.after_request
 def disable_api_cache(response):
-    if request.path.startswith("/api/"):
+    if request.path == "/" or request.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store"
     return response
 

@@ -1,0 +1,2 @@
+# requirements.txt
+# No Python dependencies are required for this static website.

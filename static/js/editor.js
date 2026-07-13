@@ -113,12 +113,21 @@
   }
 
   async function checkSession() {
-    const response = await fetch("/api/session", { cache: "no-store" });
-    const data = await response.json();
-    if (data.authenticated) {
+    try {
+      const response = await fetch("/api/session", { cache: "no-store" });
+      const data = await response.json();
+      if (!data.authenticated) {
+        authenticated = false;
+        csrf = "";
+        return;
+      }
       authenticated = true;
       csrf = data.csrf;
       enterEditor();
+    } catch (error) {
+      console.error(error);
+      authenticated = false;
+      csrf = "";
     }
   }
 
@@ -586,8 +595,27 @@
   });
 
   launch.onclick = async () => {
-    if (authenticated) enterEditor();
-    else loginModal.hidden = false;
+    if (authenticated) {
+      try {
+        const response = await fetch("/api/session", { cache: "no-store" });
+        const data = await response.json();
+        if (data.authenticated) {
+          authenticated = true;
+          csrf = data.csrf;
+          enterEditor();
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      authenticated = false;
+      csrf = "";
+    }
+
+    loginError.textContent = "";
+    $("#admin-password").value = "";
+    loginModal.hidden = false;
+    $("#admin-password").focus();
   };
 
   $("[data-close-login]").onclick = () => { loginModal.hidden = true; };

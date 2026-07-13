@@ -1,11 +1,12 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>YSL Reimagined</title>
   <meta name="description" content="Youth Soccer League — the start of your MPS journey.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
@@ -13,58 +14,253 @@
 </head>
 <body>
 <div class="page-shell">
-<header class="topbar">
-  <a class="brand" href="index.html"><span class="brand-main">YSL</span><span class="brand-divider"></span><span class="brand-sub">YOUTH<br>SOCCER<br>LEAGUE</span></a>
-  <nav class="nav-links">
-    <a class="active" href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a>
-  </nav>
-  <div class="nav-actions">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button>
-    <a class="admin-link" href="admin.html">Admin Page</a>
-    <a class="dashboard-link" href="dashboard.html">Dashboard</a>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-main" id="siteBrand">YSL</span>
+      <span class="brand-divider"></span>
+      <span class="brand-sub" id="leagueBrand">YOUTH<br>SOCCER<br>LEAGUE</span>
+    </a>
+
+    <nav class="nav-links">
+      <a class="active" href="index.html">Home</a>
+      <a href="fixtures.html">Fixtures</a>
+      <a href="standings.html">Standings</a>
+      <a href="playersheet.html">Playersheet</a>
+      <a href="news.html">News</a>
+      <a href="about.html">About</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="theme-icon-sun">☀</span>
+        <span class="theme-icon-moon">☾</span>
+      </button>
+
+      <a class="admin-link" href="admin.html">Admin Page</a>
+      <a class="dashboard-link" href="dashboard.html">Dashboard</a>
+    </div>
+
+    <button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a class="active" href="index.html">Home</a>
+    <a href="fixtures.html">Fixtures</a>
+    <a href="standings.html">Standings</a>
+    <a href="playersheet.html">Playersheet</a>
+    <a href="news.html">News</a>
+    <a href="about.html">About</a>
+    <a href="admin.html">Admin Page</a>
+    <a href="dashboard.html">Dashboard</a>
   </div>
-  <button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
-</header>
-<div class="mobile-nav" id="mobileNav">
-  <a class="active" href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a><a href="admin.html">Admin Page</a><a href="dashboard.html">Dashboard</a>
-</div>
-<main class="home">
-  <aside class="social-rail"><a href="#">◎</a><a href="#">◢</a><a href="#">▶</a><span class="social-line"></span></aside>
-  <section class="hero">
-    <div class="hero-copy">
-      <h1><span class="hero-ysl">YSL</span><span class="hero-reimagined">REIMAGINED</span></h1>
-      <p>The start of your MPS journey.</p>
-      <div class="hero-buttons">
-        <a class="primary-button" href="fixtures.html">View Fixtures <span>→</span></a>
-        <a class="secondary-button" href="standings.html">League Standings</a>
+
+  <main class="home">
+    <aside class="social-rail">
+      <a href="#">◎</a>
+      <a href="#">◢</a>
+      <a href="#">▶</a>
+      <span class="social-line"></span>
+    </aside>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>
+          <span class="hero-ysl" id="heroTop">YSL</span>
+          <span class="hero-reimagined" id="heroBottom">REIMAGINED</span>
+        </h1>
+
+        <p id="heroDescription">The start of your MPS journey.</p>
+
+        <div class="hero-buttons">
+          <a class="primary-button" id="primaryButton" href="fixtures.html">
+            <span id="primaryButtonText">View Fixtures</span>
+            <span>→</span>
+          </a>
+
+          <a class="secondary-button" id="secondaryButton" href="standings.html">
+            <span id="secondaryButtonText">League Standings</span>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="hero-art" aria-hidden="true">
-      <div class="stripe stripe-1"></div><div class="stripe stripe-2"></div><div class="stripe stripe-3"></div><div class="line line-1"></div><div class="line line-2"></div>
-    </div>
-  </section>
-  <section class="fixtures-preview">
-    <div class="fixtures-heading"><span></span><h2>Upcoming Fixtures</h2><span></span></div>
-    <div class="fixture-grid">
-      <article class="fixture-card">
-        <div class="fixture-date" contenteditable="true">DATE | TIME</div>
-        <div class="fixture-teams"><div class="team-block"><div class="team-badge">◈</div><strong contenteditable="true">TEAM NAME</strong></div><div class="versus">VS</div><div class="team-block"><div class="team-badge">◈</div><strong contenteditable="true">TEAM NAME</strong></div></div>
-        <div class="venue" contenteditable="true">VENUE NAME</div>
-      </article>
-      <article class="fixture-card">
-        <div class="fixture-date" contenteditable="true">DATE | TIME</div>
-        <div class="fixture-teams"><div class="team-block"><div class="team-badge">◈</div><strong contenteditable="true">TEAM NAME</strong></div><div class="versus">VS</div><div class="team-block"><div class="team-badge">◈</div><strong contenteditable="true">TEAM NAME</strong></div></div>
-        <div class="venue" contenteditable="true">VENUE NAME</div>
-      </article>
-      <article class="fixture-card">
-        <div class="fixture-date" contenteditable="true">DATE | TIME</div>
-        <div class="fixture-teams"><div class="team-block"><div class="team-badge">◈</div><strong contenteditable="true">TEAM NAME</strong></div><div class="versus">VS</div><div class="team-block"><div class="team-badge">◈</div><strong contenteditable="true">TEAM NAME</strong></div></div>
-        <div class="venue" contenteditable="true">VENUE NAME</div>
-      </article>
-    </div>
-  </section>
-</main>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="stripe stripe-1"></div>
+        <div class="stripe stripe-2"></div>
+        <div class="stripe stripe-3"></div>
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+      </div>
+    </section>
+
+    <section class="fixtures-preview">
+      <div class="fixtures-heading">
+        <span></span>
+        <h2>Upcoming Fixtures</h2>
+        <span></span>
+      </div>
+
+      <div class="fixture-grid" id="fixtureGrid"></div>
+    </section>
+  </main>
 </div>
+
 <script src="assets/app.js"></script>
+<script>
+  const ADMIN_STORAGE_KEY = "ysl-admin-content-v2";
+
+  const fallbackData = {
+    hero: {
+      top: "YSL",
+      bottom: "REIMAGINED",
+      description: "The start of your MPS journey.",
+      primaryText: "View Fixtures",
+      primaryLink: "fixtures.html",
+      secondaryText: "League Standings",
+      secondaryLink: "standings.html"
+    },
+    fixtures: [
+      { date: "DATE", time: "TIME", home: "TEAM NAME", away: "TEAM NAME", venue: "VENUE NAME" },
+      { date: "DATE", time: "TIME", home: "TEAM NAME", away: "TEAM NAME", venue: "VENUE NAME" },
+      { date: "DATE", time: "TIME", home: "TEAM NAME", away: "TEAM NAME", venue: "VENUE NAME" }
+    ],
+    theme: {
+      lightBg: "#ffffff",
+      darkBg: "#14091f",
+      mainPurple: "#43118d",
+      accentPurple: "#8c45e9"
+    },
+    settings: {
+      websiteName: "YSL",
+      leagueName: "Youth Soccer League",
+      discordInvite: ""
+    }
+  };
+
+  function loadAdminData() {
+    try {
+      const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
+
+      if (!raw) {
+        return fallbackData;
+      }
+
+      const saved = JSON.parse(raw);
+
+      return {
+        hero: {
+          ...fallbackData.hero,
+          ...(saved.hero || {})
+        },
+        fixtures:
+          Array.isArray(saved.fixtures) && saved.fixtures.length === 3
+            ? saved.fixtures
+            : fallbackData.fixtures,
+        theme: {
+          ...fallbackData.theme,
+          ...(saved.theme || {})
+        },
+        settings: {
+          ...fallbackData.settings,
+          ...(saved.settings || {})
+        }
+      };
+    } catch (error) {
+      console.error("Could not load admin content:", error);
+      return fallbackData;
+    }
+  }
+
+  function applyAdminContent() {
+    const data = loadAdminData();
+
+    document.getElementById("heroTop").textContent = data.hero.top;
+    document.getElementById("heroBottom").textContent = data.hero.bottom;
+    document.getElementById("heroDescription").textContent = data.hero.description;
+
+    document.getElementById("primaryButtonText").textContent = data.hero.primaryText;
+    document.getElementById("primaryButton").href = data.hero.primaryLink || "fixtures.html";
+
+    document.getElementById("secondaryButtonText").textContent = data.hero.secondaryText;
+    document.getElementById("secondaryButton").href = data.hero.secondaryLink || "standings.html";
+
+    document.getElementById("siteBrand").textContent = data.settings.websiteName || "YSL";
+    document.getElementById("leagueBrand").innerHTML =
+      (data.settings.leagueName || "Youth Soccer League")
+        .split(" ")
+        .map(word => escapeHtml(word))
+        .join("<br>");
+
+    document.documentElement.style.setProperty("--purple", data.theme.mainPurple);
+    document.documentElement.style.setProperty("--accent", data.theme.accentPurple);
+
+    const currentTheme = document.documentElement.dataset.theme;
+
+    if (currentTheme === "dark") {
+      document.documentElement.style.setProperty("--bg", data.theme.darkBg);
+    } else {
+      document.documentElement.style.setProperty("--bg", data.theme.lightBg);
+    }
+
+    renderFixtures(data.fixtures);
+  }
+
+  function renderFixtures(fixtures) {
+    const grid = document.getElementById("fixtureGrid");
+    grid.innerHTML = "";
+
+    fixtures.forEach(fixture => {
+      const card = document.createElement("article");
+      card.className = "fixture-card";
+
+      card.innerHTML = `
+        <div class="fixture-date">
+          ${escapeHtml(fixture.date)} &nbsp; | &nbsp; ${escapeHtml(fixture.time)}
+        </div>
+
+        <div class="fixture-teams">
+          <div class="team-block">
+            <div class="team-badge">◈</div>
+            <strong>${escapeHtml(fixture.home)}</strong>
+          </div>
+
+          <div class="versus">VS</div>
+
+          <div class="team-block">
+            <div class="team-badge">◈</div>
+            <strong>${escapeHtml(fixture.away)}</strong>
+          </div>
+        </div>
+
+        <div class="venue">${escapeHtml(fixture.venue)}</div>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  }
+
+  applyAdminContent();
+
+  window.addEventListener("storage", event => {
+    if (event.key === ADMIN_STORAGE_KEY) {
+      applyAdminContent();
+    }
+  });
+
+  window.addEventListener("focus", applyAdminContent);
+
+  document.getElementById("themeToggle")?.addEventListener("click", () => {
+    setTimeout(applyAdminContent, 0);
+  });
+</script>
 </body>
 </html>

@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>YSL Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,15 +24,18 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 .side-brand{display:flex;align-items:center;gap:11px;padding:4px 7px 22px;border-bottom:1px solid rgba(255,255,255,.08)}.side-brand .logo{width:42px;height:42px;margin:0;border-radius:12px;font-size:.75rem}.side-brand div{display:flex;flex-direction:column}.side-brand small{color:#9789a1}
 .nav{display:grid;gap:6px;margin-top:20px}.nav button{min-height:44px;display:flex;align-items:center;gap:11px;padding:0 12px;border:0;border-radius:10px;color:#b9adbf;background:transparent;text-align:left;font-size:.74rem;font-weight:700}.nav button:hover,.nav button.active{color:#fff;background:rgba(168,85,247,.14)}
 .side-foot{margin-top:auto;display:grid;gap:8px}.side-foot a,.side-foot button{min-height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.09);border-radius:10px;color:#d6cbdc;background:rgba(255,255,255,.04);font-size:.7rem;font-weight:700}
-.main{min-width:0}.top{min-height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card)}.top h2{margin:0;font:800 1.1rem Manrope}.actions{display:flex;gap:9px}.actions button,.actions a,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--card);font-size:.7rem;font-weight:800}.actions .save,.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}
+.main{min-width:0}.top{min-height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card)}.top h2{margin:0;font:800 1.1rem Manrope}.actions{display:flex;gap:9px;align-items:center}.actions button,.actions a,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--card);font-size:.7rem;font-weight:800}.actions .save,.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}
+.save-status{min-width:84px;color:var(--muted);font-size:.67rem;font-weight:700;text-align:right}.save-status.ok{color:var(--ok)}.save-status.bad{color:var(--danger)}
 .content{padding:28px}.page{display:none}.page.active{display:block}.heading{margin-bottom:22px}.heading h1{margin:0;font:800 clamp(2rem,4vw,3rem) Manrope;letter-spacing:-.05em}.heading p{max-width:560px;color:var(--muted);line-height:1.7}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat,.card{border:1px solid var(--border);border-radius:17px;background:var(--card);box-shadow:var(--shadow)}.stat{padding:19px}.stat span{color:var(--muted);font-size:.68rem}.stat strong{display:block;margin-top:11px;font:800 2rem Manrope}.card{margin-top:16px;overflow:hidden}.card-head{padding:17px 19px;border-bottom:1px solid var(--border)}.card-head h3{margin:0;font-size:.85rem}.card-body{padding:19px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}.fixtures{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fixture{padding:15px;border:1px solid var(--border);border-radius:13px;background:var(--input)}.fixture h4{margin:0 0 12px}.fixture label{margin-top:9px}.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.themebox{padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--input)}.themebox input{height:44px;padding:3px}
 .notice{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(22,140,95,.25);border-radius:10px;color:var(--ok);background:rgba(22,140,95,.07);font-size:.72rem;font-weight:700}.notice.show{display:block}
+.warning{margin-bottom:16px;padding:12px 14px;border:1px solid rgba(215,53,95,.25);border-radius:10px;color:#b52d50;background:rgba(215,53,95,.06);font-size:.72rem;line-height:1.5}
 @media(max-width:1050px){.stats,.themes{grid-template-columns:repeat(2,1fr)}.fixtures{grid-template-columns:1fr}}
 @media(max-width:760px){.app{grid-template-columns:78px 1fr}.side-brand div,.nav button span:last-child,.side-foot{display:none}.nav button{justify-content:center;padding:0}.content{padding:18px}.grid2{grid-template-columns:1fr}.top{padding:0 16px}.actions a,.actions button:not(.save){display:none}}
 </style>
 </head>
 <body>
+
 <section class="login" id="login">
 <form class="login-card" id="loginForm">
 <div class="logo">YSL</div><small>Secure administration</small><h1>Admin Panel</h1>
@@ -55,34 +59,24 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 </aside>
 
 <main class="main">
-<header class="top"><h2 id="title">Dashboard</h2><div class="actions"><button id="mode">Dark mode</button><a href="index.html">View site</a><button class="save" id="save">Save changes</button></div></header>
-<div class="content"><div class="notice" id="notice">Changes saved successfully.</div>
+<header class="top"><h2 id="title">Dashboard</h2><div class="actions"><span id="saveStatus" class="save-status">All changes saved</span><button id="mode">Dark mode</button><a href="index.html">View site</a><button class="save" id="save">Save now</button></div></header>
+<div class="content">
+<div class="notice" id="notice">Changes saved successfully.</div>
+<div class="warning" id="fileWarning" hidden>You are opening the website as a local file. Browser storage may not be shared between admin.html and index.html. Run the website through a local server or hosting URL.</div>
 
 <section class="page active" id="dashboard">
-<div class="heading"><h1>Dashboard</h1><p>Manage the content displayed on your YSL website.</p></div>
-<div class="stats">
-<article class="stat"><span>Homepage sections</span><strong>3</strong></article>
-<article class="stat"><span>Upcoming fixtures</span><strong>3</strong></article>
-<article class="stat"><span>Website pages</span><strong>8</strong></article>
-<article class="stat"><span>Current theme</span><strong id="themeStat">Light</strong></article>
-</div>
-<div class="card"><div class="card-head"><h3>Quick actions</h3></div><div class="card-body">
-<button class="btn" data-open="homepage">Edit homepage</button>
-<button class="btn" data-open="fixtures">Update fixtures</button>
-<button class="btn" data-open="theme">Change colours</button>
-</div></div>
+<div class="heading"><h1>Dashboard</h1><p>Changes now save automatically whenever you edit a field.</p></div>
+<div class="stats"><article class="stat"><span>Homepage sections</span><strong>3</strong></article><article class="stat"><span>Upcoming fixtures</span><strong>3</strong></article><article class="stat"><span>Website pages</span><strong>8</strong></article><article class="stat"><span>Current theme</span><strong id="themeStat">Light</strong></article></div>
+<div class="card"><div class="card-head"><h3>Quick actions</h3></div><div class="card-body"><button class="btn" data-open="homepage">Edit homepage</button> <button class="btn" data-open="fixtures">Update fixtures</button> <button class="btn" data-open="theme">Change colours</button></div></div>
 </section>
 
 <section class="page" id="homepage">
 <div class="heading"><h1>Homepage</h1><p>Edit the main headline, description and button labels.</p></div>
 <div class="card"><div class="card-head"><h3>Hero content</h3></div><div class="card-body grid2">
-<label>Top headline<input id="heroTop"></label>
-<label>Second headline<input id="heroBottom"></label>
+<label>Top headline<input id="heroTop"></label><label>Second headline<input id="heroBottom"></label>
 <label class="full">Description<textarea id="heroDescription"></textarea></label>
-<label>Primary button text<input id="primaryText"></label>
-<label>Primary button link<input id="primaryLink"></label>
-<label>Secondary button text<input id="secondaryText"></label>
-<label>Secondary button link<input id="secondaryLink"></label>
+<label>Primary button text<input id="primaryText"></label><label>Primary button link<input id="primaryLink"></label>
+<label>Secondary button text<input id="secondaryText"></label><label>Secondary button link<input id="secondaryLink"></label>
 </div></div>
 </section>
 
@@ -94,45 +88,230 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 <section class="page" id="theme">
 <div class="heading"><h1>Theme</h1><p>Change the main colours used by the website.</p></div>
 <div class="card"><div class="card-head"><h3>Website colours</h3></div><div class="card-body themes">
-<div class="themebox"><label>Light background<input id="lightBg" type="color"></label></div>
-<div class="themebox"><label>Dark background<input id="darkBg" type="color"></label></div>
-<div class="themebox"><label>Main purple<input id="mainPurple" type="color"></label></div>
-<div class="themebox"><label>Accent purple<input id="accentPurple" type="color"></label></div>
+<div class="themebox"><label>Light background<input id="lightBg" type="color"></label></div><div class="themebox"><label>Dark background<input id="darkBg" type="color"></label></div>
+<div class="themebox"><label>Main purple<input id="mainPurple" type="color"></label></div><div class="themebox"><label>Accent purple<input id="accentPurple" type="color"></label></div>
 </div></div>
 </section>
 
 <section class="page" id="settings">
 <div class="heading"><h1>Settings</h1><p>Basic YSL website details.</p></div>
 <div class="card"><div class="card-head"><h3>Website information</h3></div><div class="card-body grid2">
-<label>Website name<input id="websiteName"></label>
-<label>League name<input id="leagueName"></label>
-<label class="full">Discord invite<input id="discordInvite"></label>
+<label>Website name<input id="websiteName"></label><label>League name<input id="leagueName"></label><label class="full">Discord invite<input id="discordInvite"></label>
 </div></div>
 </section>
 
 </div></main></div>
 
 <script>
-const PASS="adminson",KEY="ysl-admin-content";
-const defaults={hero:{top:"YSL",bottom:"REIMAGINED",description:"The start of your MPS journey.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"League Standings",secondaryLink:"standings.html"},fixtures:Array.from({length:3},()=>({date:"DATE",time:"TIME",home:"TEAM NAME",away:"TEAM NAME",venue:"VENUE NAME"})),theme:{lightBg:"#ffffff",darkBg:"#14091f",mainPurple:"#43118d",accentPurple:"#8c45e9"},settings:{websiteName:"YSL",leagueName:"Youth Soccer League",discordInvite:""}};
-let data=load();
-function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x?{hero:{...defaults.hero,...x.hero},fixtures:x.fixtures||defaults.fixtures,theme:{...defaults.theme,...x.theme},settings:{...defaults.settings,...x.settings}}:structuredClone(defaults)}catch{return structuredClone(defaults)}}
+const PASS="adminson";
+const KEY="ysl-admin-content-v2";
+const defaults={
+ hero:{top:"YSL",bottom:"REIMAGINED",description:"The start of your MPS journey.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"League Standings",secondaryLink:"standings.html"},
+ fixtures:Array.from({length:3},()=>({date:"DATE",time:"TIME",home:"TEAM NAME",away:"TEAM NAME",venue:"VENUE NAME"})),
+ theme:{lightBg:"#ffffff",darkBg:"#14091f",mainPurple:"#43118d",accentPurple:"#8c45e9"},
+ settings:{websiteName:"YSL",leagueName:"Youth Soccer League",discordInvite:""}
+};
+
+let data=loadData();
+let saveTimer=null;
 const $=id=>document.getElementById(id);
-function openApp(){$("login").hidden=true;$("app").hidden=false;fill()}
-$("loginForm").onsubmit=e=>{e.preventDefault();if($("password").value!==PASS)return $("error").textContent="Incorrect password.";sessionStorage.setItem("ysl-admin-auth","1");openApp()};
+
+function clone(value){return JSON.parse(JSON.stringify(value))}
+
+function loadData(){
+ try{
+   const raw=localStorage.getItem(KEY);
+   if(!raw)return clone(defaults);
+   const saved=JSON.parse(raw);
+   return {
+     hero:{...defaults.hero,...(saved.hero||{})},
+     fixtures:Array.isArray(saved.fixtures)&&saved.fixtures.length===3?saved.fixtures:clone(defaults.fixtures),
+     theme:{...defaults.theme,...(saved.theme||{})},
+     settings:{...defaults.settings,...(saved.settings||{})}
+   };
+ }catch(error){
+   console.error("Could not load saved admin data:",error);
+   return clone(defaults);
+ }
+}
+
+function persist(){
+ collect();
+ const status=$("saveStatus");
+ status.textContent="Saving...";
+ status.className="save-status";
+
+ try{
+   const encoded=JSON.stringify(data);
+   localStorage.setItem(KEY,encoded);
+
+   const verified=localStorage.getItem(KEY);
+   if(verified!==encoded)throw new Error("Storage verification failed");
+
+   status.textContent="Saved";
+   status.className="save-status ok";
+   $("notice").classList.add("show");
+   clearTimeout(persist.noticeTimer);
+   persist.noticeTimer=setTimeout(()=>$("notice").classList.remove("show"),1600);
+ }catch(error){
+   console.error(error);
+   status.textContent="Save failed";
+   status.className="save-status bad";
+ }
+}
+
+function scheduleSave(){
+ const status=$("saveStatus");
+ status.textContent="Unsaved...";
+ status.className="save-status";
+ clearTimeout(saveTimer);
+ saveTimer=setTimeout(persist,450);
+}
+
+function openApp(){
+ $("login").hidden=true;
+ $("app").hidden=false;
+ fill();
+ attachAutoSave();
+}
+
+$("loginForm").onsubmit=e=>{
+ e.preventDefault();
+ if($("password").value!==PASS){
+   $("error").textContent="Incorrect password.";
+   return;
+ }
+ sessionStorage.setItem("ysl-admin-auth","1");
+ openApp();
+};
+
 if(sessionStorage.getItem("ysl-admin-auth")==="1")openApp();
-$("logout").onclick=()=>{sessionStorage.removeItem("ysl-admin-auth");location.reload()};
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>openPage(b.dataset.page));
-document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openPage(b.dataset.open));
-function openPage(name){document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));$("title").textContent=name[0].toUpperCase()+name.slice(1)}
-function fill(){$("heroTop").value=data.hero.top;$("heroBottom").value=data.hero.bottom;$("heroDescription").value=data.hero.description;$("primaryText").value=data.hero.primaryText;$("primaryLink").value=data.hero.primaryLink;$("secondaryText").value=data.hero.secondaryText;$("secondaryLink").value=data.hero.secondaryLink;$("lightBg").value=data.theme.lightBg;$("darkBg").value=data.theme.darkBg;$("mainPurple").value=data.theme.mainPurple;$("accentPurple").value=data.theme.accentPurple;$("websiteName").value=data.settings.websiteName;$("leagueName").value=data.settings.leagueName;$("discordInvite").value=data.settings.discordInvite;renderFixtures();$("themeStat").textContent=document.documentElement.dataset.theme==="dark"?"Dark":"Light"}
-function renderFixtures(){$("fixtureList").innerHTML="";data.fixtures.forEach((f,i)=>{const el=document.createElement("article");el.className="fixture";el.innerHTML=`<h4>Fixture ${i+1}</h4><label>Date<input data-i="${i}" data-k="date" value="${safe(f.date)}"></label><label>Time<input data-i="${i}" data-k="time" value="${safe(f.time)}"></label><label>Home team<input data-i="${i}" data-k="home" value="${safe(f.home)}"></label><label>Away team<input data-i="${i}" data-k="away" value="${safe(f.away)}"></label><label>Venue<input data-i="${i}" data-k="venue" value="${safe(f.venue)}"></label>`;$("fixtureList").appendChild(el)})}
-function save(){data.hero={top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim()};document.querySelectorAll("[data-i]").forEach(x=>data.fixtures[+x.dataset.i][x.dataset.k]=x.value.trim());data.theme={lightBg:$("lightBg").value,darkBg:$("darkBg").value,mainPurple:$("mainPurple").value,accentPurple:$("accentPurple").value};data.settings={websiteName:$("websiteName").value.trim(),leagueName:$("leagueName").value.trim(),discordInvite:$("discordInvite").value.trim()};localStorage.setItem(KEY,JSON.stringify(data));$("notice").classList.add("show");setTimeout(()=>$("notice").classList.remove("show"),2200)}
-$("save").onclick=save;
-const savedTheme=localStorage.getItem("ysl-theme");if(savedTheme)document.documentElement.dataset.theme=savedTheme;
+
+$("logout").onclick=()=>{
+ sessionStorage.removeItem("ysl-admin-auth");
+ location.reload();
+};
+
+document.querySelectorAll("[data-page]").forEach(button=>{
+ button.onclick=()=>openPage(button.dataset.page);
+});
+
+document.querySelectorAll("[data-open]").forEach(button=>{
+ button.onclick=()=>openPage(button.dataset.open);
+});
+
+function openPage(name){
+ document.querySelectorAll("[data-page]").forEach(button=>button.classList.toggle("active",button.dataset.page===name));
+ document.querySelectorAll(".page").forEach(page=>page.classList.toggle("active",page.id===name));
+ $("title").textContent=name.charAt(0).toUpperCase()+name.slice(1);
+}
+
+function fill(){
+ $("heroTop").value=data.hero.top;
+ $("heroBottom").value=data.hero.bottom;
+ $("heroDescription").value=data.hero.description;
+ $("primaryText").value=data.hero.primaryText;
+ $("primaryLink").value=data.hero.primaryLink;
+ $("secondaryText").value=data.hero.secondaryText;
+ $("secondaryLink").value=data.hero.secondaryLink;
+ $("lightBg").value=data.theme.lightBg;
+ $("darkBg").value=data.theme.darkBg;
+ $("mainPurple").value=data.theme.mainPurple;
+ $("accentPurple").value=data.theme.accentPurple;
+ $("websiteName").value=data.settings.websiteName;
+ $("leagueName").value=data.settings.leagueName;
+ $("discordInvite").value=data.settings.discordInvite;
+ $("themeStat").textContent=document.documentElement.dataset.theme==="dark"?"Dark":"Light";
+ renderFixtures();
+}
+
+function renderFixtures(){
+ $("fixtureList").innerHTML="";
+ data.fixtures.forEach((fixture,index)=>{
+   const element=document.createElement("article");
+   element.className="fixture";
+   element.innerHTML=`
+     <h4>Fixture ${index+1}</h4>
+     <label>Date<input data-fixture="${index}" data-key="date" value="${escapeHtml(fixture.date)}"></label>
+     <label>Time<input data-fixture="${index}" data-key="time" value="${escapeHtml(fixture.time)}"></label>
+     <label>Home team<input data-fixture="${index}" data-key="home" value="${escapeHtml(fixture.home)}"></label>
+     <label>Away team<input data-fixture="${index}" data-key="away" value="${escapeHtml(fixture.away)}"></label>
+     <label>Venue<input data-fixture="${index}" data-key="venue" value="${escapeHtml(fixture.venue)}"></label>`;
+   $("fixtureList").appendChild(element);
+ });
+}
+
+function collect(){
+ data.hero={
+   top:$("heroTop").value.trim(),
+   bottom:$("heroBottom").value.trim(),
+   description:$("heroDescription").value.trim(),
+   primaryText:$("primaryText").value.trim(),
+   primaryLink:$("primaryLink").value.trim(),
+   secondaryText:$("secondaryText").value.trim(),
+   secondaryLink:$("secondaryLink").value.trim()
+ };
+
+ document.querySelectorAll("[data-fixture]").forEach(input=>{
+   const index=Number(input.dataset.fixture);
+   data.fixtures[index][input.dataset.key]=input.value.trim();
+ });
+
+ data.theme={
+   lightBg:$("lightBg").value,
+   darkBg:$("darkBg").value,
+   mainPurple:$("mainPurple").value,
+   accentPurple:$("accentPurple").value
+ };
+
+ data.settings={
+   websiteName:$("websiteName").value.trim(),
+   leagueName:$("leagueName").value.trim(),
+   discordInvite:$("discordInvite").value.trim()
+ };
+}
+
+function attachAutoSave(){
+ document.querySelectorAll("#app input,#app textarea,#app select").forEach(element=>{
+   element.removeEventListener("input",scheduleSave);
+   element.removeEventListener("change",scheduleSave);
+   element.addEventListener("input",scheduleSave);
+   element.addEventListener("change",scheduleSave);
+ });
+}
+
+$("save").onclick=persist;
+
+const savedTheme=localStorage.getItem("ysl-theme");
+if(savedTheme==="light"||savedTheme==="dark")document.documentElement.dataset.theme=savedTheme;
 $("mode").textContent=document.documentElement.dataset.theme==="dark"?"Light mode":"Dark mode";
-$("mode").onclick=()=>{const n=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=n;localStorage.setItem("ysl-theme",n);$("mode").textContent=n==="dark"?"Light mode":"Dark mode";$("themeStat").textContent=n==="dark"?"Dark":"Light"};
-function safe(v){return String(v).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;")}
+
+$("mode").onclick=()=>{
+ const next=document.documentElement.dataset.theme==="dark"?"light":"dark";
+ document.documentElement.dataset.theme=next;
+ localStorage.setItem("ysl-theme",next);
+ $("mode").textContent=next==="dark"?"Light mode":"Dark mode";
+ $("themeStat").textContent=next==="dark"?"Dark":"Light";
+};
+
+if(location.protocol==="file:"){
+ $("fileWarning").hidden=false;
+}
+
+function escapeHtml(value){
+ return String(value)
+   .replaceAll("&","&amp;")
+   .replaceAll('"',"&quot;")
+   .replaceAll("<","&lt;")
+   .replaceAll(">","&gt;");
+}
+
+window.addEventListener("beforeunload",()=>{
+ if(saveTimer){
+   clearTimeout(saveTimer);
+   persist();
+ }
+});
 </script>
 </body>
 </html>

@@ -25,11 +25,10 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 .nav{display:grid;gap:6px;margin-top:20px}.nav button{min-height:44px;display:flex;align-items:center;gap:11px;padding:0 12px;border:0;border-radius:10px;color:#b9adbf;background:transparent;text-align:left;font-size:.74rem;font-weight:700}.nav button:hover,.nav button.active{color:#fff;background:rgba(168,85,247,.14)}
 .side-foot{margin-top:auto;display:grid;gap:8px}.side-foot a,.side-foot button{min-height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.09);border-radius:10px;color:#d6cbdc;background:rgba(255,255,255,.04);font-size:.7rem;font-weight:700}
 .main{min-width:0}.top{min-height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card)}.top h2{margin:0;font:800 1.1rem Manrope}.actions{display:flex;gap:9px;align-items:center}.actions button,.actions a,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--card);font-size:.7rem;font-weight:800}.actions .save,.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}
-.save-status{min-width:84px;color:var(--muted);font-size:.67rem;font-weight:700;text-align:right}.save-status.ok{color:var(--ok)}.save-status.bad{color:var(--danger)}
+.save-status{min-width:90px;color:var(--muted);font-size:.67rem;font-weight:700;text-align:right}.save-status.ok{color:var(--ok)}.save-status.bad{color:var(--danger)}
 .content{padding:28px}.page{display:none}.page.active{display:block}.heading{margin-bottom:22px}.heading h1{margin:0;font:800 clamp(2rem,4vw,3rem) Manrope;letter-spacing:-.05em}.heading p{max-width:560px;color:var(--muted);line-height:1.7}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat,.card{border:1px solid var(--border);border-radius:17px;background:var(--card);box-shadow:var(--shadow)}.stat{padding:19px}.stat span{color:var(--muted);font-size:.68rem}.stat strong{display:block;margin-top:11px;font:800 2rem Manrope}.card{margin-top:16px;overflow:hidden}.card-head{padding:17px 19px;border-bottom:1px solid var(--border)}.card-head h3{margin:0;font-size:.85rem}.card-body{padding:19px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}.fixtures{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fixture{padding:15px;border:1px solid var(--border);border-radius:13px;background:var(--input)}.fixture h4{margin:0 0 12px}.fixture label{margin-top:9px}.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.themebox{padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--input)}.themebox input{height:44px;padding:3px}
-.notice{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(22,140,95,.25);border-radius:10px;color:var(--ok);background:rgba(22,140,95,.07);font-size:.72rem;font-weight:700}.notice.show{display:block}
-.warning{margin-bottom:16px;padding:12px 14px;border:1px solid rgba(215,53,95,.25);border-radius:10px;color:#b52d50;background:rgba(215,53,95,.06);font-size:.72rem;line-height:1.5}
+.notice{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(22,140,95,.25);border-radius:10px;color:var(--ok);background:rgba(22,140,95,.07);font-size:.72rem;font-weight:700}.notice.show{display:block}.error-banner{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(215,53,95,.25);border-radius:10px;color:#b52d50;background:rgba(215,53,95,.06);font-size:.72rem}.error-banner.show{display:block}
 @media(max-width:1050px){.stats,.themes{grid-template-columns:repeat(2,1fr)}.fixtures{grid-template-columns:1fr}}
 @media(max-width:760px){.app{grid-template-columns:78px 1fr}.side-brand div,.nav button span:last-child,.side-foot{display:none}.nav button{justify-content:center;padding:0}.content{padding:18px}.grid2{grid-template-columns:1fr}.top{padding:0 16px}.actions a,.actions button:not(.save){display:none}}
 </style>
@@ -39,7 +38,7 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 <section class="login" id="login">
 <form class="login-card" id="loginForm">
 <div class="logo">YSL</div><small>Secure administration</small><h1>Admin Panel</h1>
-<p>Manage the YSL homepage, fixtures and colours.</p>
+<p>Manage the live YSL homepage, fixtures and colours.</p>
 <label>Password<input id="password" type="password" required></label>
 <button type="submit">Open Admin Panel</button><div class="error" id="error"></div>
 </form>
@@ -47,7 +46,7 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 
 <div class="app" id="app" hidden>
 <aside class="sidebar">
-<div class="side-brand"><div class="logo">YSL</div><div><strong>YSL Admin</strong><small>Website control</small></div></div>
+<div class="side-brand"><div class="logo">YSL</div><div><strong>YSL Admin</strong><small>Live website control</small></div></div>
 <nav class="nav">
 <button class="active" data-page="dashboard"><span>⌂</span><span>Dashboard</span></button>
 <button data-page="homepage"><span>✎</span><span>Homepage</span></button>
@@ -59,13 +58,13 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 </aside>
 
 <main class="main">
-<header class="top"><h2 id="title">Dashboard</h2><div class="actions"><span id="saveStatus" class="save-status">All changes saved</span><button id="mode">Dark mode</button><a href="index.html">View site</a><button class="save" id="save">Save now</button></div></header>
+<header class="top"><h2 id="title">Dashboard</h2><div class="actions"><span id="saveStatus" class="save-status">Connected</span><button id="mode">Dark mode</button><a href="index.html">View site</a><button class="save" id="save">Save changes</button></div></header>
 <div class="content">
-<div class="notice" id="notice">Changes saved successfully.</div>
-<div class="warning" id="fileWarning" hidden>You are opening the website as a local file. Browser storage may not be shared between admin.html and index.html. Run the website through a local server or hosting URL.</div>
+<div class="notice" id="notice">Changes saved to the live website.</div>
+<div class="error-banner" id="apiError"></div>
 
 <section class="page active" id="dashboard">
-<div class="heading"><h1>Dashboard</h1><p>Changes now save automatically whenever you edit a field.</p></div>
+<div class="heading"><h1>Dashboard</h1><p>All changes are saved online through the YSL backend and Supabase.</p></div>
 <div class="stats"><article class="stat"><span>Homepage sections</span><strong>3</strong></article><article class="stat"><span>Upcoming fixtures</span><strong>3</strong></article><article class="stat"><span>Website pages</span><strong>8</strong></article><article class="stat"><span>Current theme</span><strong id="themeStat">Light</strong></article></div>
 <div class="card"><div class="card-head"><h3>Quick actions</h3></div><div class="card-body"><button class="btn" data-open="homepage">Edit homepage</button> <button class="btn" data-open="fixtures">Update fixtures</button> <button class="btn" data-open="theme">Change colours</button></div></div>
 </section>
@@ -103,93 +102,90 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 </div></main></div>
 
 <script>
-const PASS="adminson";
-const KEY="ysl-admin-content-v2";
-const defaults={
- hero:{top:"YSL",bottom:"REIMAGINED",description:"The start of your MPS journey.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"League Standings",secondaryLink:"standings.html"},
- fixtures:Array.from({length:3},()=>({date:"DATE",time:"TIME",home:"TEAM NAME",away:"TEAM NAME",venue:"VENUE NAME"})),
- theme:{lightBg:"#ffffff",darkBg:"#14091f",mainPurple:"#43118d",accentPurple:"#8c45e9"},
- settings:{websiteName:"YSL",leagueName:"Youth Soccer League",discordInvite:""}
-};
-
-let data=loadData();
-let saveTimer=null;
+let csrf="";
+let data=null;
 const $=id=>document.getElementById(id);
 
-function clone(value){return JSON.parse(JSON.stringify(value))}
+function showApiError(message){
+ const box=$("apiError");
+ box.textContent=message;
+ box.classList.add("show");
+}
 
-function loadData(){
- try{
-   const raw=localStorage.getItem(KEY);
-   if(!raw)return clone(defaults);
-   const saved=JSON.parse(raw);
-   return {
-     hero:{...defaults.hero,...(saved.hero||{})},
-     fixtures:Array.isArray(saved.fixtures)&&saved.fixtures.length===3?saved.fixtures:clone(defaults.fixtures),
-     theme:{...defaults.theme,...(saved.theme||{})},
-     settings:{...defaults.settings,...(saved.settings||{})}
-   };
- }catch(error){
-   console.error("Could not load saved admin data:",error);
-   return clone(defaults);
+function clearApiError(){
+ $("apiError").classList.remove("show");
+}
+
+async function api(url,options={}){
+ const headers={...(options.headers||{})};
+ if(options.body&&!headers["Content-Type"])headers["Content-Type"]="application/json";
+ if(csrf)headers["X-CSRF-Token"]=csrf;
+
+ const response=await fetch(url,{...options,headers,cache:"no-store"});
+ let body={};
+
+ try{body=await response.json()}catch{}
+
+ if(!response.ok){
+   throw new Error(body.error||`Request failed (${response.status})`);
+ }
+
+ return body;
+}
+
+async function checkSession(){
+ const session=await api("/api/session");
+ if(session.authenticated){
+   csrf=session.csrf;
+   await openApp();
  }
 }
 
-function persist(){
- collect();
- const status=$("saveStatus");
- status.textContent="Saving...";
- status.className="save-status";
-
- try{
-   const encoded=JSON.stringify(data);
-   localStorage.setItem(KEY,encoded);
-
-   const verified=localStorage.getItem(KEY);
-   if(verified!==encoded)throw new Error("Storage verification failed");
-
-   status.textContent="Saved";
-   status.className="save-status ok";
-   $("notice").classList.add("show");
-   clearTimeout(persist.noticeTimer);
-   persist.noticeTimer=setTimeout(()=>$("notice").classList.remove("show"),1600);
- }catch(error){
-   console.error(error);
-   status.textContent="Save failed";
-   status.className="save-status bad";
- }
-}
-
-function scheduleSave(){
- const status=$("saveStatus");
- status.textContent="Unsaved...";
- status.className="save-status";
- clearTimeout(saveTimer);
- saveTimer=setTimeout(persist,450);
-}
-
-function openApp(){
+async function openApp(){
  $("login").hidden=true;
  $("app").hidden=false;
- fill();
- attachAutoSave();
+ await loadSite();
 }
 
-$("loginForm").onsubmit=e=>{
- e.preventDefault();
- if($("password").value!==PASS){
-   $("error").textContent="Incorrect password.";
-   return;
+async function loadSite(){
+ clearApiError();
+ $("saveStatus").textContent="Loading...";
+
+ try{
+   data=await api("/api/site");
+   fill();
+   $("saveStatus").textContent="Connected";
+   $("saveStatus").className="save-status ok";
+ }catch(error){
+   $("saveStatus").textContent="Connection failed";
+   $("saveStatus").className="save-status bad";
+   showApiError(error.message);
  }
- sessionStorage.setItem("ysl-admin-auth","1");
- openApp();
+}
+
+$("loginForm").onsubmit=async event=>{
+ event.preventDefault();
+ $("error").textContent="";
+
+ try{
+   const result=await api("/api/login",{
+     method:"POST",
+     body:JSON.stringify({password:$("password").value})
+   });
+
+   csrf=result.csrf;
+   await openApp();
+ }catch(error){
+   $("error").textContent=error.message;
+ }
 };
 
-if(sessionStorage.getItem("ysl-admin-auth")==="1")openApp();
-
-$("logout").onclick=()=>{
- sessionStorage.removeItem("ysl-admin-auth");
- location.reload();
+$("logout").onclick=async()=>{
+ try{
+   await api("/api/logout",{method:"POST"});
+ }finally{
+   location.reload();
+ }
 };
 
 document.querySelectorAll("[data-page]").forEach(button=>{
@@ -214,19 +210,23 @@ function fill(){
  $("primaryLink").value=data.hero.primaryLink;
  $("secondaryText").value=data.hero.secondaryText;
  $("secondaryLink").value=data.hero.secondaryLink;
+
  $("lightBg").value=data.theme.lightBg;
  $("darkBg").value=data.theme.darkBg;
  $("mainPurple").value=data.theme.mainPurple;
  $("accentPurple").value=data.theme.accentPurple;
+
  $("websiteName").value=data.settings.websiteName;
  $("leagueName").value=data.settings.leagueName;
  $("discordInvite").value=data.settings.discordInvite;
+
  $("themeStat").textContent=document.documentElement.dataset.theme==="dark"?"Dark":"Light";
  renderFixtures();
 }
 
 function renderFixtures(){
  $("fixtureList").innerHTML="";
+
  data.fixtures.forEach((fixture,index)=>{
    const element=document.createElement("article");
    element.className="fixture";
@@ -237,6 +237,7 @@ function renderFixtures(){
      <label>Home team<input data-fixture="${index}" data-key="home" value="${escapeHtml(fixture.home)}"></label>
      <label>Away team<input data-fixture="${index}" data-key="away" value="${escapeHtml(fixture.away)}"></label>
      <label>Venue<input data-fixture="${index}" data-key="venue" value="${escapeHtml(fixture.venue)}"></label>`;
+
    $("fixtureList").appendChild(element);
  });
 }
@@ -253,8 +254,7 @@ function collect(){
  };
 
  document.querySelectorAll("[data-fixture]").forEach(input=>{
-   const index=Number(input.dataset.fixture);
-   data.fixtures[index][input.dataset.key]=input.value.trim();
+   data.fixtures[Number(input.dataset.fixture)][input.dataset.key]=input.value.trim();
  });
 
  data.theme={
@@ -271,19 +271,34 @@ function collect(){
  };
 }
 
-function attachAutoSave(){
- document.querySelectorAll("#app input,#app textarea,#app select").forEach(element=>{
-   element.removeEventListener("input",scheduleSave);
-   element.removeEventListener("change",scheduleSave);
-   element.addEventListener("input",scheduleSave);
-   element.addEventListener("change",scheduleSave);
- });
-}
+$("save").onclick=async()=>{
+ collect();
+ clearApiError();
+ $("saveStatus").textContent="Saving...";
+ $("saveStatus").className="save-status";
 
-$("save").onclick=persist;
+ try{
+   await api("/api/site",{
+     method:"POST",
+     body:JSON.stringify(data)
+   });
+
+   $("saveStatus").textContent="Saved online";
+   $("saveStatus").className="save-status ok";
+   $("notice").classList.add("show");
+   setTimeout(()=>$("notice").classList.remove("show"),2200);
+ }catch(error){
+   $("saveStatus").textContent="Save failed";
+   $("saveStatus").className="save-status bad";
+   showApiError(error.message);
+ }
+};
 
 const savedTheme=localStorage.getItem("ysl-theme");
-if(savedTheme==="light"||savedTheme==="dark")document.documentElement.dataset.theme=savedTheme;
+if(savedTheme==="light"||savedTheme==="dark"){
+ document.documentElement.dataset.theme=savedTheme;
+}
+
 $("mode").textContent=document.documentElement.dataset.theme==="dark"?"Light mode":"Dark mode";
 
 $("mode").onclick=()=>{
@@ -294,10 +309,6 @@ $("mode").onclick=()=>{
  $("themeStat").textContent=next==="dark"?"Dark":"Light";
 };
 
-if(location.protocol==="file:"){
- $("fileWarning").hidden=false;
-}
-
 function escapeHtml(value){
  return String(value)
    .replaceAll("&","&amp;")
@@ -306,12 +317,7 @@ function escapeHtml(value){
    .replaceAll(">","&gt;");
 }
 
-window.addEventListener("beforeunload",()=>{
- if(saveTimer){
-   clearTimeout(saveTimer);
-   persist();
- }
-});
+checkSession().catch(error=>showApiError(error.message));
 </script>
 </body>
 </html>

@@ -1,119 +1,430 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffffff">
-<title>YSL Reimagined</title>
-<meta name="description" content="Youth Soccer League — the start of your MPS journey.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css">
-<style>
-.team-badge{overflow:hidden}.team-badge img{width:100%;height:100%;object-fit:contain;padding:4px}.team-badge.logo-empty{font-size:1.35rem}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>YSL Reimagined</title>
+  <meta name="description" content="Youth Soccer League — the start of your MPS journey.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+
+  <style>
+    .player-account-link{
+      min-height:48px;
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      padding:0 15px;
+      border:1px solid var(--line);
+      border-radius:4px;
+      color:var(--text);
+      background:var(--surface);
+      font-size:.72rem;
+      font-weight:800;
+      transition:.2s;
+    }
+
+    .player-account-link:hover{
+      transform:translateY(-2px);
+      border-color:var(--purple);
+    }
+
+    .player-account-dot{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:#25bf78;
+      box-shadow:0 0 0 5px rgba(37,191,120,.10);
+    }
+
+    .player-account-copy{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      line-height:1.05;
+    }
+
+    .player-account-copy span{
+      color:var(--muted);
+      font-size:.54rem;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+
+    .player-account-copy strong{
+      max-width:110px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:var(--purple);
+      font-size:.68rem;
+    }
+
+    .team-badge{
+      overflow:hidden;
+    }
+
+    .team-badge img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      padding:4px;
+    }
+
+    .team-badge.logo-empty{
+      font-size:1.35rem;
+    }
+
+    @media(max-width:1280px){
+      .player-account-link{
+        display:none;
+      }
+    }
+  </style>
 </head>
 <body>
 <div class="page-shell">
-<header class="topbar">
-<a class="brand" href="index.html"><span class="brand-main" id="siteBrand">YSL</span><span class="brand-divider"></span><span class="brand-sub" id="leagueBrand">YOUTH<br>SOCCER<br>LEAGUE</span></a>
-<nav class="nav-links"><a class="active" href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a></nav>
-<div class="nav-actions"><button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button><a class="admin-link" href="admin.html">Admin Page</a><a class="dashboard-link" href="dashboard.html">Dashboard</a></div>
-<button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
-</header>
-<div class="mobile-nav" id="mobileNav"><a class="active" href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a><a href="admin.html">Admin Page</a><a href="dashboard.html">Dashboard</a></div>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-main" id="siteBrand">YSL</span>
+      <span class="brand-divider"></span>
+      <span class="brand-sub" id="leagueBrand">YOUTH<br>SOCCER<br>LEAGUE</span>
+    </a>
 
-<main class="home">
-<aside class="social-rail"><a href="#">◎</a><a href="#">◢</a><a href="#">▶</a><span class="social-line"></span></aside>
-<section class="hero">
-<div class="hero-copy">
-<h1><span class="hero-ysl" id="heroTop">YSL</span><span class="hero-reimagined" id="heroBottom">REIMAGINED</span></h1>
-<p id="heroDescription">The start of your MPS journey.</p>
-<div class="hero-buttons">
-<a class="primary-button" id="primaryButton" href="fixtures.html"><span id="primaryButtonText">View Fixtures</span><span>→</span></a>
-<a class="secondary-button" id="secondaryButton" href="standings.html"><span id="secondaryButtonText">League Standings</span></a>
-</div>
-</div>
-<div class="hero-art" aria-hidden="true"><div class="stripe stripe-1"></div><div class="stripe stripe-2"></div><div class="stripe stripe-3"></div><div class="line line-1"></div><div class="line line-2"></div></div>
-</section>
+    <nav class="nav-links">
+      <a class="active" href="index.html">Home</a>
+      <a href="fixtures.html">Fixtures</a>
+      <a href="standings.html">Standings</a>
+      <a href="playersheet.html">Playersheet</a>
+      <a href="news.html">News</a>
+      <a href="about.html">About</a>
+    </nav>
 
-<section class="fixtures-preview">
-<div class="fixtures-heading"><span></span><h2>Upcoming Fixtures</h2><span></span></div>
-<div class="fixture-grid" id="fixtureGrid"><article class="fixture-card"><div class="fixture-date">LOADING...</div></article></div>
-</section>
-</main>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="theme-icon-sun">☀</span>
+        <span class="theme-icon-moon">☾</span>
+      </button>
+
+      <a class="player-account-link" id="playerAccountLink" href="login.html">
+        <span class="player-account-dot" id="playerAccountDot"></span>
+        <span class="player-account-copy">
+          <span id="playerAccountLabel">Player login</span>
+          <strong id="playerAccountName">Sign in</strong>
+        </span>
+      </a>
+
+      <a class="admin-link" href="admin.html">Admin Page</a>
+      <a class="dashboard-link" href="dashboard.html">Dashboard</a>
+    </div>
+
+    <button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a class="active" href="index.html">Home</a>
+    <a href="fixtures.html">Fixtures</a>
+    <a href="standings.html">Standings</a>
+    <a href="playersheet.html">Playersheet</a>
+    <a href="news.html">News</a>
+    <a href="about.html">About</a>
+    <a id="mobilePlayerLink" href="login.html">Player Login</a>
+    <a href="admin.html">Admin Page</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+
+  <main class="home">
+    <aside class="social-rail">
+      <a href="#">◎</a>
+      <a href="#">◢</a>
+      <a href="#">▶</a>
+      <span class="social-line"></span>
+    </aside>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>
+          <span class="hero-ysl" id="heroTop">YSL</span>
+          <span class="hero-reimagined" id="heroBottom">REIMAGINED</span>
+        </h1>
+
+        <p id="heroDescription">The start of your MPS journey.</p>
+
+        <div class="hero-buttons">
+          <a class="primary-button" id="primaryButton" href="fixtures.html">
+            <span id="primaryButtonText">View Fixtures</span>
+            <span>→</span>
+          </a>
+
+          <a class="secondary-button" id="secondaryButton" href="standings.html">
+            <span id="secondaryButtonText">League Standings</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="stripe stripe-1"></div>
+        <div class="stripe stripe-2"></div>
+        <div class="stripe stripe-3"></div>
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+      </div>
+    </section>
+
+    <section class="fixtures-preview">
+      <div class="fixtures-heading">
+        <span></span>
+        <h2>Upcoming Fixtures</h2>
+        <span></span>
+      </div>
+
+      <div class="fixture-grid" id="fixtureGrid">
+        <article class="fixture-card">
+          <div class="fixture-date">LOADING...</div>
+        </article>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script src="assets/app.js"></script>
 <script>
-(()=>{
- const fallback={
-  hero:{top:"YSL",bottom:"REIMAGINED",description:"The start of your MPS journey.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"League Standings",secondaryLink:"standings.html"},
-  fixtures:Array.from({length:3},()=>({date:"DATE",time:"TIME",home:"TEAM NAME",away:"TEAM NAME",venue:"VENUE NAME",homeLogo:"",awayLogo:""})),
-  theme:{lightBg:"#ffffff",darkBg:"#14091f",mainPurple:"#43118d",accentPurple:"#8c45e9"},
-  settings:{websiteName:"YSL",leagueName:"Youth Soccer League",discordInvite:""}
- };
- let current=fallback;
+(() => {
+  const fallback = {
+    hero: {
+      top: "YSL",
+      bottom: "REIMAGINED",
+      description: "The start of your MPS journey.",
+      primaryText: "View Fixtures",
+      primaryLink: "fixtures.html",
+      secondaryText: "League Standings",
+      secondaryLink: "standings.html"
+    },
+    fixtures: Array.from({length:3}, () => ({
+      date: "DATE",
+      time: "TIME",
+      home: "TEAM NAME",
+      away: "TEAM NAME",
+      venue: "VENUE NAME",
+      homeLogo: "",
+      awayLogo: ""
+    })),
+    theme: {
+      lightBg: "#ffffff",
+      darkBg: "#14091f",
+      mainPurple: "#43118d",
+      accentPurple: "#8c45e9"
+    },
+    settings: {
+      websiteName: "YSL",
+      leagueName: "Youth Soccer League",
+      discordInvite: ""
+    }
+  };
 
- async function load(){
-  try{
-   const response=await fetch("/api/site",{cache:"no-store",headers:{Accept:"application/json"}});
-   const body=await response.json();
-   if(!response.ok)throw new Error(body.error||`Failed to load (${response.status})`);
-   current=merge(body);apply(current)
-  }catch(error){console.error(error);apply(fallback)}
- }
+  let current = fallback;
 
- function merge(saved){
-  const fixtures=Array.isArray(saved.fixtures)?saved.fixtures:[];
-  while(fixtures.length<3)fixtures.push({});
-  return{
-   hero:{...fallback.hero,...(saved.hero||{})},
-   fixtures:fixtures.slice(0,3).map((f,i)=>({...fallback.fixtures[i],...f})),
-   theme:{...fallback.theme,...(saved.theme||{})},
-   settings:{...fallback.settings,...(saved.settings||{})}
+  async function loadSite() {
+    try {
+      const response = await fetch("/api/site", {
+        cache: "no-store",
+        headers: { Accept: "application/json" }
+      });
+
+      const body = await response.json();
+
+      if (!response.ok) {
+        throw new Error(body.error || `Failed to load (${response.status})`);
+      }
+
+      current = merge(body);
+      applySite(current);
+    } catch (error) {
+      console.error(error);
+      applySite(fallback);
+    }
   }
- }
 
- function apply(data){
-  heroTop.textContent=data.hero.top;heroBottom.textContent=data.hero.bottom;heroDescription.textContent=data.hero.description;
-  primaryButtonText.textContent=data.hero.primaryText;primaryButton.href=data.hero.primaryLink||"fixtures.html";
-  secondaryButtonText.textContent=data.hero.secondaryText;secondaryButton.href=data.hero.secondaryLink||"standings.html";
-  siteBrand.textContent=data.settings.websiteName||"YSL";
-  leagueBrand.innerHTML=(data.settings.leagueName||"Youth Soccer League").trim().split(/\s+/).map(escapeHtml).join("<br>");
-  document.documentElement.style.setProperty("--purple",data.theme.mainPurple);
-  document.documentElement.style.setProperty("--purple2",data.theme.accentPurple);
-  document.documentElement.style.setProperty("--accent",data.theme.accentPurple);
-  applyBg(data);render(data.fixtures);document.title=`${data.settings.websiteName||"YSL"} Reimagined`
- }
+  async function loadPlayerSession() {
+    try {
+      const response = await fetch("/api/player/session", {
+        cache: "no-store",
+        headers: { Accept: "application/json" }
+      });
 
- function badge(url,name){
-  if(!url)return `<div class="team-badge logo-empty" aria-label="${escapeHtml(name)}">◈</div>`;
-  return `<div class="team-badge"><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} logo" onerror="this.parentElement.classList.add('logo-empty');this.parentElement.innerHTML='◈'"></div>`
- }
+      const body = await response.json();
 
- function render(fixtures){
-  fixtureGrid.innerHTML="";
-  fixtures.forEach(f=>{
-   const card=document.createElement("article");card.className="fixture-card";
-   card.innerHTML=`<div class="fixture-date">${escapeHtml(f.date)} &nbsp; | &nbsp; ${escapeHtml(f.time)}</div>
-   <div class="fixture-teams">
-    <div class="team-block">${badge(f.homeLogo,f.home)}<strong>${escapeHtml(f.home)}</strong></div>
-    <div class="versus">VS</div>
-    <div class="team-block">${badge(f.awayLogo,f.away)}<strong>${escapeHtml(f.away)}</strong></div>
-   </div>
-   <div class="venue">${escapeHtml(f.venue)}</div>`;
-   fixtureGrid.appendChild(card)
-  })
- }
+      if (!response.ok || !body.authenticated) {
+        showLoggedOut();
+        return;
+      }
 
- function applyBg(data){document.documentElement.style.setProperty("--bg",document.documentElement.dataset.theme==="dark"?data.theme.darkBg:data.theme.lightBg)}
- function escapeHtml(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
- themeToggle?.addEventListener("click",()=>setTimeout(()=>applyBg(current),0));
- window.addEventListener("focus",load);
- document.addEventListener("visibilitychange",()=>{if(!document.hidden)load()});
- load()
+      showLoggedIn(body.player);
+    } catch {
+      showLoggedOut();
+    }
+  }
+
+  function showLoggedIn(player) {
+    const username = player?.username || "Player";
+
+    playerAccountLabel.textContent = "Logged in as";
+    playerAccountName.textContent = username;
+    playerAccountLink.href = "login.html";
+    playerAccountDot.style.background = "#25bf78";
+
+    mobilePlayerLink.textContent = `Logged in as ${username}`;
+    mobilePlayerLink.href = "login.html";
+  }
+
+  function showLoggedOut() {
+    playerAccountLabel.textContent = "Player account";
+    playerAccountName.textContent = "Sign in";
+    playerAccountLink.href = "login.html";
+    playerAccountDot.style.background = "var(--muted)";
+
+    mobilePlayerLink.textContent = "Player Login";
+    mobilePlayerLink.href = "login.html";
+  }
+
+  function merge(saved) {
+    const fixtures = Array.isArray(saved.fixtures) ? [...saved.fixtures] : [];
+
+    while (fixtures.length < 3) {
+      fixtures.push({});
+    }
+
+    return {
+      hero: {...fallback.hero, ...(saved.hero || {})},
+      fixtures: fixtures.slice(0, 3).map((fixture, index) => ({
+        ...fallback.fixtures[index],
+        ...fixture
+      })),
+      theme: {...fallback.theme, ...(saved.theme || {})},
+      settings: {...fallback.settings, ...(saved.settings || {})}
+    };
+  }
+
+  function applySite(data) {
+    heroTop.textContent = data.hero.top;
+    heroBottom.textContent = data.hero.bottom;
+    heroDescription.textContent = data.hero.description;
+
+    primaryButtonText.textContent = data.hero.primaryText;
+    primaryButton.href = data.hero.primaryLink || "fixtures.html";
+
+    secondaryButtonText.textContent = data.hero.secondaryText;
+    secondaryButton.href = data.hero.secondaryLink || "standings.html";
+
+    siteBrand.textContent = data.settings.websiteName || "YSL";
+
+    leagueBrand.innerHTML = (data.settings.leagueName || "Youth Soccer League")
+      .trim()
+      .split(/\s+/)
+      .map(escapeHtml)
+      .join("<br>");
+
+    document.documentElement.style.setProperty("--purple", data.theme.mainPurple);
+    document.documentElement.style.setProperty("--purple2", data.theme.accentPurple);
+    document.documentElement.style.setProperty("--accent", data.theme.accentPurple);
+
+    applyBackground(data);
+    renderFixtures(data.fixtures);
+
+    document.title = `${data.settings.websiteName || "YSL"} Reimagined`;
+  }
+
+  function badge(url, name) {
+    if (!url) {
+      return `<div class="team-badge logo-empty" aria-label="${escapeHtml(name)}">◈</div>`;
+    }
+
+    return `
+      <div class="team-badge">
+        <img
+          src="${escapeHtml(url)}"
+          alt="${escapeHtml(name)} logo"
+          onerror="this.parentElement.classList.add('logo-empty');this.parentElement.innerHTML='◈'"
+        >
+      </div>
+    `;
+  }
+
+  function renderFixtures(fixtures) {
+    fixtureGrid.innerHTML = "";
+
+    fixtures.forEach(fixture => {
+      const card = document.createElement("article");
+      card.className = "fixture-card";
+
+      card.innerHTML = `
+        <div class="fixture-date">
+          ${escapeHtml(fixture.date)} &nbsp; | &nbsp; ${escapeHtml(fixture.time)}
+        </div>
+
+        <div class="fixture-teams">
+          <div class="team-block">
+            ${badge(fixture.homeLogo, fixture.home)}
+            <strong>${escapeHtml(fixture.home)}</strong>
+          </div>
+
+          <div class="versus">VS</div>
+
+          <div class="team-block">
+            ${badge(fixture.awayLogo, fixture.away)}
+            <strong>${escapeHtml(fixture.away)}</strong>
+          </div>
+        </div>
+
+        <div class="venue">${escapeHtml(fixture.venue)}</div>
+      `;
+
+      fixtureGrid.appendChild(card);
+    });
+  }
+
+  function applyBackground(data) {
+    document.documentElement.style.setProperty(
+      "--bg",
+      document.documentElement.dataset.theme === "dark"
+        ? data.theme.darkBg
+        : data.theme.lightBg
+    );
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  themeToggle?.addEventListener("click", () => {
+    setTimeout(() => applyBackground(current), 0);
+  });
+
+  window.addEventListener("focus", () => {
+    loadSite();
+    loadPlayerSession();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      loadSite();
+      loadPlayerSession();
+    }
+  });
+
+  loadSite();
+  loadPlayerSession();
 })();
 </script>
 </body>

@@ -1,1 +1,1075 @@
-<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fixtures — YSL</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/styles.css"></head><body><div class="page-shell"><header class="topbar"><a class="brand" href="index.html"><span class="brand-main">YSL</span><span class="brand-divider"></span><span class="brand-sub">YOUTH<br>SOCCER<br>LEAGUE</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a></nav><div class="nav-actions"><button class="theme-toggle" id="themeToggle"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button><a class="admin-link" href="admin.html">Admin Page</a><a class="dashboard-link" href="dashboard.html">Dashboard</a></div><button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></header><div class="mobile-nav" id="mobileNav"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a><a href="admin.html">Admin Page</a><a href="dashboard.html">Dashboard</a></div><main style="min-height:calc(100vh - 102px);display:grid;place-items:center;padding:40px"><section style="text-align:center;max-width:760px"><p style="color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:.15em">YSL</p><h1 style="font-family:Manrope,sans-serif;font-size:clamp(3rem,8vw,7rem);margin:.2em 0">Fixtures</h1><p style="color:var(--muted);font-size:1.1rem">This page is ready for your content.</p><a class="primary-button" href="index.html" style="margin-top:24px">Back Home <span>→</span></a></section></main></div><script src="assets/app.js"></script></body></html>
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Fixtures — YSL</title>
+  <meta name="description" content="YSL fixtures, matchdays, venues and results.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+
+  <style>
+    :root{
+      --fixture-card:#ffffff;
+      --fixture-soft:#faf8fd;
+      --fixture-border:#e7e0ee;
+      --fixture-hover:#f7f2fb;
+      --fixture-live:#e33b67;
+      --fixture-complete:#168c5f;
+    }
+
+    html[data-theme="dark"]{
+      --fixture-card:#1b0d29;
+      --fixture-soft:#14091f;
+      --fixture-border:#382347;
+      --fixture-hover:#251335;
+      --fixture-live:#ff6b90;
+      --fixture-complete:#53d99d;
+    }
+
+    body{
+      background:
+        radial-gradient(circle at 82% 12%, color-mix(in srgb,var(--accent) 10%,transparent), transparent 25%),
+        var(--bg);
+    }
+
+    .fixtures-page{
+      min-height:calc(100vh - 102px);
+      padding:48px 4vw 62px;
+    }
+
+    .fixtures-shell{
+      width:min(1500px,100%);
+      margin:auto;
+    }
+
+    .fixtures-hero{
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:end;
+      gap:30px;
+      margin-bottom:26px;
+    }
+
+    .fixtures-hero small{
+      display:block;
+      margin-bottom:10px;
+      color:var(--purple);
+      font-size:.7rem;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .fixtures-hero h1{
+      margin:0;
+      font:800 clamp(3rem,6vw,6.2rem)/.95 Manrope,sans-serif;
+      letter-spacing:-.07em;
+    }
+
+    .fixtures-hero p{
+      max-width:640px;
+      margin:15px 0 0;
+      color:var(--muted);
+      line-height:1.75;
+    }
+
+    .next-match-card{
+      min-width:300px;
+      padding:19px;
+      border:1px solid var(--fixture-border);
+      border-radius:18px;
+      background:var(--fixture-card);
+      box-shadow:var(--shadow);
+    }
+
+    .next-match-card span{
+      display:block;
+      color:var(--muted);
+      font-size:.65rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .next-match-card strong{
+      display:block;
+      margin-top:7px;
+      font:800 1.18rem Manrope,sans-serif;
+    }
+
+    .next-match-card small{
+      margin:8px 0 0;
+      color:var(--purple);
+      letter-spacing:0;
+      text-transform:none;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .summary-card{
+      padding:18px;
+      border:1px solid var(--fixture-border);
+      border-radius:16px;
+      background:var(--fixture-card);
+      box-shadow:var(--shadow);
+    }
+
+    .summary-card span{
+      color:var(--muted);
+      font-size:.68rem;
+      font-weight:700;
+    }
+
+    .summary-card strong{
+      display:block;
+      margin-top:9px;
+      font:800 1.8rem Manrope,sans-serif;
+    }
+
+    .summary-card small{
+      display:block;
+      margin-top:6px;
+      color:var(--muted);
+      font-size:.63rem;
+    }
+
+    .fixtures-panel{
+      overflow:hidden;
+      border:1px solid var(--fixture-border);
+      border-radius:22px;
+      background:var(--fixture-card);
+      box-shadow:var(--shadow);
+    }
+
+    .fixtures-toolbar{
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:14px 18px;
+      border-bottom:1px solid var(--fixture-border);
+    }
+
+    .toolbar-left,
+    .toolbar-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .search-box{
+      min-width:250px;
+      height:42px;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:0 12px;
+      border:1px solid var(--fixture-border);
+      border-radius:11px;
+      background:var(--fixture-soft);
+    }
+
+    .search-box input{
+      width:100%;
+      border:0;
+      outline:0;
+      color:var(--text);
+      background:transparent;
+      font:inherit;
+      font-size:.76rem;
+    }
+
+    .filter-button,
+    .toolbar-select{
+      min-height:42px;
+      padding:0 13px;
+      border:1px solid var(--fixture-border);
+      border-radius:11px;
+      color:var(--text);
+      background:var(--fixture-soft);
+      font-size:.7rem;
+      font-weight:700;
+    }
+
+    .filter-button{
+      cursor:pointer;
+    }
+
+    .filter-button.active{
+      color:#fff;
+      border-color:transparent;
+      background:linear-gradient(135deg,var(--purple),var(--purple2));
+    }
+
+    .fixtures-list{
+      display:grid;
+      gap:14px;
+      padding:18px;
+    }
+
+    .matchday-group{
+      display:grid;
+      gap:10px;
+    }
+
+    .matchday-heading{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:0 4px;
+    }
+
+    .matchday-heading h2{
+      margin:0;
+      font:800 1.05rem Manrope,sans-serif;
+    }
+
+    .matchday-heading span{
+      color:var(--muted);
+      font-size:.67rem;
+    }
+
+    .fixture-card{
+      display:grid;
+      grid-template-columns:150px minmax(0,1fr) 180px;
+      align-items:center;
+      gap:22px;
+      min-height:128px;
+      padding:17px 20px;
+      border:1px solid var(--fixture-border);
+      border-radius:17px;
+      background:var(--fixture-soft);
+      transition:transform .18s ease,border-color .18s ease,background .18s ease;
+    }
+
+    .fixture-card:hover{
+      transform:translateY(-2px);
+      border-color:color-mix(in srgb,var(--purple) 35%,var(--fixture-border));
+      background:var(--fixture-hover);
+    }
+
+    .fixture-time{
+      display:grid;
+      gap:6px;
+    }
+
+    .fixture-time strong{
+      font:800 1.1rem Manrope,sans-serif;
+    }
+
+    .fixture-time span{
+      color:var(--muted);
+      font-size:.65rem;
+    }
+
+    .status-badge{
+      width:max-content;
+      min-height:25px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:0 9px;
+      border-radius:8px;
+      font-size:.59rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+
+    .status-badge.upcoming{
+      color:var(--purple);
+      background:color-mix(in srgb,var(--purple) 10%,transparent);
+    }
+
+    .status-badge.live{
+      color:#fff;
+      background:var(--fixture-live);
+    }
+
+    .status-badge.complete{
+      color:var(--fixture-complete);
+      background:color-mix(in srgb,var(--fixture-complete) 10%,transparent);
+    }
+
+    .fixture-matchup{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      gap:18px;
+    }
+
+    .team{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .team.away{
+      justify-content:flex-end;
+      text-align:right;
+    }
+
+    .team-logo{
+      width:54px;
+      height:54px;
+      flex:0 0 54px;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      border:1px solid var(--fixture-border);
+      border-radius:15px;
+      background:var(--fixture-card);
+      color:var(--muted);
+      font-size:.72rem;
+      font-weight:800;
+    }
+
+    .team-logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      padding:5px;
+    }
+
+    .team-copy{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:0;
+    }
+
+    .team-copy strong{
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-size:.83rem;
+    }
+
+    .team-copy span{
+      color:var(--muted);
+      font-size:.61rem;
+    }
+
+    .score-box{
+      min-width:92px;
+      text-align:center;
+    }
+
+    .score-box strong{
+      display:block;
+      font:800 1.4rem Manrope,sans-serif;
+    }
+
+    .score-box span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:.61rem;
+    }
+
+    .fixture-meta{
+      display:grid;
+      gap:8px;
+      justify-items:end;
+      color:var(--muted);
+      font-size:.65rem;
+    }
+
+    .fixture-meta span{
+      display:flex;
+      align-items:center;
+      gap:7px;
+    }
+
+    .empty-state{
+      display:none;
+      padding:60px 20px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .empty-state.show{
+      display:block;
+    }
+
+    .panel-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:16px 18px;
+      border-top:1px solid var(--fixture-border);
+      color:var(--muted);
+      font-size:.66rem;
+    }
+
+    .live-state{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .live-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--fixture-complete);
+      box-shadow:0 0 0 5px color-mix(in srgb,var(--fixture-complete) 10%,transparent);
+    }
+
+    @media(max-width:1100px){
+      .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .fixtures-hero{
+        grid-template-columns:1fr;
+      }
+
+      .next-match-card{
+        width:min(100%,380px);
+      }
+
+      .fixture-card{
+        grid-template-columns:130px minmax(0,1fr);
+      }
+
+      .fixture-meta{
+        grid-column:1/-1;
+        grid-auto-flow:column;
+        justify-content:space-between;
+        justify-items:start;
+      }
+    }
+
+    @media(max-width:760px){
+      .fixtures-page{
+        padding:32px 18px 42px;
+      }
+
+      .fixtures-toolbar{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .toolbar-left{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+      }
+
+      .search-box{
+        grid-column:1/-1;
+        min-width:0;
+      }
+
+      .summary-grid{
+        grid-template-columns:1fr;
+      }
+
+      .fixture-card{
+        grid-template-columns:1fr;
+        gap:15px;
+      }
+
+      .fixture-time{
+        grid-template-columns:auto 1fr auto;
+        align-items:center;
+      }
+
+      .fixture-matchup{
+        gap:10px;
+      }
+
+      .team{
+        align-items:center;
+        flex-direction:column;
+        text-align:center;
+      }
+
+      .team.away{
+        flex-direction:column-reverse;
+        text-align:center;
+      }
+
+      .team-copy span{
+        display:none;
+      }
+
+      .team-logo{
+        width:46px;
+        height:46px;
+        flex-basis:46px;
+      }
+
+      .score-box{
+        min-width:68px;
+      }
+
+      .fixture-meta{
+        grid-auto-flow:row;
+        justify-content:start;
+      }
+
+      .panel-footer{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-main" id="siteBrand">YSL</span>
+      <span class="brand-divider"></span>
+      <span class="brand-sub" id="leagueBrand">YOUTH<br>SOCCER<br>LEAGUE</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a class="active" href="fixtures.html">Fixtures</a>
+      <a href="standings.html">Standings</a>
+      <a href="playersheet.html">Playersheet</a>
+      <a href="news.html">News</a>
+      <a href="about.html">About</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="theme-icon-sun">☀</span>
+        <span class="theme-icon-moon">☾</span>
+      </button>
+      <a class="admin-link" href="admin.html">Admin Page</a>
+      <a class="dashboard-link" href="dashboard.html">Dashboard</a>
+    </div>
+
+    <button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a class="active" href="fixtures.html">Fixtures</a>
+    <a href="standings.html">Standings</a>
+    <a href="playersheet.html">Playersheet</a>
+    <a href="news.html">News</a>
+    <a href="about.html">About</a>
+    <a href="admin.html">Admin Page</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+
+  <main class="fixtures-page">
+    <div class="fixtures-shell">
+      <section class="fixtures-hero">
+        <div>
+          <small>Season One • Match centre</small>
+          <h1>Fixtures</h1>
+          <p>Browse every scheduled match, follow live fixtures and review completed results across the YSL season.</p>
+        </div>
+
+        <article class="next-match-card">
+          <span>Next fixture</span>
+          <strong id="nextFixtureTitle">Loading…</strong>
+          <small id="nextFixtureTime">Checking schedule</small>
+        </article>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>Total fixtures</span>
+          <strong id="totalFixtures">0</strong>
+          <small>Across the season</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Upcoming</span>
+          <strong id="upcomingFixtures">0</strong>
+          <small>Still to be played</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Completed</span>
+          <strong id="completedFixtures">0</strong>
+          <small>Results recorded</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Total goals</span>
+          <strong id="totalGoals">0</strong>
+          <small>From completed fixtures</small>
+        </article>
+      </section>
+
+      <section class="fixtures-panel">
+        <div class="fixtures-toolbar">
+          <div class="toolbar-left">
+            <label class="search-box">
+              <span>⌕</span>
+              <input id="searchInput" type="search" placeholder="Search teams or venues">
+            </label>
+
+            <button class="filter-button active" data-filter="all">All</button>
+            <button class="filter-button" data-filter="upcoming">Upcoming</button>
+            <button class="filter-button" data-filter="complete">Results</button>
+          </div>
+
+          <div class="toolbar-right">
+            <select class="toolbar-select" id="matchdaySelect">
+              <option value="all">All matchdays</option>
+            </select>
+
+            <select class="toolbar-select" id="sortSelect">
+              <option value="date-asc">Soonest first</option>
+              <option value="date-desc">Latest first</option>
+              <option value="team">Team A–Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fixtures-list" id="fixturesList"></div>
+
+        <div class="empty-state" id="emptyState">
+          No fixtures match your filters.
+        </div>
+
+        <footer class="panel-footer">
+          <div class="live-state">
+            <span class="live-dot"></span>
+            <span id="lastUpdated">Loading fixtures…</span>
+          </div>
+
+          <span>Times are shown exactly as entered by league staff.</span>
+        </footer>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+(() => {
+  const fallback = {
+    settings: {
+      websiteName: "YSL",
+      leagueName: "Youth Soccer League"
+    },
+    theme: {
+      lightBg: "#ffffff",
+      darkBg: "#14091f",
+      mainPurple: "#43118d",
+      accentPurple: "#8c45e9"
+    },
+    fixtures: [
+      {
+        matchday: 1,
+        date: "2026-08-02",
+        time: "19:00",
+        home: "Arsenal",
+        away: "Manchester United",
+        homeLogo: "",
+        awayLogo: "",
+        venue: "YSL Stadium",
+        status: "upcoming",
+        homeScore: null,
+        awayScore: null
+      },
+      {
+        matchday: 1,
+        date: "2026-08-03",
+        time: "19:30",
+        home: "Chelsea",
+        away: "Liverpool",
+        homeLogo: "",
+        awayLogo: "",
+        venue: "Central Arena",
+        status: "upcoming",
+        homeScore: null,
+        awayScore: null
+      },
+      {
+        matchday: 2,
+        date: "2026-08-09",
+        time: "20:00",
+        home: "Manchester City",
+        away: "Newcastle",
+        homeLogo: "",
+        awayLogo: "",
+        venue: "YSL Stadium",
+        status: "upcoming",
+        homeScore: null,
+        awayScore: null
+      }
+    ]
+  };
+
+  let siteData = fallback;
+  let fixtures = [];
+  let activeFilter = "all";
+
+  async function loadFixtures() {
+    try {
+      const response = await fetch("/api/site", {
+        cache: "no-store",
+        headers: { Accept: "application/json" }
+      });
+
+      const saved = await response.json();
+
+      if (!response.ok) {
+        throw new Error(saved.error || "Could not load fixtures.");
+      }
+
+      siteData = {
+        settings: {...fallback.settings, ...(saved.settings || {})},
+        theme: {...fallback.theme, ...(saved.theme || {})},
+        fixtures:
+          Array.isArray(saved.fixtures) && saved.fixtures.length
+            ? saved.fixtures
+            : fallback.fixtures
+      };
+    } catch (error) {
+      console.error(error);
+      siteData = fallback;
+    }
+
+    applyBranding();
+    prepareFixtures();
+    populateMatchdays();
+    render();
+    updateSummary();
+    updateNextFixture();
+    updateTimestamp();
+  }
+
+  function applyBranding() {
+    siteBrand.textContent = siteData.settings.websiteName || "YSL";
+    leagueBrand.innerHTML = (siteData.settings.leagueName || "Youth Soccer League")
+      .trim()
+      .split(/\s+/)
+      .map(escapeHtml)
+      .join("<br>");
+
+    document.documentElement.style.setProperty("--purple", siteData.theme.mainPurple);
+    document.documentElement.style.setProperty("--purple2", siteData.theme.accentPurple);
+    document.documentElement.style.setProperty("--accent", siteData.theme.accentPurple);
+    applyBackground();
+  }
+
+  function applyBackground() {
+    const dark = document.documentElement.dataset.theme === "dark";
+    document.documentElement.style.setProperty(
+      "--bg",
+      dark ? siteData.theme.darkBg : siteData.theme.lightBg
+    );
+  }
+
+  function prepareFixtures() {
+    fixtures = siteData.fixtures.map((fixture, index) => {
+      const homeScore =
+        fixture.homeScore === "" || fixture.homeScore == null
+          ? null
+          : Number(fixture.homeScore);
+
+      const awayScore =
+        fixture.awayScore === "" || fixture.awayScore == null
+          ? null
+          : Number(fixture.awayScore);
+
+      const status = String(
+        fixture.status ||
+        (homeScore != null && awayScore != null ? "complete" : "upcoming")
+      ).toLowerCase();
+
+      return {
+        id: fixture.id || index + 1,
+        matchday: Number(fixture.matchday || 1),
+        date: fixture.date || "DATE",
+        time: fixture.time || "TIME",
+        home: fixture.home || "TEAM NAME",
+        away: fixture.away || "TEAM NAME",
+        homeLogo: fixture.homeLogo || "",
+        awayLogo: fixture.awayLogo || "",
+        venue: fixture.venue || "VENUE NAME",
+        status,
+        homeScore,
+        awayScore,
+        sortDate: createSortDate(fixture.date, fixture.time)
+      };
+    });
+  }
+
+  function createSortDate(date, time) {
+    const value = new Date(`${date || ""}T${time || "00:00"}`);
+    return Number.isNaN(value.getTime()) ? new Date(8640000000000000) : value;
+  }
+
+  function populateMatchdays() {
+    const values = [...new Set(fixtures.map(fixture => fixture.matchday))]
+      .sort((a,b) => a - b);
+
+    matchdaySelect.innerHTML = '<option value="all">All matchdays</option>';
+
+    values.forEach(value => {
+      const option = document.createElement("option");
+      option.value = String(value);
+      option.textContent = `Matchday ${value}`;
+      matchdaySelect.appendChild(option);
+    });
+  }
+
+  function getVisibleFixtures() {
+    const query = searchInput.value.trim().toLowerCase();
+    const matchday = matchdaySelect.value;
+    const sort = sortSelect.value;
+
+    let visible = fixtures.filter(fixture => {
+      const searchable = `${fixture.home} ${fixture.away} ${fixture.venue}`.toLowerCase();
+
+      if (query && !searchable.includes(query)) return false;
+      if (matchday !== "all" && String(fixture.matchday) !== matchday) return false;
+      if (activeFilter === "upcoming" && fixture.status !== "upcoming" && fixture.status !== "live") return false;
+      if (activeFilter === "complete" && fixture.status !== "complete") return false;
+
+      return true;
+    });
+
+    const sorters = {
+      "date-asc": (a,b) => a.sortDate - b.sortDate,
+      "date-desc": (a,b) => b.sortDate - a.sortDate,
+      "team": (a,b) => a.home.localeCompare(b.home)
+    };
+
+    return [...visible].sort(sorters[sort] || sorters["date-asc"]);
+  }
+
+  function render() {
+    const visible = getVisibleFixtures();
+    fixturesList.innerHTML = "";
+
+    emptyState.classList.toggle("show", visible.length === 0);
+
+    const grouped = new Map();
+
+    visible.forEach(fixture => {
+      if (!grouped.has(fixture.matchday)) {
+        grouped.set(fixture.matchday, []);
+      }
+
+      grouped.get(fixture.matchday).push(fixture);
+    });
+
+    [...grouped.entries()]
+      .sort((a,b) => a[0] - b[0])
+      .forEach(([matchday, matches]) => {
+        const group = document.createElement("section");
+        group.className = "matchday-group";
+
+        const heading = document.createElement("div");
+        heading.className = "matchday-heading";
+        heading.innerHTML = `
+          <h2>Matchday ${matchday}</h2>
+          <span>${matches.length} fixture${matches.length === 1 ? "" : "s"}</span>
+        `;
+
+        group.appendChild(heading);
+
+        matches.forEach(fixture => {
+          group.appendChild(createFixtureCard(fixture));
+        });
+
+        fixturesList.appendChild(group);
+      });
+  }
+
+  function createFixtureCard(fixture) {
+    const card = document.createElement("article");
+    card.className = "fixture-card";
+
+    const scoreText =
+      fixture.status === "complete" || fixture.status === "live"
+        ? `${fixture.homeScore ?? 0} – ${fixture.awayScore ?? 0}`
+        : "VS";
+
+    card.innerHTML = `
+      <div class="fixture-time">
+        <span class="status-badge ${escapeHtml(fixture.status)}">
+          ${statusText(fixture.status)}
+        </span>
+        <strong>${escapeHtml(fixture.time)}</strong>
+        <span>${formatDate(fixture.date)}</span>
+      </div>
+
+      <div class="fixture-matchup">
+        <div class="team">
+          <div class="team-logo">
+            ${renderLogo(fixture.homeLogo, fixture.home)}
+          </div>
+
+          <div class="team-copy">
+            <strong>${escapeHtml(fixture.home)}</strong>
+            <span>Home</span>
+          </div>
+        </div>
+
+        <div class="score-box">
+          <strong>${scoreText}</strong>
+          <span>${fixture.status === "complete" ? "Full time" : fixture.status === "live" ? "Live now" : "Scheduled"}</span>
+        </div>
+
+        <div class="team away">
+          <div class="team-copy">
+            <strong>${escapeHtml(fixture.away)}</strong>
+            <span>Away</span>
+          </div>
+
+          <div class="team-logo">
+            ${renderLogo(fixture.awayLogo, fixture.away)}
+          </div>
+        </div>
+      </div>
+
+      <div class="fixture-meta">
+        <span>⌖ ${escapeHtml(fixture.venue)}</span>
+        <span>Matchday ${fixture.matchday}</span>
+      </div>
+    `;
+
+    return card;
+  }
+
+  function renderLogo(url, name) {
+    if (!url) return initials(name);
+
+    return `
+      <img
+        src="${escapeHtml(url)}"
+        alt="${escapeHtml(name)} logo"
+        onerror="this.parentElement.textContent='${initials(name)}'"
+      >
+    `;
+  }
+
+  function statusText(status) {
+    if (status === "complete") return "Full time";
+    if (status === "live") return "Live";
+    return "Upcoming";
+  }
+
+  function formatDate(date) {
+    const parsed = new Date(`${date}T00:00:00`);
+
+    if (Number.isNaN(parsed.getTime())) {
+      return escapeHtml(date);
+    }
+
+    return parsed.toLocaleDateString([], {
+      weekday: "short",
+      day: "numeric",
+      month: "short"
+    });
+  }
+
+  function updateSummary() {
+    const upcoming = fixtures.filter(fixture =>
+      fixture.status === "upcoming" || fixture.status === "live"
+    );
+
+    const completed = fixtures.filter(fixture =>
+      fixture.status === "complete"
+    );
+
+    const goals = completed.reduce((sum, fixture) => {
+      return sum + Number(fixture.homeScore || 0) + Number(fixture.awayScore || 0);
+    }, 0);
+
+    totalFixtures.textContent = fixtures.length;
+    upcomingFixtures.textContent = upcoming.length;
+    completedFixtures.textContent = completed.length;
+    totalGoals.textContent = goals;
+  }
+
+  function updateNextFixture() {
+    const next = fixtures
+      .filter(fixture => fixture.status === "upcoming" || fixture.status === "live")
+      .sort((a,b) => a.sortDate - b.sortDate)[0];
+
+    if (!next) {
+      nextFixtureTitle.textContent = "No upcoming fixture";
+      nextFixtureTime.textContent = "Schedule complete";
+      return;
+    }
+
+    nextFixtureTitle.textContent = `${next.home} vs ${next.away}`;
+    nextFixtureTime.textContent = `${formatDate(next.date)} • ${next.time}`;
+  }
+
+  function updateTimestamp() {
+    const now = new Date();
+
+    lastUpdated.textContent = `Updated ${now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    })}`;
+  }
+
+  function initials(name) {
+    return String(name)
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0,2)
+      .map(word => word[0])
+      .join("")
+      .toUpperCase();
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  searchInput.addEventListener("input", render);
+  matchdaySelect.addEventListener("change", render);
+  sortSelect.addEventListener("change", render);
+
+  document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      activeFilter = button.dataset.filter;
+
+      document.querySelectorAll("[data-filter]").forEach(item => {
+        item.classList.toggle("active", item === button);
+      });
+
+      render();
+    });
+  });
+
+  themeToggle?.addEventListener("click", () => {
+    setTimeout(applyBackground, 0);
+  });
+
+  window.addEventListener("focus", loadFixtures);
+
+  loadFixtures();
+})();
+</script>
+</body>
+</html>

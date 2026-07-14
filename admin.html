@@ -11,8 +11,8 @@
 <style>
 :root{--card:#fff;--input:#faf8fd;--border:#e8e1ef;--sidebar:#110719;--danger:#d7355f;--ok:#168c5f}
 html[data-theme=dark]{--card:#1b0d29;--input:#14091f;--border:#382347}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif}
-[hidden]{display:none!important}.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 20%,rgba(124,58,237,.22),transparent 32%),#0b0510}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif}[hidden]{display:none!important}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 20%,rgba(124,58,237,.22),transparent 32%),#0b0510}
 .login-card{width:min(430px,100%);padding:36px;border:1px solid rgba(255,255,255,.1);border-radius:24px;color:#fff;background:rgba(22,11,32,.96);box-shadow:0 30px 90px rgba(0,0,0,.5)}
 .logo{display:grid;place-items:center;width:58px;height:58px;margin-bottom:22px;border-radius:17px;background:linear-gradient(145deg,#a45eff,#5b18a7);font:800 1rem Manrope}
 .login h1{margin:10px 0 8px;font:800 2.2rem Manrope;letter-spacing:-.05em}.login p{color:#b7aabf;line-height:1.6}
@@ -24,21 +24,23 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 .side-brand{display:flex;align-items:center;gap:11px;padding:4px 7px 22px;border-bottom:1px solid rgba(255,255,255,.08)}.side-brand .logo{width:42px;height:42px;margin:0;border-radius:12px;font-size:.75rem}.side-brand div{display:flex;flex-direction:column}.side-brand small{color:#9789a1}
 .nav{display:grid;gap:6px;margin-top:20px}.nav button{min-height:44px;display:flex;align-items:center;gap:11px;padding:0 12px;border:0;border-radius:10px;color:#b9adbf;background:transparent;text-align:left;font-size:.74rem;font-weight:700}.nav button:hover,.nav button.active{color:#fff;background:rgba(168,85,247,.14)}
 .side-foot{margin-top:auto;display:grid;gap:8px}.side-foot a,.side-foot button{min-height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.09);border-radius:10px;color:#d6cbdc;background:rgba(255,255,255,.04);font-size:.7rem;font-weight:700}
-.main{min-width:0}.top{min-height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card)}.top h2{margin:0;font:800 1.1rem Manrope}.actions{display:flex;gap:9px;align-items:center}.actions button,.actions a,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--card);font-size:.7rem;font-weight:800}.actions .save,.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}
+.main{min-width:0}.top{min-height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card)}.top h2{margin:0;font:800 1.1rem Manrope}.actions{display:flex;gap:9px;align-items:center}.actions button,.actions a,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--card);font-size:.7rem;font-weight:800}.actions .save{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}
 .save-status{min-width:90px;color:var(--muted);font-size:.67rem;font-weight:700;text-align:right}.save-status.ok{color:var(--ok)}.save-status.bad{color:var(--danger)}
 .content{padding:28px}.page{display:none}.page.active{display:block}.heading{margin-bottom:22px}.heading h1{margin:0;font:800 clamp(2rem,4vw,3rem) Manrope;letter-spacing:-.05em}.heading p{max-width:560px;color:var(--muted);line-height:1.7}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat,.card{border:1px solid var(--border);border-radius:17px;background:var(--card);box-shadow:var(--shadow)}.stat{padding:19px}.stat span{color:var(--muted);font-size:.68rem}.stat strong{display:block;margin-top:11px;font:800 2rem Manrope}.card{margin-top:16px;overflow:hidden}.card-head{padding:17px 19px;border-bottom:1px solid var(--border)}.card-head h3{margin:0;font-size:.85rem}.card-body{padding:19px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}.fixtures{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fixture{padding:15px;border:1px solid var(--border);border-radius:13px;background:var(--input)}.fixture h4{margin:0 0 12px}.fixture label{margin-top:9px}.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.themebox{padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--input)}.themebox input{height:44px;padding:3px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat,.card{border:1px solid var(--border);border-radius:17px;background:var(--card);box-shadow:var(--shadow)}.stat{padding:19px}.stat span{color:var(--muted);font-size:.68rem}.stat strong{display:block;margin-top:11px;font:800 2rem Manrope}.card{margin-top:16px;overflow:hidden}.card-head{padding:17px 19px;border-bottom:1px solid var(--border)}.card-head h3{margin:0;font-size:.85rem}.card-body{padding:19px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}
+.fixtures{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.fixture{padding:15px;border:1px solid var(--border);border-radius:13px;background:var(--input)}.fixture h4{margin:0 0 12px}.fixture label{margin-top:9px}
+.logo-preview-row{display:grid;grid-template-columns:1fr 48px;gap:8px;align-items:end}.logo-preview{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:12px;background:var(--card);overflow:hidden}.logo-preview img{width:100%;height:100%;object-fit:contain;padding:5px}.logo-preview span{color:var(--muted);font-size:.55rem}
+.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.themebox{padding:14px;border:1px solid var(--border);border-radius:12px;background:var(--input)}.themebox input{height:44px;padding:3px}
 .notice{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(22,140,95,.25);border-radius:10px;color:var(--ok);background:rgba(22,140,95,.07);font-size:.72rem;font-weight:700}.notice.show{display:block}.error-banner{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(215,53,95,.25);border-radius:10px;color:#b52d50;background:rgba(215,53,95,.06);font-size:.72rem}.error-banner.show{display:block}
 @media(max-width:1050px){.stats,.themes{grid-template-columns:repeat(2,1fr)}.fixtures{grid-template-columns:1fr}}
 @media(max-width:760px){.app{grid-template-columns:78px 1fr}.side-brand div,.nav button span:last-child,.side-foot{display:none}.nav button{justify-content:center;padding:0}.content{padding:18px}.grid2{grid-template-columns:1fr}.top{padding:0 16px}.actions a,.actions button:not(.save){display:none}}
 </style>
 </head>
 <body>
-
 <section class="login" id="login">
 <form class="login-card" id="loginForm">
 <div class="logo">YSL</div><small>Secure administration</small><h1>Admin Panel</h1>
-<p>Manage the live YSL homepage, fixtures and colours.</p>
+<p>Manage the live YSL homepage, fixtures, team logos and colours.</p>
 <label>Password<input id="password" type="password" required></label>
 <button type="submit">Open Admin Panel</button><div class="error" id="error"></div>
 </form>
@@ -66,7 +68,6 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 <section class="page active" id="dashboard">
 <div class="heading"><h1>Dashboard</h1><p>All changes are saved online through the YSL backend and Supabase.</p></div>
 <div class="stats"><article class="stat"><span>Homepage sections</span><strong>3</strong></article><article class="stat"><span>Upcoming fixtures</span><strong>3</strong></article><article class="stat"><span>Website pages</span><strong>8</strong></article><article class="stat"><span>Current theme</span><strong id="themeStat">Light</strong></article></div>
-<div class="card"><div class="card-head"><h3>Quick actions</h3></div><div class="card-body"><button class="btn" data-open="homepage">Edit homepage</button> <button class="btn" data-open="fixtures">Update fixtures</button> <button class="btn" data-open="theme">Change colours</button></div></div>
 </section>
 
 <section class="page" id="homepage">
@@ -80,7 +81,7 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 </section>
 
 <section class="page" id="fixtures">
-<div class="heading"><h1>Upcoming Fixtures</h1><p>Edit the three fixture cards on the homepage.</p></div>
+<div class="heading"><h1>Upcoming Fixtures</h1><p>Edit the three fixture cards and add team logo URLs.</p></div>
 <div class="card"><div class="card-head"><h3>Homepage fixtures</h3></div><div class="card-body"><div class="fixtures" id="fixtureList"></div></div></div>
 </section>
 
@@ -98,225 +99,109 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 <label>Website name<input id="websiteName"></label><label>League name<input id="leagueName"></label><label class="full">Discord invite<input id="discordInvite"></label>
 </div></div>
 </section>
-
-</div></main></div>
+</div>
+</main>
+</div>
 
 <script>
-let csrf="";
-let data=null;
+let csrf="",data=null;
 const $=id=>document.getElementById(id);
 
-function showApiError(message){
- const box=$("apiError");
- box.textContent=message;
- box.classList.add("show");
-}
-
-function clearApiError(){
- $("apiError").classList.remove("show");
-}
-
+function showApiError(message){const box=$("apiError");box.textContent=message;box.classList.add("show")}
+function clearApiError(){$("apiError").classList.remove("show")}
 async function api(url,options={}){
  const headers={...(options.headers||{})};
  if(options.body&&!headers["Content-Type"])headers["Content-Type"]="application/json";
  if(csrf)headers["X-CSRF-Token"]=csrf;
-
  const response=await fetch(url,{...options,headers,cache:"no-store"});
- let body={};
-
- try{body=await response.json()}catch{}
-
- if(!response.ok){
-   throw new Error(body.error||`Request failed (${response.status})`);
- }
-
- return body;
+ let body={};try{body=await response.json()}catch{}
+ if(!response.ok)throw new Error(body.error||`Request failed (${response.status})`);
+ return body
 }
 
-async function checkSession(){
- const session=await api("/api/session");
- if(session.authenticated){
-   csrf=session.csrf;
-   await openApp();
- }
-}
-
-async function openApp(){
- $("login").hidden=true;
- $("app").hidden=false;
- await loadSite();
-}
-
+async function checkSession(){const s=await api("/api/session");if(s.authenticated){csrf=s.csrf;await openApp()}}
+async function openApp(){$("login").hidden=true;$("app").hidden=false;await loadSite()}
 async function loadSite(){
- clearApiError();
- $("saveStatus").textContent="Loading...";
-
- try{
-   data=await api("/api/site");
-   fill();
-   $("saveStatus").textContent="Connected";
-   $("saveStatus").className="save-status ok";
- }catch(error){
-   $("saveStatus").textContent="Connection failed";
-   $("saveStatus").className="save-status bad";
-   showApiError(error.message);
- }
+ clearApiError();$("saveStatus").textContent="Loading...";
+ try{data=await api("/api/site");normalizeFixtures();fill();$("saveStatus").textContent="Connected";$("saveStatus").className="save-status ok"}
+ catch(error){$("saveStatus").textContent="Connection failed";$("saveStatus").className="save-status bad";showApiError(error.message)}
 }
 
-$("loginForm").onsubmit=async event=>{
- event.preventDefault();
- $("error").textContent="";
-
- try{
-   const result=await api("/api/login",{
-     method:"POST",
-     body:JSON.stringify({password:$("password").value})
-   });
-
-   csrf=result.csrf;
-   await openApp();
- }catch(error){
-   $("error").textContent=error.message;
- }
-};
-
-$("logout").onclick=async()=>{
- try{
-   await api("/api/logout",{method:"POST"});
- }finally{
-   location.reload();
- }
-};
-
-document.querySelectorAll("[data-page]").forEach(button=>{
- button.onclick=()=>openPage(button.dataset.page);
-});
-
-document.querySelectorAll("[data-open]").forEach(button=>{
- button.onclick=()=>openPage(button.dataset.open);
-});
-
-function openPage(name){
- document.querySelectorAll("[data-page]").forEach(button=>button.classList.toggle("active",button.dataset.page===name));
- document.querySelectorAll(".page").forEach(page=>page.classList.toggle("active",page.id===name));
- $("title").textContent=name.charAt(0).toUpperCase()+name.slice(1);
+function normalizeFixtures(){
+ if(!Array.isArray(data.fixtures))data.fixtures=[];
+ while(data.fixtures.length<3)data.fixtures.push({});
+ data.fixtures=data.fixtures.slice(0,3).map(f=>({
+   date:f.date||"DATE",time:f.time||"TIME",home:f.home||"TEAM NAME",away:f.away||"TEAM NAME",venue:f.venue||"VENUE NAME",
+   homeLogo:f.homeLogo||"",awayLogo:f.awayLogo||""
+ }))
 }
+
+$("loginForm").onsubmit=async e=>{e.preventDefault();$("error").textContent="";try{const r=await api("/api/login",{method:"POST",body:JSON.stringify({password:$("password").value})});csrf=r.csrf;await openApp()}catch(error){$("error").textContent=error.message}};
+$("logout").onclick=async()=>{try{await api("/api/logout",{method:"POST"})}finally{location.reload()}};
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>openPage(b.dataset.page));
+function openPage(name){document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));$("title").textContent=name[0].toUpperCase()+name.slice(1)}
 
 function fill(){
- $("heroTop").value=data.hero.top;
- $("heroBottom").value=data.hero.bottom;
- $("heroDescription").value=data.hero.description;
- $("primaryText").value=data.hero.primaryText;
- $("primaryLink").value=data.hero.primaryLink;
- $("secondaryText").value=data.hero.secondaryText;
- $("secondaryLink").value=data.hero.secondaryLink;
-
- $("lightBg").value=data.theme.lightBg;
- $("darkBg").value=data.theme.darkBg;
- $("mainPurple").value=data.theme.mainPurple;
- $("accentPurple").value=data.theme.accentPurple;
-
- $("websiteName").value=data.settings.websiteName;
- $("leagueName").value=data.settings.leagueName;
- $("discordInvite").value=data.settings.discordInvite;
-
+ $("heroTop").value=data.hero.top;$("heroBottom").value=data.hero.bottom;$("heroDescription").value=data.hero.description;
+ $("primaryText").value=data.hero.primaryText;$("primaryLink").value=data.hero.primaryLink;$("secondaryText").value=data.hero.secondaryText;$("secondaryLink").value=data.hero.secondaryLink;
+ $("lightBg").value=data.theme.lightBg;$("darkBg").value=data.theme.darkBg;$("mainPurple").value=data.theme.mainPurple;$("accentPurple").value=data.theme.accentPurple;
+ $("websiteName").value=data.settings.websiteName;$("leagueName").value=data.settings.leagueName;$("discordInvite").value=data.settings.discordInvite;
  $("themeStat").textContent=document.documentElement.dataset.theme==="dark"?"Dark":"Light";
- renderFixtures();
+ renderFixtures()
+}
+
+function logoPreview(url){
+ if(!url)return '<span>No logo</span>';
+ return `<img src="${escapeHtml(url)}" alt="" onerror="this.parentElement.innerHTML='<span>Broken URL</span>'">`
 }
 
 function renderFixtures(){
  $("fixtureList").innerHTML="";
-
- data.fixtures.forEach((fixture,index)=>{
-   const element=document.createElement("article");
-   element.className="fixture";
-   element.innerHTML=`
-     <h4>Fixture ${index+1}</h4>
-     <label>Date<input data-fixture="${index}" data-key="date" value="${escapeHtml(fixture.date)}"></label>
-     <label>Time<input data-fixture="${index}" data-key="time" value="${escapeHtml(fixture.time)}"></label>
-     <label>Home team<input data-fixture="${index}" data-key="home" value="${escapeHtml(fixture.home)}"></label>
-     <label>Away team<input data-fixture="${index}" data-key="away" value="${escapeHtml(fixture.away)}"></label>
-     <label>Venue<input data-fixture="${index}" data-key="venue" value="${escapeHtml(fixture.venue)}"></label>`;
-
-   $("fixtureList").appendChild(element);
+ data.fixtures.forEach((f,i)=>{
+   const el=document.createElement("article");el.className="fixture";
+   el.innerHTML=`
+   <h4>Fixture ${i+1}</h4>
+   <label>Date<input data-fixture="${i}" data-key="date" value="${escapeHtml(f.date)}"></label>
+   <label>Time<input data-fixture="${i}" data-key="time" value="${escapeHtml(f.time)}"></label>
+   <label>Home team<input data-fixture="${i}" data-key="home" value="${escapeHtml(f.home)}"></label>
+   <div class="logo-preview-row">
+     <label>Home logo URL<input data-fixture="${i}" data-key="homeLogo" value="${escapeHtml(f.homeLogo)}"></label>
+     <div class="logo-preview" id="homePreview${i}">${logoPreview(f.homeLogo)}</div>
+   </div>
+   <label>Away team<input data-fixture="${i}" data-key="away" value="${escapeHtml(f.away)}"></label>
+   <div class="logo-preview-row">
+     <label>Away logo URL<input data-fixture="${i}" data-key="awayLogo" value="${escapeHtml(f.awayLogo)}"></label>
+     <div class="logo-preview" id="awayPreview${i}">${logoPreview(f.awayLogo)}</div>
+   </div>
+   <label>Venue<input data-fixture="${i}" data-key="venue" value="${escapeHtml(f.venue)}"></label>`;
+   $("fixtureList").appendChild(el)
  });
+ document.querySelectorAll('[data-key="homeLogo"],[data-key="awayLogo"]').forEach(input=>{
+   input.addEventListener("input",()=>{
+     const i=input.dataset.fixture;
+     const preview=$(input.dataset.key==="homeLogo"?`homePreview${i}`:`awayPreview${i}`);
+     preview.innerHTML=logoPreview(input.value.trim())
+   })
+ })
 }
 
 function collect(){
- data.hero={
-   top:$("heroTop").value.trim(),
-   bottom:$("heroBottom").value.trim(),
-   description:$("heroDescription").value.trim(),
-   primaryText:$("primaryText").value.trim(),
-   primaryLink:$("primaryLink").value.trim(),
-   secondaryText:$("secondaryText").value.trim(),
-   secondaryLink:$("secondaryLink").value.trim()
- };
-
- document.querySelectorAll("[data-fixture]").forEach(input=>{
-   data.fixtures[Number(input.dataset.fixture)][input.dataset.key]=input.value.trim();
- });
-
- data.theme={
-   lightBg:$("lightBg").value,
-   darkBg:$("darkBg").value,
-   mainPurple:$("mainPurple").value,
-   accentPurple:$("accentPurple").value
- };
-
- data.settings={
-   websiteName:$("websiteName").value.trim(),
-   leagueName:$("leagueName").value.trim(),
-   discordInvite:$("discordInvite").value.trim()
- };
+ data.hero={top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim()};
+ document.querySelectorAll("[data-fixture]").forEach(input=>{data.fixtures[Number(input.dataset.fixture)][input.dataset.key]=input.value.trim()});
+ data.theme={lightBg:$("lightBg").value,darkBg:$("darkBg").value,mainPurple:$("mainPurple").value,accentPurple:$("accentPurple").value};
+ data.settings={websiteName:$("websiteName").value.trim(),leagueName:$("leagueName").value.trim(),discordInvite:$("discordInvite").value.trim()}
 }
 
 $("save").onclick=async()=>{
- collect();
- clearApiError();
- $("saveStatus").textContent="Saving...";
- $("saveStatus").className="save-status";
-
- try{
-   await api("/api/site",{
-     method:"POST",
-     body:JSON.stringify(data)
-   });
-
-   $("saveStatus").textContent="Saved online";
-   $("saveStatus").className="save-status ok";
-   $("notice").classList.add("show");
-   setTimeout(()=>$("notice").classList.remove("show"),2200);
- }catch(error){
-   $("saveStatus").textContent="Save failed";
-   $("saveStatus").className="save-status bad";
-   showApiError(error.message);
- }
+ collect();clearApiError();$("saveStatus").textContent="Saving...";$("saveStatus").className="save-status";
+ try{await api("/api/site",{method:"POST",body:JSON.stringify(data)});$("saveStatus").textContent="Saved online";$("saveStatus").className="save-status ok";$("notice").classList.add("show");setTimeout(()=>$("notice").classList.remove("show"),2200)}
+ catch(error){$("saveStatus").textContent="Save failed";$("saveStatus").className="save-status bad";showApiError(error.message)}
 };
 
-const savedTheme=localStorage.getItem("ysl-theme");
-if(savedTheme==="light"||savedTheme==="dark"){
- document.documentElement.dataset.theme=savedTheme;
-}
-
+const savedTheme=localStorage.getItem("ysl-theme");if(savedTheme==="light"||savedTheme==="dark")document.documentElement.dataset.theme=savedTheme;
 $("mode").textContent=document.documentElement.dataset.theme==="dark"?"Light mode":"Dark mode";
-
-$("mode").onclick=()=>{
- const next=document.documentElement.dataset.theme==="dark"?"light":"dark";
- document.documentElement.dataset.theme=next;
- localStorage.setItem("ysl-theme",next);
- $("mode").textContent=next==="dark"?"Light mode":"Dark mode";
- $("themeStat").textContent=next==="dark"?"Dark":"Light";
-};
-
-function escapeHtml(value){
- return String(value)
-   .replaceAll("&","&amp;")
-   .replaceAll('"',"&quot;")
-   .replaceAll("<","&lt;")
-   .replaceAll(">","&gt;");
-}
-
+$("mode").onclick=()=>{const next=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=next;localStorage.setItem("ysl-theme",next);$("mode").textContent=next==="dark"?"Light mode":"Dark mode";$("themeStat").textContent=next==="dark"?"Dark":"Light"};
+function escapeHtml(value){return String(value??"").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
 checkSession().catch(error=>showApiError(error.message));
 </script>
 </body>

@@ -1,1 +1,968 @@
-<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Standings — YSL</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/styles.css"></head><body><div class="page-shell"><header class="topbar"><a class="brand" href="index.html"><span class="brand-main">YSL</span><span class="brand-divider"></span><span class="brand-sub">YOUTH<br>SOCCER<br>LEAGUE</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a></nav><div class="nav-actions"><button class="theme-toggle" id="themeToggle"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button><a class="admin-link" href="admin.html">Admin Page</a><a class="dashboard-link" href="dashboard.html">Dashboard</a></div><button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></header><div class="mobile-nav" id="mobileNav"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a><a href="admin.html">Admin Page</a><a href="dashboard.html">Dashboard</a></div><main style="min-height:calc(100vh - 102px);display:grid;place-items:center;padding:40px"><section style="text-align:center;max-width:760px"><p style="color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:.15em">YSL</p><h1 style="font-family:Manrope,sans-serif;font-size:clamp(3rem,8vw,7rem);margin:.2em 0">Standings</h1><p style="color:var(--muted);font-size:1.1rem">This page is ready for your content.</p><a class="primary-button" href="index.html" style="margin-top:24px">Back Home <span>→</span></a></section></main></div><script src="assets/app.js"></script></body></html>
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Standings — YSL</title>
+  <meta name="description" content="YSL league standings, club form and performance statistics.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+
+  <style>
+    :root{
+      --table-card:#ffffff;
+      --table-soft:#faf8fd;
+      --table-border:#e7e0ee;
+      --table-hover:#f7f2fb;
+      --positive:#168c5f;
+      --negative:#d13b59;
+      --draw:#c18b24;
+    }
+
+    html[data-theme="dark"]{
+      --table-card:#1b0d29;
+      --table-soft:#14091f;
+      --table-border:#382347;
+      --table-hover:#251335;
+      --positive:#53d99d;
+      --negative:#ff7f99;
+      --draw:#f2c96f;
+    }
+
+    body{
+      background:
+        radial-gradient(circle at 82% 12%, color-mix(in srgb,var(--accent) 10%,transparent), transparent 25%),
+        var(--bg);
+    }
+
+    .standings-page{
+      min-height:calc(100vh - 102px);
+      padding:48px 4vw 60px;
+    }
+
+    .standings-shell{
+      width:min(1500px,100%);
+      margin:auto;
+    }
+
+    .standings-hero{
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:end;
+      gap:30px;
+      margin-bottom:26px;
+    }
+
+    .standings-hero small{
+      display:block;
+      margin-bottom:10px;
+      color:var(--purple);
+      font-size:.7rem;
+      font-weight:800;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .standings-hero h1{
+      margin:0;
+      font:800 clamp(3rem,6vw,6.2rem)/.95 Manrope,sans-serif;
+      letter-spacing:-.07em;
+    }
+
+    .standings-hero p{
+      max-width:630px;
+      margin:15px 0 0;
+      color:var(--muted);
+      line-height:1.75;
+    }
+
+    .season-card{
+      min-width:260px;
+      padding:18px;
+      border:1px solid var(--table-border);
+      border-radius:18px;
+      background:var(--table-card);
+      box-shadow:var(--shadow);
+    }
+
+    .season-card span{
+      display:block;
+      color:var(--muted);
+      font-size:.65rem;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .season-card strong{
+      display:block;
+      margin-top:6px;
+      font:800 1.25rem Manrope,sans-serif;
+    }
+
+    .season-card small{
+      margin:8px 0 0;
+      color:var(--positive);
+      letter-spacing:0;
+      text-transform:none;
+    }
+
+    .summary-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .summary-card{
+      padding:18px;
+      border:1px solid var(--table-border);
+      border-radius:16px;
+      background:var(--table-card);
+      box-shadow:var(--shadow);
+    }
+
+    .summary-card span{
+      color:var(--muted);
+      font-size:.68rem;
+      font-weight:700;
+    }
+
+    .summary-card strong{
+      display:block;
+      margin-top:9px;
+      font:800 1.8rem Manrope,sans-serif;
+    }
+
+    .summary-card small{
+      display:block;
+      margin-top:6px;
+      color:var(--muted);
+      font-size:.63rem;
+    }
+
+    .table-panel{
+      overflow:hidden;
+      border:1px solid var(--table-border);
+      border-radius:22px;
+      background:var(--table-card);
+      box-shadow:var(--shadow);
+    }
+
+    .table-toolbar{
+      min-height:74px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:14px 18px;
+      border-bottom:1px solid var(--table-border);
+    }
+
+    .table-toolbar-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .search-box{
+      min-width:250px;
+      height:42px;
+      display:flex;
+      align-items:center;
+      gap:9px;
+      padding:0 12px;
+      border:1px solid var(--table-border);
+      border-radius:11px;
+      background:var(--table-soft);
+    }
+
+    .search-box input{
+      width:100%;
+      border:0;
+      outline:0;
+      color:var(--text);
+      background:transparent;
+      font:inherit;
+      font-size:.76rem;
+    }
+
+    .filter-button,
+    .sort-select{
+      min-height:42px;
+      padding:0 13px;
+      border:1px solid var(--table-border);
+      border-radius:11px;
+      color:var(--text);
+      background:var(--table-soft);
+      font-size:.7rem;
+      font-weight:700;
+    }
+
+    .filter-button{
+      cursor:pointer;
+    }
+
+    .filter-button.active{
+      color:#fff;
+      border-color:transparent;
+      background:linear-gradient(135deg,var(--purple),var(--purple2));
+    }
+
+    .legend{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      color:var(--muted);
+      font-size:.63rem;
+    }
+
+    .legend span{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .legend i{
+      width:9px;
+      height:9px;
+      border-radius:3px;
+    }
+
+    .legend .champions{background:var(--purple)}
+    .legend .playoffs{background:var(--accent)}
+    .legend .danger{background:var(--negative)}
+
+    .table-scroll{
+      overflow:auto;
+    }
+
+    table{
+      width:100%;
+      min-width:1150px;
+      border-collapse:collapse;
+    }
+
+    thead th{
+      position:sticky;
+      top:0;
+      z-index:2;
+      height:50px;
+      padding:0 12px;
+      color:var(--muted);
+      background:var(--table-soft);
+      border-bottom:1px solid var(--table-border);
+      font-size:.61rem;
+      font-weight:800;
+      letter-spacing:.07em;
+      text-align:center;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+
+    thead th.club-col{
+      text-align:left;
+    }
+
+    tbody tr{
+      border-bottom:1px solid var(--table-border);
+      transition:background .18s ease,transform .18s ease;
+    }
+
+    tbody tr:last-child{
+      border-bottom:0;
+    }
+
+    tbody tr:hover{
+      background:var(--table-hover);
+    }
+
+    tbody td{
+      height:76px;
+      padding:0 12px;
+      font-size:.75rem;
+      text-align:center;
+      white-space:nowrap;
+    }
+
+    .position-cell{
+      position:relative;
+      width:64px;
+      font:800 1rem Manrope,sans-serif;
+    }
+
+    .position-cell::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:14px;
+      bottom:14px;
+      width:4px;
+      border-radius:0 4px 4px 0;
+      background:transparent;
+    }
+
+    tr.zone-champion .position-cell::before{background:var(--purple)}
+    tr.zone-playoff .position-cell::before{background:var(--accent)}
+    tr.zone-danger .position-cell::before{background:var(--negative)}
+
+    .club-cell{
+      min-width:250px;
+      text-align:left;
+    }
+
+    .club-info{
+      display:flex;
+      align-items:center;
+      gap:13px;
+    }
+
+    .club-logo{
+      width:46px;
+      height:46px;
+      flex:0 0 46px;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      border:1px solid var(--table-border);
+      border-radius:13px;
+      background:var(--table-soft);
+      color:var(--muted);
+      font-size:.7rem;
+      font-weight:800;
+    }
+
+    .club-logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      padding:5px;
+    }
+
+    .club-name{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+
+    .club-name strong{
+      font-size:.82rem;
+    }
+
+    .club-name span{
+      color:var(--muted);
+      font-size:.61rem;
+    }
+
+    .record-cell{
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .goal-difference.positive{color:var(--positive)}
+    .goal-difference.negative{color:var(--negative)}
+
+    .points{
+      font:800 1.05rem Manrope,sans-serif;
+      color:var(--purple);
+    }
+
+    .form-list{
+      display:flex;
+      justify-content:center;
+      gap:5px;
+    }
+
+    .form-badge{
+      width:25px;
+      height:25px;
+      display:grid;
+      place-items:center;
+      border-radius:7px;
+      color:#fff;
+      font-size:.58rem;
+      font-weight:800;
+    }
+
+    .form-badge.w{background:var(--positive)}
+    .form-badge.d{background:var(--draw)}
+    .form-badge.l{background:var(--negative)}
+
+    .trend{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:52px;
+      min-height:27px;
+      border-radius:8px;
+      font-size:.61rem;
+      font-weight:800;
+    }
+
+    .trend.up{
+      color:var(--positive);
+      background:color-mix(in srgb,var(--positive) 10%,transparent);
+    }
+
+    .trend.down{
+      color:var(--negative);
+      background:color-mix(in srgb,var(--negative) 10%,transparent);
+    }
+
+    .trend.same{
+      color:var(--muted);
+      background:var(--table-soft);
+    }
+
+    .table-footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+      padding:16px 18px;
+      border-top:1px solid var(--table-border);
+      color:var(--muted);
+      font-size:.66rem;
+    }
+
+    .last-updated{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .live-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--positive);
+      box-shadow:0 0 0 5px color-mix(in srgb,var(--positive) 10%,transparent);
+    }
+
+    .empty-state{
+      display:none;
+      padding:55px 20px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .empty-state.show{
+      display:block;
+    }
+
+    @media(max-width:1100px){
+      .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+      }
+
+      .standings-hero{
+        grid-template-columns:1fr;
+      }
+
+      .season-card{
+        width:min(100%,360px);
+      }
+
+      .legend{
+        display:none;
+      }
+    }
+
+    @media(max-width:760px){
+      .standings-page{
+        padding:32px 18px 40px;
+      }
+
+      .table-toolbar{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .table-toolbar-left{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+      }
+
+      .search-box{
+        grid-column:1/-1;
+        min-width:0;
+      }
+
+      .summary-grid{
+        grid-template-columns:1fr;
+      }
+
+      .table-footer{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-main" id="siteBrand">YSL</span>
+      <span class="brand-divider"></span>
+      <span class="brand-sub" id="leagueBrand">YOUTH<br>SOCCER<br>LEAGUE</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="fixtures.html">Fixtures</a>
+      <a class="active" href="standings.html">Standings</a>
+      <a href="playersheet.html">Playersheet</a>
+      <a href="news.html">News</a>
+      <a href="about.html">About</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <span class="theme-icon-sun">☀</span>
+        <span class="theme-icon-moon">☾</span>
+      </button>
+      <a class="admin-link" href="admin.html">Admin Page</a>
+      <a class="dashboard-link" href="dashboard.html">Dashboard</a>
+    </div>
+
+    <button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="fixtures.html">Fixtures</a>
+    <a class="active" href="standings.html">Standings</a>
+    <a href="playersheet.html">Playersheet</a>
+    <a href="news.html">News</a>
+    <a href="about.html">About</a>
+    <a href="admin.html">Admin Page</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
+
+  <main class="standings-page">
+    <div class="standings-shell">
+      <section class="standings-hero">
+        <div>
+          <small>Season One • Live table</small>
+          <h1>League Standings</h1>
+          <p>Track every club across the season with detailed records, goal difference, recent form, movement and points.</p>
+        </div>
+
+        <article class="season-card">
+          <span>Current competition</span>
+          <strong>YSL Season One</strong>
+          <small>● Table active</small>
+        </article>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <span>League leader</span>
+          <strong id="leaderName">—</strong>
+          <small id="leaderPoints">0 points</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Most goals</span>
+          <strong id="topScorerTeam">—</strong>
+          <small id="topGoals">0 goals scored</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Best defence</span>
+          <strong id="bestDefenceTeam">—</strong>
+          <small id="fewestConceded">0 conceded</small>
+        </article>
+
+        <article class="summary-card">
+          <span>Total league goals</span>
+          <strong id="totalGoals">0</strong>
+          <small>Across all clubs</small>
+        </article>
+      </section>
+
+      <section class="table-panel">
+        <div class="table-toolbar">
+          <div class="table-toolbar-left">
+            <label class="search-box">
+              <span>⌕</span>
+              <input id="searchInput" type="search" placeholder="Search clubs">
+            </label>
+
+            <button class="filter-button active" data-filter="all">All clubs</button>
+            <button class="filter-button" data-filter="top">Top 4</button>
+
+            <select class="sort-select" id="sortSelect">
+              <option value="position">Sort: Position</option>
+              <option value="points">Sort: Points</option>
+              <option value="gd">Sort: Goal difference</option>
+              <option value="gf">Sort: Goals scored</option>
+              <option value="form">Sort: Recent form</option>
+            </select>
+          </div>
+
+          <div class="legend">
+            <span><i class="champions"></i>Champion</span>
+            <span><i class="playoffs"></i>Playoff places</span>
+            <span><i class="danger"></i>Bottom place</span>
+          </div>
+        </div>
+
+        <div class="table-scroll" id="tableScroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th class="club-col">Club</th>
+                <th>P</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>GF</th>
+                <th>GA</th>
+                <th>GD</th>
+                <th>Points</th>
+                <th>Form</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+
+            <tbody id="standingsBody"></tbody>
+          </table>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          No clubs match your search.
+        </div>
+
+        <footer class="table-footer">
+          <div class="last-updated">
+            <span class="live-dot"></span>
+            <span id="lastUpdated">Loading live standings…</span>
+          </div>
+
+          <span>W = win • D = draw • L = loss • GD = goal difference</span>
+        </footer>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+(() => {
+  const fallback = {
+    settings: {
+      websiteName: "YSL",
+      leagueName: "Youth Soccer League"
+    },
+    theme: {
+      lightBg: "#ffffff",
+      darkBg: "#14091f",
+      mainPurple: "#43118d",
+      accentPurple: "#8c45e9"
+    },
+    standings: [
+      {name:"Arsenal",logo:"",played:8,wins:6,draws:1,losses:1,gf:19,ga:7,points:19,form:["W","W","W","D","W"],trend:1},
+      {name:"Chelsea",logo:"",played:8,wins:5,draws:2,losses:1,gf:16,ga:8,points:17,form:["W","D","W","W","W"],trend:1},
+      {name:"Manchester City",logo:"",played:8,wins:5,draws:1,losses:2,gf:17,ga:10,points:16,form:["L","W","W","D","W"],trend:0},
+      {name:"Liverpool",logo:"",played:8,wins:4,draws:2,losses:2,gf:14,ga:9,points:14,form:["W","L","W","D","W"],trend:-1},
+      {name:"Manchester United",logo:"",played:8,wins:2,draws:2,losses:4,gf:10,ga:15,points:8,form:["L","D","W","L","L"],trend:0},
+      {name:"Newcastle",logo:"",played:8,wins:1,draws:1,losses:6,gf:7,ga:24,points:4,form:["L","L","D","L","L"],trend:-1}
+    ]
+  };
+
+  let siteData = fallback;
+  let rows = [];
+  let activeFilter = "all";
+
+  const body = document.getElementById("standingsBody");
+  const emptyState = document.getElementById("emptyState");
+
+  async function loadStandings() {
+    try {
+      const response = await fetch("/api/site", {
+        cache: "no-store",
+        headers: { Accept: "application/json" }
+      });
+
+      const saved = await response.json();
+
+      if (!response.ok) {
+        throw new Error(saved.error || "Could not load standings.");
+      }
+
+      siteData = {
+        settings: {...fallback.settings, ...(saved.settings || {})},
+        theme: {...fallback.theme, ...(saved.theme || {})},
+        standings:
+          Array.isArray(saved.standings) && saved.standings.length
+            ? saved.standings
+            : fallback.standings
+      };
+    } catch (error) {
+      console.error(error);
+      siteData = fallback;
+    }
+
+    applyBranding();
+    prepareRows();
+    render();
+    updateSummary();
+    updateTimestamp();
+  }
+
+  function applyBranding() {
+    siteBrand.textContent = siteData.settings.websiteName || "YSL";
+    leagueBrand.innerHTML = (siteData.settings.leagueName || "Youth Soccer League")
+      .trim()
+      .split(/\s+/)
+      .map(escapeHtml)
+      .join("<br>");
+
+    document.documentElement.style.setProperty("--purple", siteData.theme.mainPurple);
+    document.documentElement.style.setProperty("--purple2", siteData.theme.accentPurple);
+    document.documentElement.style.setProperty("--accent", siteData.theme.accentPurple);
+    applyBackground();
+  }
+
+  function applyBackground() {
+    const dark = document.documentElement.dataset.theme === "dark";
+    document.documentElement.style.setProperty(
+      "--bg",
+      dark ? siteData.theme.darkBg : siteData.theme.lightBg
+    );
+  }
+
+  function prepareRows() {
+    rows = siteData.standings.map((team, index) => {
+      const gf = Number(team.gf || 0);
+      const ga = Number(team.ga || 0);
+      const wins = Number(team.wins || 0);
+      const draws = Number(team.draws || 0);
+      const losses = Number(team.losses || 0);
+      const played = Number(team.played ?? wins + draws + losses);
+      const points = Number(team.points ?? wins * 3 + draws);
+      const form = Array.isArray(team.form) ? team.form.slice(-5) : [];
+
+      return {
+        ...team,
+        originalPosition: index + 1,
+        played,
+        wins,
+        draws,
+        losses,
+        gf,
+        ga,
+        gd: gf - ga,
+        points,
+        form,
+        formScore: form.reduce((score, result) => {
+          if (String(result).toUpperCase() === "W") return score + 3;
+          if (String(result).toUpperCase() === "D") return score + 1;
+          return score;
+        }, 0)
+      };
+    });
+
+    rows.sort(defaultSort);
+    rows.forEach((team, index) => team.position = index + 1);
+  }
+
+  function defaultSort(a, b) {
+    return (
+      b.points - a.points ||
+      b.gd - a.gd ||
+      b.gf - a.gf ||
+      a.name.localeCompare(b.name)
+    );
+  }
+
+  function getVisibleRows() {
+    const query = searchInput.value.trim().toLowerCase();
+    const sort = sortSelect.value;
+
+    let visible = rows.filter(team =>
+      team.name.toLowerCase().includes(query)
+    );
+
+    if (activeFilter === "top") {
+      visible = visible.filter(team => team.position <= 4);
+    }
+
+    const sorters = {
+      position: (a,b) => a.position - b.position,
+      points: (a,b) => b.points - a.points || b.gd - a.gd,
+      gd: (a,b) => b.gd - a.gd || b.points - a.points,
+      gf: (a,b) => b.gf - a.gf || b.points - a.points,
+      form: (a,b) => b.formScore - a.formScore || b.points - a.points
+    };
+
+    return [...visible].sort(sorters[sort] || sorters.position);
+  }
+
+  function render() {
+    const visible = getVisibleRows();
+    body.innerHTML = "";
+
+    emptyState.classList.toggle("show", visible.length === 0);
+    tableScroll.style.display = visible.length ? "block" : "none";
+
+    visible.forEach(team => {
+      const row = document.createElement("tr");
+
+      if (team.position === 1) row.className = "zone-champion";
+      else if (team.position <= 4) row.className = "zone-playoff";
+      else if (team.position === rows.length) row.className = "zone-danger";
+
+      row.innerHTML = `
+        <td class="position-cell">${team.position}</td>
+
+        <td class="club-cell">
+          <div class="club-info">
+            <div class="club-logo">
+              ${team.logo
+                ? `<img src="${escapeHtml(team.logo)}" alt="${escapeHtml(team.name)} logo" onerror="this.parentElement.textContent='${initials(team.name)}'">`
+                : initials(team.name)}
+            </div>
+
+            <div class="club-name">
+              <strong>${escapeHtml(team.name)}</strong>
+              <span>${team.position === 1 ? "League leader" : `Position ${team.position}`}</span>
+            </div>
+          </div>
+        </td>
+
+        <td>${team.played}</td>
+        <td>${team.wins}</td>
+        <td>${team.draws}</td>
+        <td>${team.losses}</td>
+        <td>${team.gf}</td>
+        <td>${team.ga}</td>
+        <td class="goal-difference ${team.gd > 0 ? "positive" : team.gd < 0 ? "negative" : ""}">
+          ${team.gd > 0 ? "+" : ""}${team.gd}
+        </td>
+        <td class="points">${team.points}</td>
+
+        <td>
+          <div class="form-list">
+            ${renderForm(team.form)}
+          </div>
+        </td>
+
+        <td>
+          ${renderTrend(team.trend)}
+        </td>
+      `;
+
+      body.appendChild(row);
+    });
+  }
+
+  function renderForm(form) {
+    if (!form.length) {
+      return `<span style="color:var(--muted)">—</span>`;
+    }
+
+    return form.map(result => {
+      const value = String(result).toUpperCase();
+      const cls = value === "W" ? "w" : value === "D" ? "d" : "l";
+      return `<span class="form-badge ${cls}">${escapeHtml(value)}</span>`;
+    }).join("");
+  }
+
+  function renderTrend(trend) {
+    const value = Number(trend || 0);
+
+    if (value > 0) {
+      return `<span class="trend up">↑ ${value}</span>`;
+    }
+
+    if (value < 0) {
+      return `<span class="trend down">↓ ${Math.abs(value)}</span>`;
+    }
+
+    return `<span class="trend same">—</span>`;
+  }
+
+  function updateSummary() {
+    if (!rows.length) return;
+
+    const leader = rows[0];
+    const topScorer = [...rows].sort((a,b) => b.gf - a.gf)[0];
+    const bestDefence = [...rows].sort((a,b) => a.ga - b.ga)[0];
+    const goals = rows.reduce((sum, team) => sum + team.gf, 0);
+
+    leaderName.textContent = leader.name;
+    leaderPoints.textContent = `${leader.points} points`;
+
+    topScorerTeam.textContent = topScorer.name;
+    topGoals.textContent = `${topScorer.gf} goals scored`;
+
+    bestDefenceTeam.textContent = bestDefence.name;
+    fewestConceded.textContent = `${bestDefence.ga} conceded`;
+
+    totalGoals.textContent = goals;
+  }
+
+  function updateTimestamp() {
+    const now = new Date();
+    lastUpdated.textContent = `Updated ${now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    })}`;
+  }
+
+  function initials(name) {
+    return String(name)
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0,2)
+      .map(word => word[0])
+      .join("")
+      .toUpperCase();
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  searchInput.addEventListener("input", render);
+  sortSelect.addEventListener("change", render);
+
+  document.querySelectorAll("[data-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      activeFilter = button.dataset.filter;
+
+      document.querySelectorAll("[data-filter]").forEach(item => {
+        item.classList.toggle("active", item === button);
+      });
+
+      render();
+    });
+  });
+
+  themeToggle?.addEventListener("click", () => {
+    setTimeout(applyBackground, 0);
+  });
+
+  window.addEventListener("focus", loadStandings);
+
+  loadStandings();
+})();
+</script>
+</body>
+</html>

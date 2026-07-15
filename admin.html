@@ -479,7 +479,6 @@ $("saveButton").onclick=async()=>{
 
  try{
   collect();
-
   await refreshAdminSession();
 
   $("saveStatus").textContent="Saving...";
@@ -488,27 +487,6 @@ $("saveButton").onclick=async()=>{
    method:"POST",
    body:JSON.stringify(data)
   });
-
-  const savedData=await api("/api/site");
-
-  const expected=JSON.stringify(data);
-  const received=JSON.stringify(savedData);
-
-  await api("/api/site", {
-  method: "POST",
-  body: JSON.stringify(data)
-});
-
-saveStatus.textContent = "Saved online";
-saveStatus.className = "save-status ok";
-
-notice.textContent = "Everything was saved successfully to Supabase.";
-notice.classList.add("show");
-
-setTimeout(() => {
-  notice.classList.remove("show");
-}, 2600);
-  }
 
   $("saveStatus").textContent="Saved online";
   $("saveStatus").className="status ok";
@@ -533,10 +511,11 @@ setTimeout(() => {
     `${error.message} Refresh the page and log in again.`
    );
   }else{
-   showError(error.message);
+   showError(error.message||"The website data could not be saved.");
   }
  }
 };
+
 function safe(v){return String(v??"").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
 checkSession().catch(error=>showError(error.message));
 </script>

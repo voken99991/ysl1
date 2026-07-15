@@ -46,6 +46,10 @@ PASSWORD_ITERATIONS = 310_000
 TEMP_PASSWORD_LENGTH = 8
 
 
+# ---------------------------------------------------------------------------
+# Supabase REST helper
+# ---------------------------------------------------------------------------
+
 def supabase_request(
     method: str,
     path: str,
@@ -53,8 +57,13 @@ def supabase_request(
     body: Any | None = None,
     prefer: str | None = None,
 ) -> Any:
-    if not SUPABASE_URL or not SUPABASE_SECRET_KEY:
-        raise RuntimeError("Supabase environment variables are missing.")
+    if not SUPABASE_URL:
+        raise RuntimeError("SUPABASE_URL is missing.")
+
+    if not SUPABASE_SECRET_KEY:
+        raise RuntimeError(
+            "SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY is missing."
+        )
 
     headers = {
         "apikey": SUPABASE_SECRET_KEY,
@@ -65,7 +74,11 @@ def supabase_request(
     payload = None
 
     if body is not None:
-        payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
+        payload = json.dumps(
+            body,
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode("utf-8")
         headers["Content-Type"] = "application/json"
 
     if prefer:
@@ -79,66 +92,25 @@ def supabase_request(
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=20) as response:
+        with urllib.request.urlopen(req, timeout=25) as response:
             raw = response.read().decode("utf-8")
             return json.loads(raw) if raw else None
+
     except urllib.error.HTTPError as exc:
         details = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(
             f"Supabase returned HTTP {exc.code}: {details}"
         ) from exc
+
     except urllib.error.URLError as exc:
         raise RuntimeError(
             f"Could not connect to Supabase: {exc.reason}"
         ) from exc
 
 
-def normalise_username(username: str) -> str:
-    return username.strip().lower()
-
-
-def generate_temporary_password(length: int = TEMP_PASSWORD_LENGTH) -> str:
-    alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-    return "".join(secrets.choice(alphabet) for _ in range(length))
-
-
-def hash_password(password: str) -> str:
-    salt = secrets.token_bytes(16)
-    derived = hashlib.pbkdf2_hmac(
-        "sha256",
-        password.encode("utf-8"),
-        salt,
-        PASSWORD_ITERATIONS,
-    )
-
-    return "pbkdf2_sha256${iterations}${salt}${hash}".format(
-        iterations=PASSWORD_ITERATIONS,
-        salt=base64.urlsafe_b64encode(salt).decode("ascii"),
-        hash=base64.urlsafe_b64encode(derived).decode("ascii"),
-    )
-
-
-def verify_password(password: str, stored: str) -> bool:
-    try:
-        algorithm, iterations, salt_b64, hash_b64 = stored.split("$", 3)
-
-        if algorithm != "pbkdf2_sha256":
-            return False
-
-        salt = base64.urlsafe_b64decode(salt_b64.encode("ascii"))
-        expected = base64.urlsafe_b64decode(hash_b64.encode("ascii"))
-
-        actual = hashlib.pbkdf2_hmac(
-            "sha256",
-            password.encode("utf-8"),
-            salt,
-            int(iterations),
-        )
-
-        return hmac.compare_digest(actual, expected)
-    except (ValueError, TypeError):
-        return False
-
+# ---------------------------------------------------------------------------
+# Generic site-content storage
+# ---------------------------------------------------------------------------
 
 def read_site_content() -> dict[str, Any]:
     rows = supabase_request(
@@ -150,10 +122,22 @@ def read_site_content() -> dict[str, Any]:
         return {}
 
     content = rows[0].get("content")
-    return content if isinstance(content, dict) else {}
+
+    if not isinstance(content, dict):
+        return {}
+
+    return content
 
 
 def save_site_content(content: dict[str, Any]) -> None:
+    """
+    Save the complete JSON object unchanged.
+
+    This intentionally accepts future keys and nested structures such as:
+    hero, settings, theme, teams, fixtures, stats, lineups, goals, cards,
+    substitutions, players, standings, news, transfers, awards, and more.
+    """
+
     updated = supabase_request(
         "PATCH",
         "site_content?id=eq.1",
@@ -172,24 +156,85 @@ def save_site_content(content: dict[str, Any]) -> None:
     )
 
     if not isinstance(inserted, list) or not inserted:
-        raise RuntimeError("Supabase did not confirm the save.")
+        raise RuntimeError("Supabase did not confirm the site-content save.")
 
+
+# ---------------------------------------------------------------------------
+# Password helpers
+# ---------------------------------------------------------------------------
+
+def normalise_username(username: str) -> str:
+    return username.strip().lower()
+
+
+def generate_temporary_password(length: int = TEMP_PASSWORD_LENGTH) -> str:
+    alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
+
+def hash_password(password: str) -> str:
+    salt = secrets.token_bytes(16)
+
+    derived = hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        salt,
+        PASSWORD_ITERATIONS,
+    )
+
+    return "pbkdf2_sha256${iterations}${salt}${digest}".format(
+        iterations=PASSWORD_ITERATIONS,
+        salt=base64.urlsafe_b64encode(salt).decode("ascii"),
+        digest=base64.urlsafe_b64encode(derived).decode("ascii"),
+    )
+
+
+def verify_password(password: str, stored: str) -> bool:
+    try:
+        algorithm, iterations, salt_b64, digest_b64 = stored.split("$", 3)
+
+        if algorithm != "pbkdf2_sha256":
+            return False
+
+        salt = base64.urlsafe_b64decode(salt_b64.encode("ascii"))
+        expected = base64.urlsafe_b64decode(digest_b64.encode("ascii"))
+
+        actual = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            salt,
+            int(iterations),
+        )
+
+        return hmac.compare_digest(actual, expected)
+
+    except (ValueError, TypeError):
+        return False
+
+
+# ---------------------------------------------------------------------------
+# Player-account database helpers
+# ---------------------------------------------------------------------------
 
 def get_player_by_username(username: str) -> dict[str, Any] | None:
     key = urllib.parse.quote(normalise_username(username), safe="")
+
     rows = supabase_request(
         "GET",
         f"players?username_key=eq.{key}&select=*",
     )
+
     return rows[0] if rows else None
 
 
 def get_player_by_discord_id(discord_id: str) -> dict[str, Any] | None:
     value = urllib.parse.quote(str(discord_id), safe="")
+
     rows = supabase_request(
         "GET",
         f"players?discord_id=eq.{value}&select=*",
     )
+
     return rows[0] if rows else None
 
 
@@ -198,7 +243,7 @@ def create_or_reset_player(
     username: str,
     discord_id: str,
     roblox_user_id: str | None = None,
-) -> str:
+) -> tuple[str, dict[str, Any]]:
     clean_username = username.strip()
 
     if not clean_username:
@@ -220,22 +265,29 @@ def create_or_reset_player(
 
     if existing:
         player_id = urllib.parse.quote(str(existing["id"]), safe="")
-        supabase_request(
+
+        rows = supabase_request(
             "PATCH",
             f"players?id=eq.{player_id}",
             body=payload,
             prefer="return=representation",
         )
     else:
-        supabase_request(
+        rows = supabase_request(
             "POST",
             "players",
             body=payload,
             prefer="return=representation",
         )
 
-    return temporary_password
+    saved_player = rows[0] if isinstance(rows, list) and rows else payload
 
+    return temporary_password, saved_player
+
+
+# ---------------------------------------------------------------------------
+# Session helpers
+# ---------------------------------------------------------------------------
 
 def admin_logged_in() -> bool:
     return bool(session.get("admin"))
@@ -245,7 +297,7 @@ def player_logged_in() -> bool:
     return bool(session.get("player_id"))
 
 
-def csrf_valid() -> bool:
+def admin_csrf_valid() -> bool:
     supplied = request.headers.get("X-CSRF-Token", "")
     expected = session.get("admin_csrf", "")
 
@@ -267,8 +319,8 @@ def bot_authorised() -> bool:
 
 
 def clear_admin_session() -> None:
-    for key in ("admin", "admin_csrf"):
-        session.pop(key, None)
+    session.pop("admin", None)
+    session.pop("admin_csrf", None)
 
 
 def clear_player_session() -> None:
@@ -281,10 +333,23 @@ def clear_player_session() -> None:
         session.pop(key, None)
 
 
+# ---------------------------------------------------------------------------
+# Static pages
+# ---------------------------------------------------------------------------
+
 @app.get("/")
 def homepage():
     return send_from_directory(BASE_DIR, "index.html")
 
+
+@app.get("/<path:filename>")
+def serve_file(filename: str):
+    return send_from_directory(BASE_DIR, filename)
+
+
+# ---------------------------------------------------------------------------
+# Health
+# ---------------------------------------------------------------------------
 
 @app.get("/api/health")
 def health():
@@ -297,12 +362,17 @@ def health():
     })
 
 
+# ---------------------------------------------------------------------------
+# Admin API
+# ---------------------------------------------------------------------------
+
 @app.get("/api/session")
-def admin_session():
+def get_admin_session():
     if not admin_logged_in():
         return jsonify({"authenticated": False})
 
     session.setdefault("admin_csrf", secrets.token_urlsafe(32))
+    session.permanent = True
 
     return jsonify({
         "authenticated": True,
@@ -318,7 +388,6 @@ def admin_login():
     if not hmac.compare_digest(password, ADMIN_PASSWORD):
         return jsonify({"error": "Incorrect password."}), 401
 
-    # Do not clear the player login when an admin logs in.
     session.permanent = True
     session["admin"] = True
     session["admin_csrf"] = secrets.token_urlsafe(32)
@@ -334,11 +403,11 @@ def admin_logout():
     if not admin_logged_in():
         return jsonify({"error": "Not logged in."}), 401
 
-    if not csrf_valid():
+    if not admin_csrf_valid():
         return jsonify({"error": "Invalid security token."}), 403
 
-    # Only remove admin keys. Preserve the player account session.
     clear_admin_session()
+
     return jsonify({"ok": True})
 
 
@@ -346,7 +415,9 @@ def admin_logout():
 def get_site():
     try:
         return jsonify(read_site_content())
+
     except RuntimeError as exc:
+        app.logger.exception("Failed to read site content.")
         return jsonify({"error": str(exc)}), 503
 
 
@@ -355,35 +426,41 @@ def save_site():
     if not admin_logged_in():
         return jsonify({"error": "Authentication required."}), 401
 
-    if not csrf_valid():
+    if not admin_csrf_valid():
         return jsonify({"error": "Invalid security token."}), 403
 
     payload = request.get_json(silent=True)
 
     if not isinstance(payload, dict):
-        return jsonify({"error": "Invalid website data."}), 400
+        return jsonify({
+            "error": "Website data must be a JSON object."
+        }), 400
 
     try:
+        # Save the entire payload unchanged.
+        # No schema filtering and no strict read-back comparison.
         save_site_content(payload)
-        saved = read_site_content()
-
-        if saved != payload:
-            return jsonify({
-                "error": "Supabase save verification failed."
-            }), 500
 
         return jsonify({
             "ok": True,
             "savedKeys": sorted(payload.keys()),
         })
+
     except RuntimeError as exc:
+        app.logger.exception("Failed to save site content.")
         return jsonify({"error": str(exc)}), 503
 
 
+# ---------------------------------------------------------------------------
+# Player website API
+# ---------------------------------------------------------------------------
+
 @app.get("/api/player/session")
-def player_session():
+def get_player_session():
     if not player_logged_in():
         return jsonify({"authenticated": False})
+
+    session.permanent = True
 
     return jsonify({
         "authenticated": True,
@@ -410,6 +487,7 @@ def player_login():
 
     try:
         player = get_player_by_username(username)
+
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
@@ -421,9 +499,10 @@ def player_login():
             str(player.get("password_hash", "")),
         )
     ):
-        return jsonify({"error": "Incorrect username or password."}), 401
+        return jsonify({
+            "error": "Incorrect username or password."
+        }), 401
 
-    # Keep this login for 30 days and do not clear admin session keys.
     session.permanent = True
     clear_player_session()
 
@@ -447,7 +526,6 @@ def player_login():
 
 @app.post("/api/player/logout")
 def player_logout():
-    # Only remove player keys. Preserve an admin session.
     clear_player_session()
     return jsonify({"ok": True})
 
@@ -481,7 +559,7 @@ def player_change_password():
 
         player_id = urllib.parse.quote(str(player["id"]), safe="")
 
-        supabase_request(
+        rows = supabase_request(
             "PATCH",
             f"players?id=eq.{player_id}",
             body={
@@ -491,13 +569,23 @@ def player_change_password():
             prefer="return=representation",
         )
 
+        if not isinstance(rows, list) or not rows:
+            raise RuntimeError(
+                "Supabase did not confirm the password update."
+            )
+
         session["must_change_password"] = False
         session.modified = True
 
         return jsonify({"ok": True})
+
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
+
+# ---------------------------------------------------------------------------
+# Discord-bot API
+# ---------------------------------------------------------------------------
 
 @app.post("/api/bot/create-player")
 def bot_create_player():
@@ -505,6 +593,7 @@ def bot_create_player():
         return jsonify({"error": "Invalid bot API key."}), 401
 
     payload = request.get_json(silent=True) or {}
+
     username = str(payload.get("username", "")).strip()
     discord_id = str(payload.get("discordId", "")).strip()
     roblox_user_id = str(payload.get("robloxUserId", "")).strip()
@@ -515,7 +604,7 @@ def bot_create_player():
         }), 400
 
     try:
-        temporary_password = create_or_reset_player(
+        temporary_password, saved_player = create_or_reset_player(
             username=username,
             discord_id=discord_id,
             roblox_user_id=roblox_user_id,
@@ -523,12 +612,14 @@ def bot_create_player():
 
         return jsonify({
             "ok": True,
-            "username": username,
+            "username": saved_player.get("username", username),
             "temporaryPassword": temporary_password,
             "mustChangePassword": True,
         })
+
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
+
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
@@ -548,9 +639,11 @@ def bot_reset_player_password():
         player = get_player_by_discord_id(discord_id)
 
         if not player:
-            return jsonify({"error": "Player account not found."}), 404
+            return jsonify({
+                "error": "Player account not found."
+            }), 404
 
-        temporary_password = create_or_reset_player(
+        temporary_password, saved_player = create_or_reset_player(
             username=str(player["username"]),
             discord_id=discord_id,
             roblox_user_id=str(player.get("roblox_user_id", "")),
@@ -558,18 +651,21 @@ def bot_reset_player_password():
 
         return jsonify({
             "ok": True,
-            "username": player["username"],
+            "username": saved_player.get(
+                "username",
+                player["username"],
+            ),
             "temporaryPassword": temporary_password,
             "mustChangePassword": True,
         })
+
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
 
-@app.get("/<path:filename>")
-def serve_file(filename: str):
-    return send_from_directory(BASE_DIR, filename)
-
+# ---------------------------------------------------------------------------
+# Response headers
+# ---------------------------------------------------------------------------
 
 @app.after_request
 def no_api_cache(response):

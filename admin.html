@@ -226,8 +226,93 @@ async function loadSite(){
   renderAll();
   $("saveStatus").textContent="Connected";$("saveStatus").className="status ok"
  }catch(error){
-  $("saveStatus").textContent="Connection failed";$("saveStatus").className="status bad";showError(error.message)
+  $("saveStatus").textContent="Connection failed";$("saveStatus").className="status bad";showError(error.message || "The admin panel could not load website data.")
  }
+}
+
+
+function blankFixtureStats(){
+ return {
+  referee:"",
+  attendance:0,
+  potm:"",
+  stage:"",
+  report:"",
+  visible:true,
+  reportStatus:"draft",
+  highlightsUrl:"",
+  lineups:{
+   home:[],
+   away:[]
+  },
+  goals:[],
+  cards:[],
+  substitutions:[],
+  metrics:{
+   home:{},
+   away:{}
+  }
+ };
+}
+
+function normalizeStats(value){
+ const source =
+  value && typeof value === "object" && !Array.isArray(value)
+   ? value
+   : {};
+
+ const base = blankFixtureStats();
+
+ return {
+  ...base,
+  ...source,
+
+  visible:
+   source.visible === undefined
+    ? true
+    : Boolean(source.visible),
+
+  attendance:
+   Number.isFinite(Number(source.attendance))
+    ? Number(source.attendance)
+    : 0,
+
+  lineups:{
+   home:Array.isArray(source.lineups?.home)
+    ? source.lineups.home
+    : [],
+   away:Array.isArray(source.lineups?.away)
+    ? source.lineups.away
+    : []
+  },
+
+  goals:Array.isArray(source.goals)
+   ? source.goals
+   : [],
+
+  cards:Array.isArray(source.cards)
+   ? source.cards
+   : [],
+
+  substitutions:Array.isArray(source.substitutions)
+   ? source.substitutions
+   : [],
+
+  metrics:{
+   home:
+    source.metrics?.home &&
+    typeof source.metrics.home === "object" &&
+    !Array.isArray(source.metrics.home)
+     ? source.metrics.home
+     : {},
+   away:
+    source.metrics?.away &&
+    typeof source.metrics.away === "object" &&
+    !Array.isArray(source.metrics.away)
+     ? source.metrics.away
+     : {}
+  }
+ };
 }
 
 function normalize(){

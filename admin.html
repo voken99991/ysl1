@@ -1,107 +1,125 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f0818">
 <title>YSL Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--card:#fff;--input:#faf8fd;--border:#e8e1ef;--sidebar:#110719;--danger:#d7355f;--ok:#168c5f}
-html[data-theme=dark]{--card:#1b0d29;--input:#14091f;--border:#382347}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif}[hidden]{display:none!important}
-.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 20%,rgba(124,58,237,.22),transparent 32%),#0b0510}
-.login-card{width:min(430px,100%);padding:36px;border:1px solid rgba(255,255,255,.1);border-radius:24px;color:#fff;background:rgba(22,11,32,.96);box-shadow:0 30px 90px rgba(0,0,0,.5)}
-.logo{display:grid;place-items:center;width:58px;height:58px;margin-bottom:22px;border-radius:17px;background:linear-gradient(145deg,#a45eff,#5b18a7);font:800 1rem Manrope}
-.login h1{margin:10px 0 8px;font:800 2.2rem Manrope;letter-spacing:-.05em}.login p{color:#b7aabf;line-height:1.6}
-label{display:grid;gap:7px;color:var(--muted);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-input,textarea,select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;color:var(--text);background:var(--input);outline:none}
-textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d0712;border-color:rgba(255,255,255,.1)}
-.login button{width:100%;height:48px;margin-top:14px;border:0;border-radius:11px;color:#1b0924;background:linear-gradient(135deg,#f0e5ff,#d3a3ff);font-weight:800}.error{min-height:18px;margin-top:8px;color:#ff91a5;font-size:.72rem}
-.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}.sidebar{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 16px;color:#fff;background:linear-gradient(180deg,#160a20,#09050e)}
-.side-brand{display:flex;align-items:center;gap:11px;padding:4px 7px 22px;border-bottom:1px solid rgba(255,255,255,.08)}.side-brand .logo{width:42px;height:42px;margin:0;border-radius:12px;font-size:.75rem}.side-brand div{display:flex;flex-direction:column}.side-brand small{color:#9789a1}
-.nav{display:grid;gap:6px;margin-top:20px}.nav button{min-height:44px;display:flex;align-items:center;gap:11px;padding:0 12px;border:0;border-radius:10px;color:#b9adbf;background:transparent;text-align:left;font-size:.74rem;font-weight:700}.nav button:hover,.nav button.active{color:#fff;background:rgba(168,85,247,.14)}
-.side-foot{margin-top:auto;display:grid;gap:8px}.side-foot a,.side-foot button{min-height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.09);border-radius:10px;color:#d6cbdc;background:rgba(255,255,255,.04);font-size:.7rem;font-weight:700}
-.main{min-width:0}.top{min-height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card)}.top h2{margin:0;font:800 1.1rem Manrope}.actions{display:flex;gap:9px;align-items:center}.actions button,.actions a,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--card);font-size:.7rem;font-weight:800}.actions .save,.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}
-.save-status{min-width:90px;color:var(--muted);font-size:.67rem;font-weight:700;text-align:right}.save-status.ok{color:var(--ok)}.save-status.bad{color:var(--danger)}
-.content{padding:28px}.page{display:none}.page.active{display:block}.heading{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:22px}.heading h1{margin:0;font:800 clamp(2rem,4vw,3rem) Manrope;letter-spacing:-.05em}.heading p{max-width:620px;color:var(--muted);line-height:1.7}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat,.card{border:1px solid var(--border);border-radius:17px;background:var(--card);box-shadow:var(--shadow)}.stat{padding:19px}.stat span{color:var(--muted);font-size:.68rem}.stat strong{display:block;margin-top:11px;font:800 2rem Manrope}.card{margin-top:16px;overflow:hidden}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 19px;border-bottom:1px solid var(--border)}.card-head h3{margin:0;font-size:.85rem}.card-body{padding:19px}.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}
-.editor-list{display:grid;gap:14px}.editor-card{padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--input)}.editor-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.editor-title h4{margin:0}.editor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.editor-grid .wide{grid-column:span 2}.logo-preview{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:12px;background:var(--card);overflow:hidden}.logo-preview img{width:100%;height:100%;object-fit:contain;padding:5px}.row-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
-.table-wrap{overflow:auto}.admin-table{width:100%;min-width:980px;border-collapse:collapse}.admin-table th,.admin-table td{height:52px;padding:0 10px;border-bottom:1px solid var(--border);font-size:.7rem;text-align:center}.admin-table th{color:var(--muted);background:var(--input);text-transform:uppercase}.admin-table td:nth-child(2),.admin-table th:nth-child(2){text-align:left}.club-cell{display:flex;align-items:center;gap:10px}.club-cell img{width:34px;height:34px;object-fit:contain;border-radius:9px;background:var(--card);border:1px solid var(--border)}
-.btn.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 30%,var(--border))}.btn.small{min-height:34px;padding:0 10px}
-.notice{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(22,140,95,.25);border-radius:10px;color:var(--ok);background:rgba(22,140,95,.07);font-size:.72rem;font-weight:700}.notice.show{display:block}.error-banner{display:none;margin-bottom:16px;padding:12px 14px;border:1px solid rgba(215,53,95,.25);border-radius:10px;color:#b52d50;background:rgba(215,53,95,.06);font-size:.72rem}.error-banner.show{display:block}
-@media(max-width:1100px){.stats{grid-template-columns:repeat(2,1fr)}.editor-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){.app{grid-template-columns:78px 1fr}.side-brand div,.nav button span:last-child,.side-foot{display:none}.nav button{justify-content:center;padding:0}.content{padding:18px}.grid2,.editor-grid{grid-template-columns:1fr}.top{padding:0 16px}.actions a,.actions button:not(.save){display:none}.heading{align-items:start;flex-direction:column}}
+:root{
+  --bg:#0f0818;--surface:#171021;--surface2:#1d1429;--surface3:#241832;
+  --line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.15);
+  --text:#f7f3fb;--muted:#a99cb5;--purple:#8f5cf6;--purple2:#6f3ee8;
+  --success:#58d39b;--danger:#ff6f8f;--warning:#e5b75a;--shadow:0 24px 70px rgba(0,0,0,.34)
+}
+*{box-sizing:border-box}html{background:var(--bg);color-scheme:dark}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 84% 12%,rgba(143,92,246,.08),transparent 28%),var(--bg);font-family:Inter,sans-serif}[hidden]{display:none!important}
+button,input,textarea,select{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px}.login-card{width:min(430px,100%);padding:32px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:var(--shadow)}.login-logo{width:56px;height:56px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,var(--purple),var(--purple2));font:800 1rem Manrope}.login h1{margin:18px 0 8px;font:800 2.2rem Manrope}.login p{color:var(--muted);line-height:1.6}.login label{display:grid;gap:7px;margin-top:18px;color:var(--muted);font-size:.65rem;font-weight:800;text-transform:uppercase}.login input{height:48px;padding:0 13px;border:1px solid var(--line);border-radius:11px;color:var(--text);background:var(--surface2)}.login button{width:100%;height:48px;margin-top:12px;border:0;border-radius:11px;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2));font-weight:800}.login-error{min-height:18px;margin-top:8px;color:var(--danger);font-size:.7rem}
+.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}.sidebar{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:18px 14px;border-right:1px solid var(--line);background:#0d0714}.brand{display:flex;align-items:center;gap:11px;padding:4px 6px 18px;border-bottom:1px solid var(--line)}.brand-logo{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--purple2));font:800 .75rem Manrope}.brand-copy strong{display:block;font-size:.78rem}.brand-copy span{color:var(--muted);font-size:.59rem}.nav{display:grid;gap:6px;margin-top:18px}.nav button{min-height:44px;display:flex;align-items:center;gap:11px;padding:0 12px;border:0;border-radius:10px;color:#b8adbf;background:transparent;text-align:left;font-size:.7rem;font-weight:700}.nav button:hover,.nav button.active{color:#fff;background:rgba(143,92,246,.13)}.side-footer{margin-top:auto;display:grid;gap:8px}.side-footer a,.side-footer button{min-height:40px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;color:#d8cfdf;background:var(--surface);font-size:.66rem;font-weight:700}
+.main{min-width:0}.topbar{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 24px;border-bottom:1px solid var(--line);background:rgba(15,8,24,.84);backdrop-filter:blur(16px)}.topbar h2{margin:0;font:800 1rem Manrope}.top-actions{display:flex;align-items:center;gap:9px}.status{min-width:100px;color:var(--muted);font-size:.64rem;text-align:right}.status.ok{color:var(--success)}.status.bad{color:var(--danger)}.top-actions a,.top-actions button,.btn{min-height:40px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px;border:1px solid var(--line);border-radius:10px;color:var(--text);background:var(--surface);font-size:.67rem;font-weight:800}.top-actions .save,.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2))}.btn.danger{color:var(--danger)}.btn.small{min-height:34px;padding:0 10px}
+.content{padding:24px}.page{display:none}.page.active{display:block}.heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:20px}.heading h1{margin:0;font:800 clamp(2rem,4vw,3.2rem) Manrope;letter-spacing:-.055em}.heading p{max-width:680px;margin:8px 0 0;color:var(--muted);line-height:1.6}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.stat{padding:17px;border:1px solid var(--line);border-radius:15px;background:var(--surface)}.stat span{color:var(--muted);font-size:.62rem;text-transform:uppercase}.stat strong{display:block;margin-top:10px;font:800 1.7rem Manrope}
+.card{margin-top:14px;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}.card-head h3{margin:0;font-size:.8rem}.card-body{padding:18px}.grid2,.grid3,.grid4{display:grid;gap:12px}.grid2{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}.full{grid-column:1/-1}
+label{display:grid;gap:7px;color:var(--muted);font-size:.61rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}input,textarea,select{width:100%;min-height:42px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;color:var(--text);background:var(--surface2);outline:none}textarea{min-height:90px;resize:vertical}
+.editor-list{display:grid;gap:12px}.editor-card{padding:15px;border:1px solid var(--line);border-radius:14px;background:var(--surface2)}.editor-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.editor-title h4{margin:0;font-size:.78rem}.row-actions{display:flex;gap:7px}.table-wrap{overflow:auto}.admin-table{width:100%;min-width:1000px;border-collapse:collapse}.admin-table th,.admin-table td{height:50px;padding:0 10px;border-bottom:1px solid var(--line);font-size:.67rem;text-align:center}.admin-table th{color:var(--muted);background:var(--surface2);text-transform:uppercase}.admin-table th:nth-child(2),.admin-table td:nth-child(2){text-align:left}.team-cell{display:flex;align-items:center;gap:9px}.team-cell img{width:32px;height:32px;object-fit:contain;border-radius:8px;background:var(--surface3)}
+.notice,.error-banner{display:none;margin-bottom:14px;padding:11px 13px;border-radius:10px;font-size:.68rem}.notice.show,.error-banner.show{display:block}.notice{color:var(--success);border:1px solid rgba(88,211,155,.22);background:rgba(88,211,155,.07)}.error-banner{color:var(--danger);border:1px solid rgba(255,111,143,.22);background:rgba(255,111,143,.07)}
+.comp-preview{display:flex;gap:8px;flex-wrap:wrap}.chip{min-height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:8px;font-size:.6rem;font-weight:800}.pl{color:#d6b5ff;background:rgba(155,54,255,.14)}.cc{color:#7df0e7;background:rgba(0,196,180,.13)}.fa{color:#ff9da1;background:rgba(239,62,66,.13)}.ucl{color:#aeb7ff;background:rgba(82,103,255,.14)}.wc{color:#efcf8c;background:rgba(213,162,63,.13)}.eu{color:#8fc7ff;background:rgba(31,143,255,.13)}
+@media(max-width:1150px){.stats{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.app{grid-template-columns:76px 1fr}.brand-copy,.nav button span:last-child,.side-footer{display:none}.nav button{justify-content:center}.content{padding:16px}.grid2,.grid3,.grid4{grid-template-columns:1fr}.topbar{padding:0 14px}.top-actions a{display:none}.heading{align-items:start;flex-direction:column}}
 </style>
 </head>
 <body>
 <section class="login" id="login">
 <form class="login-card" id="loginForm">
-<div class="logo">YSL</div><small>Secure administration</small><h1>Admin Panel</h1>
-<p>Edit teams, fixtures and automatically rebuild the live table.</p>
+<div class="login-logo">YSL</div>
+<h1>Admin Panel</h1>
+<p>Manage homepage content, teams, competitions, fixtures, players and the live table.</p>
 <label>Password<input id="password" type="password" required></label>
-<button type="submit">Open Admin Panel</button><div class="error" id="error"></div>
+<button type="submit">Open Admin Panel</button>
+<div class="login-error" id="loginError"></div>
 </form>
 </section>
 
 <div class="app" id="app" hidden>
 <aside class="sidebar">
-<div class="side-brand"><div class="logo">YSL</div><div><strong>YSL Admin</strong><small>League control</small></div></div>
+<div class="brand"><div class="brand-logo">YSL</div><div class="brand-copy"><strong>YSL Admin</strong><span>League control</span></div></div>
 <nav class="nav">
 <button class="active" data-page="dashboard"><span>⌂</span><span>Dashboard</span></button>
+<button data-page="homepage"><span>✎</span><span>Homepage</span></button>
 <button data-page="teams"><span>◉</span><span>Teams</span></button>
 <button data-page="fixtures"><span>◫</span><span>Fixtures</span></button>
+<button data-page="players"><span>♙</span><span>Players</span></button>
 <button data-page="standings"><span>≡</span><span>Standings</span></button>
-<button data-page="homepage"><span>✎</span><span>Homepage</span></button>
+<button data-page="settings"><span>⚙</span><span>Settings</span></button>
 </nav>
-<div class="side-foot"><a href="index.html">View website</a><button id="logout">Log out</button></div>
+<div class="side-footer"><a href="index.html">View website</a><button id="logout">Log out</button></div>
 </aside>
 
 <main class="main">
-<header class="top"><h2 id="title">Dashboard</h2><div class="actions"><span id="saveStatus" class="save-status">Connected</span><a href="index.html">View site</a><button class="save" id="save">Save changes</button></div></header>
+<header class="topbar">
+<h2 id="pageTitle">Dashboard</h2>
+<div class="top-actions"><span class="status" id="saveStatus">Connected</span><a href="index.html">View site</a><button class="save" id="saveButton">Save changes</button></div>
+</header>
+
 <div class="content">
-<div class="notice" id="notice">Changes saved and standings rebuilt.</div>
+<div class="notice" id="notice">Saved to Supabase and the live website.</div>
 <div class="error-banner" id="apiError"></div>
 
 <section class="page active" id="dashboard">
-<div class="heading"><div><h1>Dashboard</h1><p>Manage the teams and fixtures. Completed results automatically update the league table.</p></div></div>
+<div class="heading"><div><h1>Dashboard</h1><p>Everything on the public website is controlled from here.</p></div></div>
 <div class="stats">
 <article class="stat"><span>Teams</span><strong id="teamCount">0</strong></article>
 <article class="stat"><span>Fixtures</span><strong id="fixtureCount">0</strong></article>
+<article class="stat"><span>Players</span><strong id="playerCount">0</strong></article>
 <article class="stat"><span>Completed</span><strong id="completedCount">0</strong></article>
-<article class="stat"><span>League leader</span><strong id="leaderName">—</strong></article>
+<article class="stat"><span>Leader</span><strong id="leaderName">—</strong></article>
 </div>
-</section>
-
-<section class="page" id="teams">
-<div class="heading"><div><h1>Teams</h1><p>Add clubs once and reuse their names and logos throughout fixtures and standings.</p></div><button class="btn primary" id="addTeam">Add team</button></div>
-<div class="card"><div class="card-head"><h3>League clubs</h3></div><div class="card-body"><div class="editor-list" id="teamEditors"></div></div></div>
-</section>
-
-<section class="page" id="fixtures">
-<div class="heading"><div><h1>Fixtures</h1><p>Edit matchdays, dates, venues, statuses and scores. Full-time scores feed directly into the table.</p></div><button class="btn primary" id="addFixture">Add fixture</button></div>
-<div class="card"><div class="card-head"><h3>Season fixtures</h3></div><div class="card-body"><div class="editor-list" id="fixtureEditors"></div></div></div>
-</section>
-
-<section class="page" id="standings">
-<div class="heading"><div><h1>Standings</h1><p>This table is calculated automatically from completed fixture results.</p></div><button class="btn" id="rebuildTable">Rebuild table</button></div>
-<div class="card"><div class="card-head"><h3>Calculated league table</h3></div><div class="table-wrap">
-<table class="admin-table">
-<thead><tr><th>Pos</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead>
-<tbody id="standingsBody"></tbody>
-</table>
-</div></div>
+<div class="card"><div class="card-head"><h3>Competition styles</h3></div><div class="card-body"><div class="comp-preview"><span class="chip pl">Premier League</span><span class="chip cc">Carabao Cup</span><span class="chip fa">FA Cup</span><span class="chip ucl">UCL</span><span class="chip wc">World Cup</span><span class="chip eu">Euros</span></div></div></div>
 </section>
 
 <section class="page" id="homepage">
-<div class="heading"><div><h1>Homepage</h1><p>Edit the homepage heading and buttons.</p></div></div>
+<div class="heading"><div><h1>Homepage</h1><p>Edit the premium dark homepage text and buttons.</p></div></div>
 <div class="card"><div class="card-head"><h3>Hero content</h3></div><div class="card-body grid2">
-<label>Top headline<input id="heroTop"></label><label>Second headline<input id="heroBottom"></label>
+<label>Top headline<input id="heroTop"></label>
+<label>Second headline<input id="heroBottom"></label>
 <label class="full">Description<textarea id="heroDescription"></textarea></label>
-<label>Primary button text<input id="primaryText"></label><label>Primary button link<input id="primaryLink"></label>
-<label>Secondary button text<input id="secondaryText"></label><label>Secondary button link<input id="secondaryLink"></label>
+<label>Primary button text<input id="primaryText"></label>
+<label>Primary button link<input id="primaryLink"></label>
+<label>Secondary button text<input id="secondaryText"></label>
+<label>Secondary button link<input id="secondaryLink"></label>
+</div></div>
+</section>
+
+<section class="page" id="teams">
+<div class="heading"><div><h1>Teams</h1><p>Add each club once and reuse its logo everywhere.</p></div><button class="btn primary" id="addTeam">Add team</button></div>
+<div class="card"><div class="card-head"><h3>League teams</h3></div><div class="card-body"><div class="editor-list" id="teamEditors"></div></div></div>
+</section>
+
+<section class="page" id="fixtures">
+<div class="heading"><div><h1>Fixtures</h1><p>Add competitions, matchdays, statuses and results. Each competition gets its own card style.</p></div><button class="btn primary" id="addFixture">Add fixture</button></div>
+<div class="card"><div class="card-head"><h3>Season fixtures</h3></div><div class="card-body"><div class="editor-list" id="fixtureEditors"></div></div></div>
+</section>
+
+<section class="page" id="players">
+<div class="heading"><div><h1>Players</h1><p>Assign teams and update the simple dashboard statistics for each Roblox player.</p></div><button class="btn primary" id="addPlayer">Add player</button></div>
+<div class="card"><div class="card-head"><h3>Player profiles</h3></div><div class="card-body"><div class="editor-list" id="playerEditors"></div></div></div>
+</section>
+
+<section class="page" id="standings">
+<div class="heading"><div><h1>Standings</h1><p>Only completed Premier League fixtures affect the league table.</p></div><button class="btn" id="rebuildTable">Rebuild table</button></div>
+<div class="card"><div class="card-head"><h3>Calculated league table</h3></div><div class="table-wrap"><table class="admin-table"><thead><tr><th>Pos</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead><tbody id="standingsBody"></tbody></table></div></div>
+</section>
+
+<section class="page" id="settings">
+<div class="heading"><div><h1>Settings</h1><p>Global website branding and season information.</p></div></div>
+<div class="card"><div class="card-head"><h3>Website settings</h3></div><div class="card-body grid2">
+<label>Website name<input id="websiteName"></label>
+<label>League name<input id="leagueName"></label>
+<label>Season name<input id="seasonName"></label>
+<label>Discord invite<input id="discordInvite"></label>
+<label>Main purple<input id="mainPurple" type="color"></label>
+<label>Accent purple<input id="accentPurple" type="color"></label>
 </div></div>
 </section>
 </div>
@@ -111,9 +129,7 @@ textarea{min-height:100px;resize:vertical}.login input{color:#fff;background:#0d
 <script>
 let csrf="",data=null;
 const $=id=>document.getElementById(id);
-
-function showError(message){const box=$("apiError");box.textContent=message;box.classList.add("show")}
-function clearError(){$("apiError").classList.remove("show")}
+const competitions=["Premier League","Carabao Cup","FA Cup","UCL","World Cup","Euros"];
 
 async function api(url,options={}){
  const headers={...(options.headers||{})};
@@ -125,9 +141,12 @@ async function api(url,options={}){
  return body
 }
 
+function showError(message){$("apiError").textContent=message;$("apiError").classList.add("show")}
+function clearError(){$("apiError").classList.remove("show")}
+
 async function checkSession(){
- const session=await api("/api/session");
- if(session.authenticated){csrf=session.csrf;await openApp()}
+ const s=await api("/api/session");
+ if(s.authenticated){csrf=s.csrf;await openApp()}
 }
 
 async function openApp(){
@@ -138,147 +157,172 @@ async function loadSite(){
  clearError();$("saveStatus").textContent="Loading...";
  try{
   data=await api("/api/site");
-  normalizeData();
+  normalize();
   renderAll();
-  $("saveStatus").textContent="Connected";$("saveStatus").className="save-status ok"
+  $("saveStatus").textContent="Connected";$("saveStatus").className="status ok"
  }catch(error){
-  $("saveStatus").textContent="Connection failed";$("saveStatus").className="save-status bad";showError(error.message)
+  $("saveStatus").textContent="Connection failed";$("saveStatus").className="status bad";showError(error.message)
  }
 }
 
-function normalizeData(){
- data.hero=data.hero||{top:"YSL",bottom:"REIMAGINED",description:"The start of your MPS journey.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"League Standings",secondaryLink:"standings.html"};
- data.teams=Array.isArray(data.teams)&&data.teams.length?data.teams:[
-  {name:"Arsenal",logo:""},{name:"Chelsea",logo:""},{name:"Liverpool",logo:""},{name:"Manchester City",logo:""},{name:"Manchester United",logo:""},{name:"Newcastle",logo:""}
- ];
+function normalize(){
+ data.hero={top:"YSL",bottom:"REIMAGINED",description:"The start of your MPS journey.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"League Standings",secondaryLink:"standings.html",...(data.hero||{})};
+ data.settings={websiteName:"YSL",leagueName:"Youth Soccer League",seasonName:"YSL Season One",discordInvite:"",...(data.settings||{})};
+ data.theme={mainPurple:"#8f5cf6",accentPurple:"#6f3ee8",...(data.theme||{})};
+ data.teams=Array.isArray(data.teams)?data.teams:[];
  data.fixtures=Array.isArray(data.fixtures)?data.fixtures:[];
+ data.players=Array.isArray(data.players)?data.players:(Array.isArray(data.playerStats)?data.playerStats:[]);
  data.fixtures=data.fixtures.map((f,i)=>({
-  id:f.id||crypto.randomUUID(),matchday:Number(f.matchday||1),date:f.date||"",time:f.time||"",home:f.home||data.teams[0]?.name||"",away:f.away||data.teams[1]?.name||"",
-  homeLogo:f.homeLogo||"",awayLogo:f.awayLogo||"",venue:f.venue||"",status:f.status||"upcoming",
-  homeScore:f.homeScore??"",awayScore:f.awayScore??""
+  id:f.id||crypto.randomUUID(),matchday:Number(f.matchday||1),competition:f.competition||"Premier League",
+  date:f.date||"",time:f.time||"",home:f.home||data.teams[0]?.name||"",away:f.away||data.teams[1]?.name||"",
+  venue:f.venue||"",status:f.status||"upcoming",homeScore:f.homeScore??"",awayScore:f.awayScore??"",
+  homeLogo:f.homeLogo||"",awayLogo:f.awayLogo||""
  }));
- syncFixtureLogos();
- rebuildStandings();
+ data.players=data.players.map(p=>({
+  username:p.username||p.robloxUsername||p.name||"",team:p.team||p.teamName||"",position:p.position||p.pos||"",
+  goals:Number(p.goals||0),assists:Number(p.assists||0),appearances:Number(p.appearances??p.apps??0),
+  potm:Number(p.potm??p.playerOfTheMatch??0),availability:p.availability||p.status||"Available",note:p.note||p.notes||""
+ }));
+ syncLogos();rebuildStandings()
 }
 
 function renderAll(){
- renderTeams();renderFixtures();renderStandings();fillHomepage();updateStats()
+ fillHomepage();fillSettings();renderTeams();renderFixtures();renderPlayers();renderStandings();updateStats()
+}
+
+function fillHomepage(){
+ $("heroTop").value=data.hero.top;$("heroBottom").value=data.hero.bottom;$("heroDescription").value=data.hero.description;
+ $("primaryText").value=data.hero.primaryText;$("primaryLink").value=data.hero.primaryLink;
+ $("secondaryText").value=data.hero.secondaryText;$("secondaryLink").value=data.hero.secondaryLink
+}
+
+function fillSettings(){
+ $("websiteName").value=data.settings.websiteName;$("leagueName").value=data.settings.leagueName;
+ $("seasonName").value=data.settings.seasonName;$("discordInvite").value=data.settings.discordInvite;
+ $("mainPurple").value=data.theme.mainPurple;$("accentPurple").value=data.theme.accentPurple
 }
 
 function renderTeams(){
  $("teamEditors").innerHTML="";
  data.teams.forEach((team,index)=>{
   const card=document.createElement("article");card.className="editor-card";
-  card.innerHTML=`
-   <div class="editor-title"><h4>Team ${index+1}</h4><button class="btn danger small" data-delete-team="${index}">Delete</button></div>
-   <div class="editor-grid">
-    <label class="wide">Team name<input data-team="${index}" data-key="name" value="${safe(team.name)}"></label>
-    <label class="wide">Logo URL<input data-team="${index}" data-key="logo" value="${safe(team.logo||"")}"></label>
-   </div>`;
+  card.innerHTML=`<div class="editor-title"><h4>Team ${index+1}</h4><div class="row-actions"><button class="btn danger small" data-delete-team="${index}">Delete</button></div></div>
+  <div class="grid2"><label>Team name<input data-team="${index}" data-key="name" value="${safe(team.name)}"></label><label>Logo URL<input data-team="${index}" data-key="logo" value="${safe(team.logo||"")}"></label></div>`;
   $("teamEditors").appendChild(card)
  });
- document.querySelectorAll("[data-delete-team]").forEach(btn=>btn.onclick=()=>{
-  const index=Number(btn.dataset.deleteTeam);
-  if(confirm("Delete this team?")){data.teams.splice(index,1);syncFixtureLogos();rebuildStandings();renderAll()}
- })
+ document.querySelectorAll("[data-delete-team]").forEach(btn=>btn.onclick=()=>{if(confirm("Delete this team?")){data.teams.splice(Number(btn.dataset.deleteTeam),1);syncLogos();rebuildStandings();renderAll()}})
 }
 
 function teamOptions(selected){
- return data.teams.map(team=>`<option value="${safe(team.name)}" ${team.name===selected?"selected":""}>${safe(team.name)}</option>`).join("")
+ return `<option value="">Unassigned</option>`+data.teams.map(t=>`<option value="${safe(t.name)}" ${t.name===selected?"selected":""}>${safe(t.name)}</option>`).join("")
+}
+
+function competitionOptions(selected){
+ return competitions.map(c=>`<option value="${c}" ${c===selected?"selected":""}>${c}</option>`).join("")
 }
 
 function renderFixtures(){
  $("fixtureEditors").innerHTML="";
- data.fixtures.forEach((fixture,index)=>{
+ data.fixtures.forEach((f,index)=>{
   const card=document.createElement("article");card.className="editor-card";
-  card.innerHTML=`
-   <div class="editor-title"><h4>Fixture ${index+1}</h4><button class="btn danger small" data-delete-fixture="${index}">Delete</button></div>
-   <div class="editor-grid">
-    <label>Matchday<input type="number" min="1" data-fixture="${index}" data-key="matchday" value="${fixture.matchday}"></label>
-    <label>Date<input type="date" data-fixture="${index}" data-key="date" value="${safe(fixture.date)}"></label>
-    <label>Time<input type="time" data-fixture="${index}" data-key="time" value="${safe(fixture.time)}"></label>
-    <label>Status<select data-fixture="${index}" data-key="status">
-      <option value="upcoming" ${fixture.status==="upcoming"?"selected":""}>Upcoming</option>
-      <option value="live" ${fixture.status==="live"?"selected":""}>Live</option>
-      <option value="complete" ${fixture.status==="complete"?"selected":""}>Complete</option>
-    </select></label>
-    <label>Home team<select data-fixture="${index}" data-key="home">${teamOptions(fixture.home)}</select></label>
-    <label>Home score<input type="number" min="0" data-fixture="${index}" data-key="homeScore" value="${safe(fixture.homeScore)}"></label>
-    <label>Away team<select data-fixture="${index}" data-key="away">${teamOptions(fixture.away)}</select></label>
-    <label>Away score<input type="number" min="0" data-fixture="${index}" data-key="awayScore" value="${safe(fixture.awayScore)}"></label>
-    <label class="wide">Venue<input data-fixture="${index}" data-key="venue" value="${safe(fixture.venue)}"></label>
-   </div>`;
+  card.innerHTML=`<div class="editor-title"><h4>Fixture ${index+1}</h4><div class="row-actions"><button class="btn danger small" data-delete-fixture="${index}">Delete</button></div></div>
+  <div class="grid4">
+   <label>Competition<select data-fixture="${index}" data-key="competition">${competitionOptions(f.competition)}</select></label>
+   <label>Matchday<input type="number" min="1" data-fixture="${index}" data-key="matchday" value="${f.matchday}"></label>
+   <label>Date<input type="date" data-fixture="${index}" data-key="date" value="${safe(f.date)}"></label>
+   <label>Time<input type="time" data-fixture="${index}" data-key="time" value="${safe(f.time)}"></label>
+   <label>Home team<select data-fixture="${index}" data-key="home">${teamOptions(f.home)}</select></label>
+   <label>Home score<input type="number" min="0" data-fixture="${index}" data-key="homeScore" value="${safe(f.homeScore)}"></label>
+   <label>Away team<select data-fixture="${index}" data-key="away">${teamOptions(f.away)}</select></label>
+   <label>Away score<input type="number" min="0" data-fixture="${index}" data-key="awayScore" value="${safe(f.awayScore)}"></label>
+   <label>Status<select data-fixture="${index}" data-key="status"><option value="upcoming" ${f.status==="upcoming"?"selected":""}>Upcoming</option><option value="live" ${f.status==="live"?"selected":""}>Live</option><option value="complete" ${f.status==="complete"?"selected":""}>Complete</option></select></label>
+   <label class="full">Venue<input data-fixture="${index}" data-key="venue" value="${safe(f.venue)}"></label>
+  </div>`;
   $("fixtureEditors").appendChild(card)
  });
- document.querySelectorAll("[data-delete-fixture]").forEach(btn=>btn.onclick=()=>{
-  const index=Number(btn.dataset.deleteFixture);
-  if(confirm("Delete this fixture?")){data.fixtures.splice(index,1);rebuildStandings();renderAll()}
- })
+ document.querySelectorAll("[data-delete-fixture]").forEach(btn=>btn.onclick=()=>{if(confirm("Delete this fixture?")){data.fixtures.splice(Number(btn.dataset.deleteFixture),1);rebuildStandings();renderAll()}})
 }
 
-function collectEditors(){
- document.querySelectorAll("[data-team]").forEach(input=>{
-  const i=Number(input.dataset.team);data.teams[i][input.dataset.key]=input.value.trim()
+function renderPlayers(){
+ $("playerEditors").innerHTML="";
+ data.players.forEach((p,index)=>{
+  const card=document.createElement("article");card.className="editor-card";
+  card.innerHTML=`<div class="editor-title"><h4>${safe(p.username||`Player ${index+1}`)}</h4><div class="row-actions"><button class="btn danger small" data-delete-player="${index}">Delete</button></div></div>
+  <div class="grid4">
+   <label>Roblox username<input data-player="${index}" data-key="username" value="${safe(p.username)}"></label>
+   <label>Team<select data-player="${index}" data-key="team">${teamOptions(p.team)}</select></label>
+   <label>Position<input data-player="${index}" data-key="position" value="${safe(p.position)}" placeholder="ST, CM, GK..."></label>
+   <label>Availability<input data-player="${index}" data-key="availability" value="${safe(p.availability)}"></label>
+   <label>Goals<input type="number" min="0" data-player="${index}" data-key="goals" value="${p.goals}"></label>
+   <label>Assists<input type="number" min="0" data-player="${index}" data-key="assists" value="${p.assists}"></label>
+   <label>Appearances<input type="number" min="0" data-player="${index}" data-key="appearances" value="${p.appearances}"></label>
+   <label>POTM awards<input type="number" min="0" data-player="${index}" data-key="potm" value="${p.potm}"></label>
+   <label class="full">Player note<textarea data-player="${index}" data-key="note">${safe(p.note)}</textarea></label>
+  </div>`;
+  $("playerEditors").appendChild(card)
  });
+ document.querySelectorAll("[data-delete-player]").forEach(btn=>btn.onclick=()=>{if(confirm("Delete this player profile?")){data.players.splice(Number(btn.dataset.deletePlayer),1);renderAll()}})
+}
+
+function collect(){
+ document.querySelectorAll("[data-team]").forEach(input=>data.teams[Number(input.dataset.team)][input.dataset.key]=input.value.trim());
  document.querySelectorAll("[data-fixture]").forEach(input=>{
-  const i=Number(input.dataset.fixture),key=input.dataset.key;
-  data.fixtures[i][key]=["matchday","homeScore","awayScore"].includes(key)&&input.value!==""?Number(input.value):input.value
+  const key=input.dataset.key,index=Number(input.dataset.fixture);
+  data.fixtures[index][key]=["matchday","homeScore","awayScore"].includes(key)&&input.value!==""?Number(input.value):input.value
+ });
+ document.querySelectorAll("[data-player]").forEach(input=>{
+  const key=input.dataset.key,index=Number(input.dataset.player);
+  data.players[index][key]=["goals","assists","appearances","potm"].includes(key)?Number(input.value||0):input.value.trim()
  });
  data.hero={top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim()};
- syncFixtureLogos();rebuildStandings()
+ data.settings={websiteName:$("websiteName").value.trim(),leagueName:$("leagueName").value.trim(),seasonName:$("seasonName").value.trim(),discordInvite:$("discordInvite").value.trim()};
+ data.theme={...data.theme,mainPurple:$("mainPurple").value,accentPurple:$("accentPurple").value};
+ syncLogos();rebuildStandings()
 }
 
-function syncFixtureLogos(){
- const logoMap=Object.fromEntries(data.teams.map(team=>[team.name,team.logo||""]));
- data.fixtures.forEach(f=>{f.homeLogo=logoMap[f.home]||"";f.awayLogo=logoMap[f.away]||""})
+function syncLogos(){
+ const map=Object.fromEntries(data.teams.map(t=>[t.name,t.logo||""]));
+ data.fixtures.forEach(f=>{f.homeLogo=map[f.home]||"";f.awayLogo=map[f.away]||""})
 }
 
 function rebuildStandings(){
  const table=new Map();
- data.teams.forEach(team=>table.set(team.name,{name:team.name,logo:team.logo||"",played:0,wins:0,draws:0,losses:0,gf:0,ga:0,points:0,form:[],trend:0}));
- data.fixtures
-  .filter(f=>f.status==="complete"&&f.homeScore!==""&&f.awayScore!=="")
-  .sort((a,b)=>`${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
-  .forEach(f=>{
-   if(!table.has(f.home)||!table.has(f.away))return;
-   const home=table.get(f.home),away=table.get(f.away),hs=Number(f.homeScore),as=Number(f.awayScore);
-   home.played++;away.played++;home.gf+=hs;home.ga+=as;away.gf+=as;away.ga+=hs;
-   if(hs>as){home.wins++;away.losses++;home.points+=3;home.form.push("W");away.form.push("L")}
-   else if(hs<as){away.wins++;home.losses++;away.points+=3;away.form.push("W");home.form.push("L")}
-   else{home.draws++;away.draws++;home.points++;away.points++;home.form.push("D");away.form.push("D")}
-  });
- data.standings=[...table.values()]
-  .map(team=>({...team,form:team.form.slice(-5)}))
-  .sort((a,b)=>b.points-a.points||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.name.localeCompare(b.name));
- data.standings.forEach((team,index)=>team.position=index+1)
+ data.teams.forEach(t=>table.set(t.name,{name:t.name,logo:t.logo||"",played:0,wins:0,draws:0,losses:0,gf:0,ga:0,points:0,form:[],trend:0}));
+ data.fixtures.filter(f=>f.competition==="Premier League"&&f.status==="complete"&&f.homeScore!==""&&f.awayScore!=="").sort((a,b)=>`${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)).forEach(f=>{
+  if(!table.has(f.home)||!table.has(f.away))return;
+  const h=table.get(f.home),a=table.get(f.away),hs=Number(f.homeScore),as=Number(f.awayScore);
+  h.played++;a.played++;h.gf+=hs;h.ga+=as;a.gf+=as;a.ga+=hs;
+  if(hs>as){h.wins++;a.losses++;h.points+=3;h.form.push("W");a.form.push("L")}
+  else if(hs<as){a.wins++;h.losses++;a.points+=3;a.form.push("W");h.form.push("L")}
+  else{h.draws++;a.draws++;h.points++;a.points++;h.form.push("D");a.form.push("D")}
+ });
+ data.standings=[...table.values()].map(t=>({...t,form:t.form.slice(-5)})).sort((a,b)=>b.points-a.points||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.name.localeCompare(b.name));
+ data.standings.forEach((t,i)=>t.position=i+1)
 }
 
 function renderStandings(){
  $("standingsBody").innerHTML="";
- data.standings.forEach(team=>{
+ data.standings.forEach(t=>{
   const row=document.createElement("tr");
-  row.innerHTML=`<td>${team.position}</td><td><div class="club-cell">${team.logo?`<img src="${safe(team.logo)}" alt="">`:""}<strong>${safe(team.name)}</strong></div></td><td>${team.played}</td><td>${team.wins}</td><td>${team.draws}</td><td>${team.losses}</td><td>${team.gf}</td><td>${team.ga}</td><td>${team.gf-team.ga>0?"+":""}${team.gf-team.ga}</td><td><strong>${team.points}</strong></td><td>${team.form.join(" ")||"—"}</td>`;
+  row.innerHTML=`<td>${t.position}</td><td><div class="team-cell">${t.logo?`<img src="${safe(t.logo)}" alt="">`:""}<strong>${safe(t.name)}</strong></div></td><td>${t.played}</td><td>${t.wins}</td><td>${t.draws}</td><td>${t.losses}</td><td>${t.gf}</td><td>${t.ga}</td><td>${t.gf-t.ga>0?"+":""}${t.gf-t.ga}</td><td><strong>${t.points}</strong></td><td>${t.form.join(" ")||"—"}</td>`;
   $("standingsBody").appendChild(row)
  })
 }
 
-function fillHomepage(){
- $("heroTop").value=data.hero.top;$("heroBottom").value=data.hero.bottom;$("heroDescription").value=data.hero.description;$("primaryText").value=data.hero.primaryText;$("primaryLink").value=data.hero.primaryLink;$("secondaryText").value=data.hero.secondaryText;$("secondaryLink").value=data.hero.secondaryLink
-}
-
 function updateStats(){
- $("teamCount").textContent=data.teams.length;$("fixtureCount").textContent=data.fixtures.length;$("completedCount").textContent=data.fixtures.filter(f=>f.status==="complete").length;$("leaderName").textContent=data.standings[0]?.name||"—"
+ $("teamCount").textContent=data.teams.length;$("fixtureCount").textContent=data.fixtures.length;$("playerCount").textContent=data.players.length;
+ $("completedCount").textContent=data.fixtures.filter(f=>f.status==="complete").length;$("leaderName").textContent=data.standings[0]?.name||"—"
 }
 
-$("loginForm").onsubmit=async e=>{e.preventDefault();$("error").textContent="";try{const r=await api("/api/login",{method:"POST",body:JSON.stringify({password:$("password").value})});csrf=r.csrf;await openApp()}catch(error){$("error").textContent=error.message}};
+$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginError").textContent="";try{const r=await api("/api/login",{method:"POST",body:JSON.stringify({password:$("password").value})});csrf=r.csrf;await openApp()}catch(error){$("loginError").textContent=error.message}};
 $("logout").onclick=async()=>{try{await api("/api/logout",{method:"POST"})}finally{location.reload()}};
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>openPage(b.dataset.page));
-function openPage(name){document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));$("title").textContent=name[0].toUpperCase()+name.slice(1)}
-$("addTeam").onclick=()=>{collectEditors();data.teams.push({name:`New Team ${data.teams.length+1}`,logo:""});renderAll()};
-$("addFixture").onclick=()=>{collectEditors();data.fixtures.push({id:crypto.randomUUID(),matchday:1,date:"",time:"",home:data.teams[0]?.name||"",away:data.teams[1]?.name||"",homeLogo:"",awayLogo:"",venue:"",status:"upcoming",homeScore:"",awayScore:""});renderAll()};
-$("rebuildTable").onclick=()=>{collectEditors();renderStandings();updateStats()};
-$("save").onclick=async()=>{collectEditors();clearError();$("saveStatus").textContent="Saving...";$("saveStatus").className="save-status";try{await api("/api/site",{method:"POST",body:JSON.stringify(data)});$("saveStatus").textContent="Saved online";$("saveStatus").className="save-status ok";$("notice").classList.add("show");setTimeout(()=>$("notice").classList.remove("show"),2200)}catch(error){$("saveStatus").textContent="Save failed";$("saveStatus").className="save-status bad";showError(error.message)}};
-function safe(value){return String(value??"").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===b.dataset.page));$("pageTitle").textContent=b.dataset.page[0].toUpperCase()+b.dataset.page.slice(1)});
+$("addTeam").onclick=()=>{collect();data.teams.push({name:`New Team ${data.teams.length+1}`,logo:""});renderAll()};
+$("addFixture").onclick=()=>{collect();data.fixtures.push({id:crypto.randomUUID(),competition:"Premier League",matchday:1,date:"",time:"",home:data.teams[0]?.name||"",away:data.teams[1]?.name||"",venue:"",status:"upcoming",homeScore:"",awayScore:"",homeLogo:"",awayLogo:""});renderAll()};
+$("addPlayer").onclick=()=>{collect();data.players.push({username:"",team:"",position:"",goals:0,assists:0,appearances:0,potm:0,availability:"Available",note:""});renderAll()};
+$("rebuildTable").onclick=()=>{collect();renderStandings();updateStats()};
+$("saveButton").onclick=async()=>{collect();clearError();$("saveStatus").textContent="Saving...";$("saveStatus").className="status";try{await api("/api/site",{method:"POST",body:JSON.stringify(data)});$("saveStatus").textContent="Saved online";$("saveStatus").className="status ok";$("notice").classList.add("show");setTimeout(()=>$("notice").classList.remove("show"),2200)}catch(error){$("saveStatus").textContent="Save failed";$("saveStatus").className="status bad";showError(error.message)}};
+function safe(v){return String(v??"").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
 checkSession().catch(error=>showError(error.message));
 </script>
 </body>

@@ -27,6 +27,10 @@ label{display:grid;gap:7px;color:var(--muted);font-size:.61rem;font-weight:800;t
 .notice,.error-banner{display:none;margin-bottom:14px;padding:11px 13px;border-radius:10px;font-size:.68rem}.notice.show,.error-banner.show{display:block}.notice{color:var(--success);border:1px solid rgba(88,211,155,.22);background:rgba(88,211,155,.07)}.error-banner{color:var(--danger);border:1px solid rgba(255,111,143,.22);background:rgba(255,111,143,.07)}
 .comp-preview{display:flex;gap:8px;flex-wrap:wrap}.chip{min-height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:8px;font-size:.6rem;font-weight:800}.pl{color:#d6b5ff;background:rgba(155,54,255,.14)}.cc{color:#7df0e7;background:rgba(0,196,180,.13)}.fa{color:#ff9da1;background:rgba(239,62,66,.13)}.ucl{color:#aeb7ff;background:rgba(82,103,255,.14)}.wc{color:#efcf8c;background:rgba(213,162,63,.13)}.eu{color:#8fc7ff;background:rgba(31,143,255,.13)}
 @media(max-width:1150px){.stats{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.app{grid-template-columns:76px 1fr}.brand-copy,.nav button span:last-child,.side-footer{display:none}.nav button{justify-content:center}.content{padding:16px}.grid2,.grid3,.grid4{grid-template-columns:1fr}.topbar{padding:0 14px}.top-actions a{display:none}.heading{align-items:start;flex-direction:column}}
+
+.fixture-title-block{display:grid;gap:5px}.fixture-subtitle{color:var(--muted);font-size:.62rem}.stats-button{gap:8px}.stats-button span:last-child{font-size:.9rem}
+.stats-page{position:fixed;inset:0;z-index:100;background:var(--bg);overflow:auto}.stats-header{position:sticky;top:0;z-index:3;min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 22px;border-bottom:1px solid var(--line);background:rgba(15,8,24,.95);backdrop-filter:blur(16px)}.stats-header-left{display:flex;align-items:center;gap:12px}.back-button{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;color:var(--text);background:var(--surface)}.stats-header h2{margin:0;font:800 1rem Manrope}.stats-header p{margin:4px 0 0;color:var(--muted);font-size:.62rem}.stats-content{width:min(1400px,100%);margin:auto;padding:24px}.stats-hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-bottom:16px}.stats-hero h1{margin:0;font:800 clamp(2rem,4vw,3.4rem) Manrope;letter-spacing:-.05em}.stats-score{padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font:800 1.35rem Manrope}.stats-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.stats-tab{min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:10px;color:var(--muted);background:var(--surface);font-size:.66rem;font-weight:800}.stats-tab.active{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--purple),var(--purple2))}.stats-section{display:none}.stats-section.active{display:block}.split,.lineup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.sub-card{border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}.sub-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}.sub-head h3{margin:0;font-size:.77rem}.sub-body{padding:16px}.dynamic-list{display:grid;gap:10px}.dynamic-row{display:grid;grid-template-columns:1fr 1fr 100px auto;gap:9px;align-items:end;padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--input)}.dynamic-row.lineup{grid-template-columns:1fr 110px 110px auto}.dynamic-row.card-event{grid-template-columns:1fr 120px 120px auto}.mini-note{color:var(--muted);font-size:.64rem;line-height:1.55}.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--input)}.metric span{display:block;color:var(--muted);font-size:.58rem;text-transform:uppercase}.metric input{margin-top:8px}.save-bottom{position:sticky;bottom:0;display:flex;justify-content:flex-end;gap:9px;padding:14px 22px;border-top:1px solid var(--line);background:rgba(15,8,24,.95);backdrop-filter:blur(16px)}
+@media(max-width:900px){.split,.lineup-grid{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.dynamic-row,.dynamic-row.lineup,.dynamic-row.card-event{grid-template-columns:1fr}.stats-content{padding:16px}.stats-hero{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -127,10 +131,26 @@ label{display:grid;gap:7px;color:var(--muted);font-size:.61rem;font-weight:800;t
 </main>
 </div>
 
+
+<section class="stats-page" id="fixtureStatsPage" hidden>
+<header class="stats-header"><div class="stats-header-left"><button class="back-button" id="closeStats">←</button><div><h2 id="statsHeaderTitle">Fixture statistics</h2><p>Detailed match editor</p></div></div><button class="btn primary" id="saveStatsTop">Save fixture stats</button></header>
+<div class="stats-content">
+<section class="stats-hero"><div><h1 id="statsFixtureTitle">Home vs Away</h1><p class="mini-note" id="statsFixtureMeta">Competition • Date • Venue</p></div><div class="stats-score" id="statsScore">0 – 0</div></section>
+<nav class="stats-tabs"><button class="stats-tab active" data-stats-tab="overview">Overview</button><button class="stats-tab" data-stats-tab="lineups">Lineups</button><button class="stats-tab" data-stats-tab="goals">Goals</button><button class="stats-tab" data-stats-tab="cards">Cards</button><button class="stats-tab" data-stats-tab="substitutions">Substitutions</button><button class="stats-tab" data-stats-tab="matchstats">Match stats</button></nav>
+<section class="stats-section active" id="stats-overview"><div class="split"><div class="sub-card"><div class="sub-head"><h3>Match information</h3></div><div class="sub-body grid2"><label>Referee<input id="matchReferee"></label><label>Attendance<input id="matchAttendance" type="number" min="0"></label><label>Player of the match<input id="matchPotm"></label><label>Round / stage<input id="matchStage"></label><label class="full">Match report<textarea id="matchReport"></textarea></label></div></div><div class="sub-card"><div class="sub-head"><h3>Publishing</h3></div><div class="sub-body grid2"><label>Stats visible<select id="statsVisible"><option value="true">Visible</option><option value="false">Hidden</option></select></label><label>Report status<select id="reportStatus"><option value="draft">Draft</option><option value="published">Published</option></select></label><label class="full">Highlights URL<input id="highlightsUrl"></label></div></div></div></section>
+<section class="stats-section" id="stats-lineups"><div class="lineup-grid"><div class="sub-card"><div class="sub-head"><h3 id="homeLineupTitle">Home lineup</h3><button class="btn small" id="addHomeLineup">Add player</button></div><div class="sub-body"><div class="dynamic-list" id="homeLineupList"></div></div></div><div class="sub-card"><div class="sub-head"><h3 id="awayLineupTitle">Away lineup</h3><button class="btn small" id="addAwayLineup">Add player</button></div><div class="sub-body"><div class="dynamic-list" id="awayLineupList"></div></div></div></div></section>
+<section class="stats-section" id="stats-goals"><div class="sub-card"><div class="sub-head"><h3>Goal scorers</h3><button class="btn small" id="addGoal">Add goal</button></div><div class="sub-body"><div class="dynamic-list" id="goalList"></div></div></div></section>
+<section class="stats-section" id="stats-cards"><div class="sub-card"><div class="sub-head"><h3>Cards</h3><button class="btn small" id="addCard">Add card</button></div><div class="sub-body"><div class="dynamic-list" id="cardList"></div></div></div></section>
+<section class="stats-section" id="stats-substitutions"><div class="sub-card"><div class="sub-head"><h3>Substitutions</h3><button class="btn small" id="addSubstitution">Add substitution</button></div><div class="sub-body"><div class="dynamic-list" id="substitutionList"></div></div></div></section>
+<section class="stats-section" id="stats-matchstats"><div class="split"><div class="sub-card"><div class="sub-head"><h3 id="homeStatsTitle">Home statistics</h3></div><div class="sub-body metric-grid" id="homeMetrics"></div></div><div class="sub-card"><div class="sub-head"><h3 id="awayStatsTitle">Away statistics</h3></div><div class="sub-body metric-grid" id="awayMetrics"></div></div></div></section>
+</div>
+<footer class="save-bottom"><button class="btn" id="cancelStats">Close</button><button class="btn primary" id="saveStatsBottom">Save fixture stats</button></footer>
+</section>
 <script>
-let csrf="",data=null;
+let csrf="",data=null,currentFixtureIndex=null,statsDraft=null;
 const $=id=>document.getElementById(id);
 const competitions=["Premier League","Carabao Cup","FA Cup","UCL","World Cup","Euros"];
+const metricKeys=[["possession","Possession %"],["shots","Shots"],["shotsOnTarget","Shots on target"],["corners","Corners"],["fouls","Fouls"],["offsides","Offsides"],["passes","Passes"],["saves","Saves"]];
 
 async function api(url,options={}){
  const headers={Accept:"application/json",...(options.headers||{})};
@@ -221,7 +241,7 @@ function normalize(){
   id:f.id||crypto.randomUUID(),matchday:Number(f.matchday||1),competition:f.competition||"Premier League",
   date:f.date||"",time:f.time||"",home:f.home||data.teams[0]?.name||"",away:f.away||data.teams[1]?.name||"",
   venue:f.venue||"",status:f.status||"upcoming",homeScore:f.homeScore??"",awayScore:f.awayScore??"",
-  homeLogo:f.homeLogo||"",awayLogo:f.awayLogo||""
+  homeLogo:f.homeLogo||"",awayLogo:f.awayLogo||"",stats:normalizeStats(f.stats)
  }));
  data.players=data.players.map(p=>({
   username:p.username||p.robloxUsername||p.name||"",team:p.team||p.teamName||"",position:p.position||p.pos||"",
@@ -270,7 +290,8 @@ function renderFixtures(){
  $("fixtureEditors").innerHTML="";
  data.fixtures.forEach((f,index)=>{
   const card=document.createElement("article");card.className="editor-card";
-  card.innerHTML=`<div class="editor-title"><h4>Fixture ${index+1}</h4><div class="row-actions"><button class="btn danger small" data-delete-fixture="${index}">Delete</button></div></div>
+  const detailCount=(f.stats?.goals?.length||0)+(f.stats?.cards?.length||0)+(f.stats?.substitutions?.length||0)+(f.stats?.lineups?.home?.length||0)+(f.stats?.lineups?.away?.length||0);
+  card.innerHTML=`<div class="editor-title"><div class="fixture-title-block"><h4>${safe(f.home||"Home")} vs ${safe(f.away||"Away")}</h4><span class="fixture-subtitle">${safe(f.competition)} • ${detailCount} detailed entries</span></div><div class="row-actions"><button class="btn small stats-button" data-open-stats="${index}"><span>Add stats</span><span>→</span></button><button class="btn danger small" data-delete-fixture="${index}">Delete</button></div></div>
   <div class="grid4">
    <label>Competition<select data-fixture="${index}" data-key="competition">${competitionOptions(f.competition)}</select></label>
    <label>Matchday<input type="number" min="1" data-fixture="${index}" data-key="matchday" value="${f.matchday}"></label>

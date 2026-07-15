@@ -65,6 +65,7 @@ label{display:grid;gap:7px;color:var(--muted);font-size:.61rem;font-weight:800;t
 <div class="content">
 <div class="notice" id="notice">Saved to Supabase and the live website.</div>
 <div class="error-banner" id="apiError"></div>
+<div id="saveDebug" style="display:none;margin-bottom:14px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;color:var(--muted);background:var(--surface);font-size:.65rem;white-space:pre-wrap"></div>
 
 <section class="page active" id="dashboard">
 <div class="heading"><div><h1>Dashboard</h1><p>Everything on the public website is controlled from here.</p></div></div>
@@ -132,13 +133,57 @@ const $=id=>document.getElementById(id);
 const competitions=["Premier League","Carabao Cup","FA Cup","UCL","World Cup","Euros"];
 
 async function api(url,options={}){
- const headers={...(options.headers||{})};
- if(options.body&&!headers["Content-Type"])headers["Content-Type"]="application/json";
- if(csrf)headers["X-CSRF-Token"]=csrf;
- const response=await fetch(url,{...options,headers,cache:"no-store"});
- let body={};try{body=await response.json()}catch{}
- if(!response.ok)throw new Error(body.error||`Request failed (${response.status})`);
+ const headers={Accept:"application/json",...(options.headers||{})};
+
+ if(options.body&&!headers["Content-Type"]){
+  headers["Content-Type"]="application/json";
+ }
+
+ if(csrf){
+  headers["X-CSRF-Token"]=csrf;
+ }
+
+ const response=await fetch(url,{
+  ...options,
+  headers,
+  cache:"no-store",
+  credentials:"same-origin"
+ });
+
+ const text=await response.text();
+ let body={};
+
+ if(text){
+  try{
+   body=JSON.parse(text);
+  }catch{
+   body={error:text.slice(0,500)};
+  }
+ }
+
+ if(!response.ok){
+  const error=new Error(
+   body.error||
+   body.message||
+   `Request failed (${response.status})`
+  );
+  error.status=response.status;
+  error.body=body;
+  throw error;
+ }
+
  return body
+}
+
+async function refreshAdminSession(){
+ const sessionData=await api("/api/session");
+
+ if(!sessionData.authenticated){
+  throw new Error("Your admin session expired. Log in again.");
+ }
+
+ csrf=sessionData.csrf||csrf;
+ return sessionData
 }
 
 function showError(message){$("apiError").textContent=message;$("apiError").classList.add("show")}
@@ -321,7 +366,63 @@ $("addTeam").onclick=()=>{collect();data.teams.push({name:`New Team ${data.teams
 $("addFixture").onclick=()=>{collect();data.fixtures.push({id:crypto.randomUUID(),competition:"Premier League",matchday:1,date:"",time:"",home:data.teams[0]?.name||"",away:data.teams[1]?.name||"",venue:"",status:"upcoming",homeScore:"",awayScore:"",homeLogo:"",awayLogo:""});renderAll()};
 $("addPlayer").onclick=()=>{collect();data.players.push({username:"",team:"",position:"",goals:0,assists:0,appearances:0,potm:0,availability:"Available",note:""});renderAll()};
 $("rebuildTable").onclick=()=>{collect();renderStandings();updateStats()};
-$("saveButton").onclick=async()=>{collect();clearError();$("saveStatus").textContent="Saving...";$("saveStatus").className="status";try{await api("/api/site",{method:"POST",body:JSON.stringify(data)});$("saveStatus").textContent="Saved online";$("saveStatus").className="status ok";$("notice").classList.add("show");setTimeout(()=>$("notice").classList.remove("show"),2200)}catch(error){$("saveStatus").textContent="Save failed";$("saveStatus").className="status bad";showError(error.message)}};
+$("saveButton").onclick=async()=>{
+ clearError();
+ $("saveStatus").textContent="Preparing...";
+ $("saveStatus").className="status";
+
+ try{
+  collect();
+
+  await refreshAdminSession();
+
+  $("saveStatus").textContent="Saving...";
+
+  const saveResult=await api("/api/site",{
+   method:"POST",
+   body:JSON.stringify(data)
+  });
+
+  const savedData=await api("/api/site");
+
+  const expected=JSON.stringify(data);
+  const received=JSON.stringify(savedData);
+
+  if(expected!==received){
+   console.error("Expected payload:",data);
+   console.error("Returned payload:",savedData);
+   throw new Error(
+    "The server responded, but the data read back from Supabase did not match."
+   );
+  }
+
+  $("saveStatus").textContent="Saved online";
+  $("saveStatus").className="status ok";
+
+  $("notice").textContent=
+   `Saved successfully. ${saveResult.savedKeys?.length||Object.keys(data).length} sections updated.`;
+  $("notice").classList.add("show");
+
+  setTimeout(
+   ()=>$("notice").classList.remove("show"),
+   2600
+  );
+
+ }catch(error){
+  console.error("Admin save failed:",error);
+
+  $("saveStatus").textContent="Save failed";
+  $("saveStatus").className="status bad";
+
+  if(error.status===401||error.status===403){
+   showError(
+    `${error.message} Refresh the page and log in again.`
+   );
+  }else{
+   showError(error.message);
+  }
+ }
+};
 function safe(v){return String(v??"").replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
 checkSession().catch(error=>showError(error.message));
 </script>

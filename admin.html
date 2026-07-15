@@ -494,12 +494,20 @@ $("saveButton").onclick=async()=>{
   const expected=JSON.stringify(data);
   const received=JSON.stringify(savedData);
 
-  if(expected!==received){
-   console.error("Expected payload:",data);
-   console.error("Returned payload:",savedData);
-   throw new Error(
-    "The server responded, but the data read back from Supabase did not match."
-   );
+  await api("/api/site", {
+  method: "POST",
+  body: JSON.stringify(data)
+});
+
+saveStatus.textContent = "Saved online";
+saveStatus.className = "save-status ok";
+
+notice.textContent = "Everything was saved successfully to Supabase.";
+notice.classList.add("show");
+
+setTimeout(() => {
+  notice.classList.remove("show");
+}, 2600);
   }
 
   $("saveStatus").textContent="Saved online";

@@ -46,10 +46,6 @@ PASSWORD_ITERATIONS = 310_000
 TEMP_PASSWORD_LENGTH = 8
 
 
-# ---------------------------------------------------------------------------
-# Supabase REST helper
-# ---------------------------------------------------------------------------
-
 def supabase_request(
     method: str,
     path: str,
@@ -95,22 +91,16 @@ def supabase_request(
         with urllib.request.urlopen(req, timeout=25) as response:
             raw = response.read().decode("utf-8")
             return json.loads(raw) if raw else None
-
     except urllib.error.HTTPError as exc:
         details = exc.read().decode("utf-8", errors="replace")
         raise RuntimeError(
             f"Supabase returned HTTP {exc.code}: {details}"
         ) from exc
-
     except urllib.error.URLError as exc:
         raise RuntimeError(
             f"Could not connect to Supabase: {exc.reason}"
         ) from exc
 
-
-# ---------------------------------------------------------------------------
-# Generic site-content storage
-# ---------------------------------------------------------------------------
 
 def read_site_content() -> dict[str, Any]:
     rows = supabase_request(
@@ -122,22 +112,10 @@ def read_site_content() -> dict[str, Any]:
         return {}
 
     content = rows[0].get("content")
-
-    if not isinstance(content, dict):
-        return {}
-
-    return content
+    return content if isinstance(content, dict) else {}
 
 
 def save_site_content(content: dict[str, Any]) -> None:
-    """
-    Save the complete JSON object unchanged.
-
-    This intentionally accepts future keys and nested structures such as:
-    hero, settings, theme, teams, fixtures, stats, lineups, goals, cards,
-    substitutions, players, standings, news, transfers, awards, and more.
-    """
-
     updated = supabase_request(
         "PATCH",
         "site_content?id=eq.1",
@@ -158,10 +136,6 @@ def save_site_content(content: dict[str, Any]) -> None:
     if not isinstance(inserted, list) or not inserted:
         raise RuntimeError("Supabase did not confirm the site-content save.")
 
-
-# ---------------------------------------------------------------------------
-# Password helpers
-# ---------------------------------------------------------------------------
 
 def normalise_username(username: str) -> str:
     return username.strip().lower()
@@ -207,14 +181,9 @@ def verify_password(password: str, stored: str) -> bool:
         )
 
         return hmac.compare_digest(actual, expected)
-
     except (ValueError, TypeError):
         return False
 
-
-# ---------------------------------------------------------------------------
-# Player-account database helpers
-# ---------------------------------------------------------------------------
 
 def get_player_by_username(username: str) -> dict[str, Any] | None:
     key = urllib.parse.quote(normalise_username(username), safe="")
@@ -233,6 +202,17 @@ def get_player_by_discord_id(discord_id: str) -> dict[str, Any] | None:
     rows = supabase_request(
         "GET",
         f"players?discord_id=eq.{value}&select=*",
+    )
+
+    return rows[0] if rows else None
+
+
+def get_player_by_roblox_id(roblox_user_id: str) -> dict[str, Any] | None:
+    value = urllib.parse.quote(str(roblox_user_id), safe="")
+
+    rows = supabase_request(
+        "GET",
+        f"players?roblox_user_id=eq.{value}&select=*",
     )
 
     return rows[0] if rows else None
@@ -281,13 +261,86 @@ def create_or_reset_player(
         )
 
     saved_player = rows[0] if isinstance(rows, list) and rows else payload
-
     return temporary_password, saved_player
 
 
-# ---------------------------------------------------------------------------
-# Session helpers
-# ---------------------------------------------------------------------------
+def activate_playersheet_player(
+    *,
+    discord_id: str,
+    roblox_username: str,
+    roblox_user_id: str,
+) -> dict[str, Any]:
+    existing = get_player_by_roblox_id(roblox_user_id)
+
+    payload = {
+        "username": roblox_username,
+        "username_key": normalise_username(roblox_username),
+        "discord_id": str(discord_id),
+        "roblox_user_id": str(roblox_user_id),
+        "active": True,
+        "is_active": True,
+        "left_at": None,
+        "updated_at": "now()",
+    }
+
+    if existing:
+        player_id = urllib.parse.quote(str(existing["id"]), safe="")
+
+        rows = supabase_request(
+            "PATCH",
+            f"players?id=eq.{player_id}",
+            body=payload,
+            prefer="return=representation",
+        )
+    else:
+        payload.update({
+            "rating": 64,
+            "market_value": 50000,
+            "team": "Free Agent",
+            "player_role": "Player",
+            "joined_at": "now()",
+            "must_change_password": True,
+            "password_hash": hash_password(generate_temporary_password()),
+        })
+
+        rows = supabase_request(
+            "POST",
+            "players",
+            body=payload,
+            prefer="return=representation",
+        )
+
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError("Supabase did not confirm player activation.")
+
+    return rows[0]
+
+
+def deactivate_playersheet_player(discord_id: str) -> dict[str, Any] | None:
+    existing = get_player_by_discord_id(discord_id)
+
+    if not existing:
+        return None
+
+    player_id = urllib.parse.quote(str(existing["id"]), safe="")
+
+    rows = supabase_request(
+        "PATCH",
+        f"players?id=eq.{player_id}",
+        body={
+            "active": False,
+            "is_active": False,
+            "left_at": "now()",
+            "updated_at": "now()",
+        },
+        prefer="return=representation",
+    )
+
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError("Supabase did not confirm player deactivation.")
+
+    return rows[0]
+
 
 def admin_logged_in() -> bool:
     return bool(session.get("admin"))
@@ -333,10 +386,6 @@ def clear_player_session() -> None:
         session.pop(key, None)
 
 
-# ---------------------------------------------------------------------------
-# Static pages
-# ---------------------------------------------------------------------------
-
 @app.get("/")
 def homepage():
     return send_from_directory(BASE_DIR, "index.html")
@@ -346,10 +395,6 @@ def homepage():
 def serve_file(filename: str):
     return send_from_directory(BASE_DIR, filename)
 
-
-# ---------------------------------------------------------------------------
-# Health
-# ---------------------------------------------------------------------------
 
 @app.get("/api/health")
 def health():
@@ -361,10 +406,6 @@ def health():
         "botApiConfigured": bool(BOT_API_KEY),
     })
 
-
-# ---------------------------------------------------------------------------
-# Admin API
-# ---------------------------------------------------------------------------
 
 @app.get("/api/session")
 def get_admin_session():
@@ -407,7 +448,6 @@ def admin_logout():
         return jsonify({"error": "Invalid security token."}), 403
 
     clear_admin_session()
-
     return jsonify({"ok": True})
 
 
@@ -415,7 +455,6 @@ def admin_logout():
 def get_site():
     try:
         return jsonify(read_site_content())
-
     except RuntimeError as exc:
         app.logger.exception("Failed to read site content.")
         return jsonify({"error": str(exc)}), 503
@@ -437,23 +476,46 @@ def save_site():
         }), 400
 
     try:
-        # Save the entire payload unchanged.
-        # No schema filtering and no strict read-back comparison.
         save_site_content(payload)
 
         return jsonify({
             "ok": True,
             "savedKeys": sorted(payload.keys()),
         })
-
     except RuntimeError as exc:
         app.logger.exception("Failed to save site content.")
         return jsonify({"error": str(exc)}), 503
 
 
-# ---------------------------------------------------------------------------
-# Player website API
-# ---------------------------------------------------------------------------
+@app.get("/api/players")
+def public_playersheet():
+    try:
+        rows = supabase_request(
+            "GET",
+            "players?select=id,username,roblox_user_id,team,player_role,"
+            "rating,market_value,active,is_active&order=rating.desc,username.asc",
+        )
+
+        players = []
+
+        for row in rows or []:
+            players.append({
+                "id": row.get("id"),
+                "username": row.get("username"),
+                "roblox_user_id": row.get("roblox_user_id"),
+                "team": row.get("team") or "Free Agent",
+                "role": row.get("player_role") or "Player",
+                "rating": row.get("rating") or 64,
+                "value": row.get("market_value") or 50000,
+                "active": bool(
+                    row.get("active", row.get("is_active", True))
+                ),
+            })
+
+        return jsonify({"players": players})
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 503
+
 
 @app.get("/api/player/session")
 def get_player_session():
@@ -487,7 +549,6 @@ def player_login():
 
     try:
         player = get_player_by_username(username)
-
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
@@ -578,14 +639,9 @@ def player_change_password():
         session.modified = True
 
         return jsonify({"ok": True})
-
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
-
-# ---------------------------------------------------------------------------
-# Discord-bot API
-# ---------------------------------------------------------------------------
 
 @app.post("/api/bot/create-player")
 def bot_create_player():
@@ -616,10 +672,8 @@ def bot_create_player():
             "temporaryPassword": temporary_password,
             "mustChangePassword": True,
         })
-
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
-
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
@@ -658,14 +712,71 @@ def bot_reset_player_password():
             "temporaryPassword": temporary_password,
             "mustChangePassword": True,
         })
-
     except RuntimeError as exc:
         return jsonify({"error": str(exc)}), 503
 
 
-# ---------------------------------------------------------------------------
-# Response headers
-# ---------------------------------------------------------------------------
+@app.post("/api/bot/playersheet/activate")
+def bot_playersheet_activate():
+    if not bot_authorised():
+        return jsonify({"error": "Invalid bot API key."}), 401
+
+    payload = request.get_json(silent=True) or {}
+
+    discord_id = str(payload.get("discordId", "")).strip()
+    roblox_username = str(payload.get("robloxUsername", "")).strip()
+    roblox_user_id = str(payload.get("robloxId", "")).strip()
+
+    if not discord_id or not roblox_username or not roblox_user_id:
+        return jsonify({
+            "error": "discordId, robloxUsername and robloxId are required."
+        }), 400
+
+    try:
+        player = activate_playersheet_player(
+            discord_id=discord_id,
+            roblox_username=roblox_username,
+            roblox_user_id=roblox_user_id,
+        )
+
+        return jsonify({
+            "ok": True,
+            "player": {
+                "id": player.get("id"),
+                "username": player.get("username"),
+                "robloxId": player.get("roblox_user_id"),
+                "rating": player.get("rating", 64),
+                "value": player.get("market_value", 50000),
+                "team": player.get("team", "Free Agent"),
+                "role": player.get("player_role", "Player"),
+                "active": True,
+            },
+        })
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 503
+
+
+@app.post("/api/bot/playersheet/deactivate")
+def bot_playersheet_deactivate():
+    if not bot_authorised():
+        return jsonify({"error": "Invalid bot API key."}), 401
+
+    payload = request.get_json(silent=True) or {}
+    discord_id = str(payload.get("discordId", "")).strip()
+
+    if not discord_id:
+        return jsonify({"error": "discordId is required."}), 400
+
+    try:
+        player = deactivate_playersheet_player(discord_id)
+
+        return jsonify({
+            "ok": True,
+            "found": player is not None,
+        })
+    except RuntimeError as exc:
+        return jsonify({"error": str(exc)}), 503
+
 
 @app.after_request
 def no_api_cache(response):

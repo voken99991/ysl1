@@ -1,1 +1,71 @@
-<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard — YSL</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/styles.css"></head><body><div class="page-shell"><header class="topbar"><a class="brand" href="index.html"><span class="brand-main">YSL</span><span class="brand-divider"></span><span class="brand-sub">YOUTH<br>SOCCER<br>LEAGUE</span></a><nav class="nav-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a></nav><div class="nav-actions"><button class="theme-toggle" id="themeToggle"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button><a class="admin-link" href="admin.html">Admin Page</a><a class="dashboard-link" href="dashboard.html">Dashboard</a></div><button class="mobile-menu" id="mobileMenu" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button></header><div class="mobile-nav" id="mobileNav"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a><a href="admin.html">Admin Page</a><a href="dashboard.html">Dashboard</a></div><main style="min-height:calc(100vh - 102px);display:grid;place-items:center;padding:40px"><section style="text-align:center;max-width:760px"><p style="color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:.15em">YSL</p><h1 style="font-family:Manrope,sans-serif;font-size:clamp(3rem,8vw,7rem);margin:.2em 0">Dashboard</h1><p style="color:var(--muted);font-size:1.1rem">This page is ready for your content.</p><a class="primary-button" href="index.html" style="margin-top:24px">Back Home <span>→</span></a></section></main></div><script src="assets/app.js"></script></body></html>
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Player Dashboard — YSL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+:root{--card:#fff;--soft:#faf8fd;--border:#e7e0ee}html[data-theme=dark]{--card:#1b0d29;--soft:#14091f;--border:#382347}
+*{box-sizing:border-box}body{margin:0;color:var(--text);background:radial-gradient(circle at 82% 10%,color-mix(in srgb,var(--accent) 11%,transparent),transparent 26%),var(--bg);font-family:Inter,sans-serif}[hidden]{display:none!important}
+.page{min-height:calc(100vh - 102px);padding:44px 4vw 60px}.shell{width:min(1400px,100%);margin:auto}.heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:24px}.heading small{color:var(--purple);font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.heading h1{margin:8px 0 0;font:800 clamp(2.8rem,5vw,5.4rem)/.96 Manrope;letter-spacing:-.07em}.heading p{max-width:620px;color:var(--muted);line-height:1.7}.login-pill{min-width:230px;padding:15px 17px;border:1px solid var(--border);border-radius:16px;background:var(--card);box-shadow:var(--shadow)}.login-pill span{display:block;color:var(--muted);font-size:.62rem;text-transform:uppercase}.login-pill strong{display:block;margin-top:6px;color:var(--purple);font:800 1.05rem Manrope}
+.grid{display:grid;grid-template-columns:350px 1fr;gap:18px}.panel,.stat{border:1px solid var(--border);border-radius:20px;background:var(--card);box-shadow:var(--shadow)}.profile{overflow:hidden}.cover{height:125px;background:linear-gradient(135deg,var(--purple),var(--purple2))}.profile-body{padding:0 22px 24px}.avatar{width:88px;height:88px;display:grid;place-items:center;margin-top:-44px;border:6px solid var(--card);border-radius:24px;color:#fff;background:linear-gradient(145deg,var(--purple),var(--purple2));font:800 1.2rem Manrope}.profile h2{margin:16px 0 5px;font:800 1.55rem Manrope}.muted{color:var(--muted);font-size:.74rem}.team{display:flex;align-items:center;gap:13px;margin-top:20px;padding:14px;border:1px solid var(--border);border-radius:14px;background:var(--soft)}.team-logo{width:52px;height:52px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--border);border-radius:14px;background:var(--card);font-weight:800}.team-logo img{width:100%;height:100%;object-fit:contain;padding:5px}.team span{display:block;color:var(--muted);font-size:.58rem;text-transform:uppercase}.team strong{display:block;margin-top:5px}
+.actions{display:grid;gap:9px;margin-top:18px}.actions a,.actions button{min-height:43px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:11px;color:var(--text);background:var(--soft);font-size:.7rem;font-weight:800;text-decoration:none;cursor:pointer}.actions .primary{color:#fff;border:0;background:linear-gradient(135deg,var(--purple),var(--purple2))}
+.main{display:grid;gap:18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{min-height:145px;padding:19px}.stat span{color:var(--muted);font-size:.64rem;font-weight:700;text-transform:uppercase}.stat strong{display:block;margin-top:20px;font:800 2.65rem/1 Manrope}.stat small{display:block;margin-top:10px;color:var(--muted);font-size:.61rem}.panel-head{min-height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border)}.panel-head h3{margin:0;font:800 .9rem Manrope}.summary{display:grid;grid-template-columns:repeat(3,1fr)}.summary div{padding:21px;border-right:1px solid var(--border)}.summary div:last-child{border-right:0}.summary span{color:var(--muted);font-size:.62rem;text-transform:uppercase}.summary strong{display:block;margin-top:8px;font:800 1.4rem Manrope}.summary small{display:block;margin-top:6px;color:var(--muted);font-size:.6rem}.note{padding:20px;color:var(--muted);font-size:.73rem;line-height:1.65}
+.login-required{min-height:calc(100vh - 102px);display:grid;place-items:center;padding:30px}.login-card{width:min(100%,520px);padding:34px;border:1px solid var(--border);border-radius:23px;text-align:center;background:var(--card);box-shadow:var(--shadow)}.login-card h1{font:800 2.2rem Manrope}.login-card p{color:var(--muted);line-height:1.7}.login-card a{min-height:48px;display:inline-flex;align-items:center;margin-top:15px;padding:0 22px;border-radius:11px;color:#fff;background:linear-gradient(135deg,var(--purple),var(--purple2));font-size:.74rem;font-weight:800;text-decoration:none}
+@media(max-width:1050px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.page{padding:30px 18px 44px}.heading{align-items:start;flex-direction:column}.login-pill{width:100%}.stats,.summary{grid-template-columns:1fr}.summary div{border-right:0;border-bottom:1px solid var(--border)}}
+</style>
+</head>
+<body>
+<div class="page-shell">
+<header class="topbar">
+<a class="brand" href="index.html"><span class="brand-main" id="siteBrand">YSL</span><span class="brand-divider"></span><span class="brand-sub" id="leagueBrand">YOUTH<br>SOCCER<br>LEAGUE</span></a>
+<nav class="nav-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a href="news.html">News</a><a href="about.html">About</a></nav>
+<div class="nav-actions"><button class="theme-toggle" id="themeToggle"><span class="theme-icon-sun">☀</span><span class="theme-icon-moon">☾</span></button><a class="admin-link" href="admin.html">Admin Page</a><a class="dashboard-link" href="dashboard.html">Dashboard</a></div>
+</header>
+
+<section class="login-required" id="loginRequired" hidden><article class="login-card"><small>PLAYER ACCESS</small><h1>Login required</h1><p>Sign in with the Roblox username and website password sent by the YSL Discord bot.</p><a href="login.html">Open player login</a></article></section>
+
+<main class="page" id="dashboardPage" hidden>
+<div class="shell">
+<section class="heading"><div><small>Private player area</small><h1>Your Dashboard</h1><p>Your team and simple season statistics.</p></div><article class="login-pill"><span>Logged in as</span><strong id="loggedInUsername">—</strong></article></section>
+<section class="grid">
+<aside class="panel profile"><div class="cover"></div><div class="profile-body"><div class="avatar" id="playerAvatar">YS</div><h2 id="playerUsername">—</h2><p class="muted" id="playerPosition">Position not assigned</p><div class="team"><div class="team-logo" id="teamLogo">—</div><div><span>Current team</span><strong id="teamName">Unassigned</strong></div></div><div class="actions"><a class="primary" href="playersheet.html">Open player sheet</a><a href="fixtures.html">View fixtures</a><button id="logoutButton">Log out</button></div></div></aside>
+<div class="main">
+<section class="stats">
+<article class="stat"><span>Goals</span><strong id="goalsStat">0</strong><small>Season total</small></article>
+<article class="stat"><span>Assists</span><strong id="assistsStat">0</strong><small>Season total</small></article>
+<article class="stat"><span>Appearances</span><strong id="appearancesStat">0</strong><small>Matches played</small></article>
+<article class="stat"><span>Player of the match</span><strong id="potmStat">0</strong><small>Awards earned</small></article>
+</section>
+<section class="panel"><div class="panel-head"><h3>Season overview</h3><span id="seasonLabel">YSL Season One</span></div><div class="summary"><div><span>Goal contributions</span><strong id="contributionsStat">0</strong><small>Goals + assists</small></div><div><span>Goals per appearance</span><strong id="goalsPerGameStat">0.00</strong><small>Simple average</small></div><div><span>Availability</span><strong id="availabilityStat">Available</strong><small>Current player status</small></div></div></section>
+<section class="panel"><div class="panel-head"><h3>Player information</h3><span>YSL profile</span></div><div class="note" id="playerNote">No additional player note has been added yet.</div></section>
+</div>
+</section>
+</div>
+</main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+let site={settings:{websiteName:"YSL",leagueName:"Youth Soccer League",seasonName:"YSL Season One"},theme:{lightBg:"#fff",darkBg:"#14091f",mainPurple:"#43118d",accentPurple:"#8c45e9"},teams:[],players:[]},sessionPlayer=null;
+async function api(url,options={}){const r=await fetch(url,{...options,headers:{Accept:"application/json","Content-Type":"application/json",...(options.headers||{})},cache:"no-store"});let b={};try{b=await r.json()}catch{}if(!r.ok)throw new Error(b.error||`Request failed (${r.status})`);return b}
+async function init(){try{const s=await api("/api/player/session");if(!s.authenticated)return requireLogin();sessionPlayer=s.player;const d=await api("/api/site");site={settings:{...site.settings,...(d.settings||{})},theme:{...site.theme,...(d.theme||{})},teams:Array.isArray(d.teams)?d.teams:[],players:Array.isArray(d.players)?d.players:(Array.isArray(d.playerStats)?d.playerStats:[])};branding();render()}catch(e){console.error(e);requireLogin()}}
+function render(){const u=sessionPlayer.username||"Player",r=site.players.find(p=>norm(p.username||p.robloxUsername||p.name)===norm(u))||{},teamNameValue=r.team||r.teamName||"Unassigned",team=site.teams.find(t=>norm(t.name)===norm(teamNameValue))||{name:teamNameValue,logo:r.teamLogo||""};const g=num(r.goals),a=num(r.assists),apps=num(r.appearances??r.apps),potm=num(r.playerOfTheMatch??r.potm);loginRequired.hidden=true;dashboardPage.hidden=false;loggedInUsername.textContent=u;playerUsername.textContent=u;playerAvatar.textContent=initials(u);playerPosition.textContent=r.position||r.pos||"Position not assigned";teamName.textContent=team.name||"Unassigned";logo(team.logo,team.name);goalsStat.textContent=g;assistsStat.textContent=a;appearancesStat.textContent=apps;potmStat.textContent=potm;contributionsStat.textContent=g+a;goalsPerGameStat.textContent=apps?(g/apps).toFixed(2):"0.00";availabilityStat.textContent=r.availability||r.status||"Available";seasonLabel.textContent=site.settings.seasonName||"YSL Season One";playerNote.textContent=r.note||r.notes||"No additional player note has been added yet."}
+function branding(){siteBrand.textContent=site.settings.websiteName||"YSL";leagueBrand.innerHTML=(site.settings.leagueName||"Youth Soccer League").trim().split(/\s+/).map(esc).join("<br>");document.documentElement.style.setProperty("--purple",site.theme.mainPurple);document.documentElement.style.setProperty("--purple2",site.theme.accentPurple);document.documentElement.style.setProperty("--accent",site.theme.accentPurple);bg()}
+function bg(){document.documentElement.style.setProperty("--bg",document.documentElement.dataset.theme==="dark"?site.theme.darkBg:site.theme.lightBg)}
+function logo(url,name){if(!url){teamLogo.textContent=initials(name);return}teamLogo.innerHTML=`<img src="${esc(url)}" alt="${esc(name)} logo" onerror="this.parentElement.textContent='${initials(name)}'">`}
+function requireLogin(){dashboardPage.hidden=true;loginRequired.hidden=false}
+logoutButton?.addEventListener("click",async()=>{try{await api("/api/player/logout",{method:"POST",body:"{}"})}finally{location.href="login.html"}});
+themeToggle?.addEventListener("click",()=>setTimeout(bg,0));
+function norm(v){return String(v||"").trim().toLowerCase()}function num(v){const n=Number(v);return Number.isFinite(n)?n:0}function initials(v){return String(v||"YS").replace(/[^a-z0-9]/gi,"").slice(0,2).toUpperCase()||"YS"}function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+init()
+})();
+</script>
+</body>
+</html>

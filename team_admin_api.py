@@ -245,3 +245,119 @@ def list_teams():
         return jsonify({"teams": rows or []})
     except APIError as exc:
         return jsonify({"error": str(exc)}), 503
+
+
+@team_admin_api.get("/api/playersheet")
+def public_playersheet():
+    """
+    Return Playersheet data with manager roles derived from team_managers
+    and club logos derived from teams.
+    """
+    try:
+        teams = sb(
+            "GET",
+            "teams?select=id,name,logo_url,active"
+            "&active=eq.true&order=name.asc",
+        ) or []
+
+        managers = sb(
+            "GET",
+            "team_managers?select=team_id,discord_id,staff_role,active"
+            "&active=eq.true",
+        ) or []
+
+        players = sb(
+            "GET",
+            "players?select=id,username,roblox_user_id,discord_id,"
+            "current_team_id,team,player_role,rating,market_value,releases,"
+            "avatar_url,active,is_active&order=rating.desc,username.asc",
+        ) or []
+
+        teams_by_id = {
+            str(team["id"]): team
+            for team in teams
+        }
+
+        staff_by_discord = {
+            str(manager["discord_id"]): manager
+            for manager in managers
+            if manager.get("discord_id")
+        }
+
+        output = []
+
+        for player in players:
+            staff = staff_by_discord.get(
+                str(player.get("discord_id") or "")
+            )
+
+            team_id = (
+                str(player.get("current_team_id"))
+                if player.get("current_team_id")
+                else ""
+            )
+
+            if staff:
+                team_id = str(staff.get("team_id") or team_id)
+                displayed_role = staff.get("staff_role") or "Player"
+            else:
+                displayed_role = player.get("player_role") or "Player"
+
+            team_record = teams_by_id.get(team_id)
+
+            team_name = (
+                team_record.get("name")
+                if team_record
+                else player.get("team") or "Free Agent"
+            )
+
+            is_free_agent = (
+                str(team_name).strip().lower() == "free agent"
+            )
+
+            team_logo = (
+                "https://www.fifacm.com/content/media/imgs/fifa21/teams/256/l111592.png"
+                if is_free_agent
+                else (
+                    team_record.get("logo_url")
+                    if team_record
+                    else ""
+                )
+            )
+
+            output.append({
+                "id": player.get("id"),
+                "username": player.get("username"),
+                "roblox_user_id": player.get("roblox_user_id"),
+                "team": team_name,
+                "teamLogo": team_logo or "",
+                "role": displayed_role,
+                "rating": player.get("rating") or 64,
+                "value": player.get("market_value") or 50000,
+                "releases": (
+                    1
+                    if player.get("releases") is None
+                    else max(0, int(player.get("releases")))
+                ),
+                "avatarUrl": player.get("avatar_url") or "",
+                "active": bool(
+                    player.get(
+                        "active",
+                        player.get("is_active", True),
+                    )
+                ),
+            })
+
+        return jsonify({
+            "teams": [
+                {
+                    "id": team.get("id"),
+                    "name": team.get("name"),
+                    "logo_url": team.get("logo_url") or "",
+                }
+                for team in teams
+            ],
+            "players": output,
+        })
+    except (APIError, ValueError, TypeError) as exc:
+        return jsonify({"error": str(exc)}), 503

@@ -1,18 +1,19 @@
 """
-YSL Transfer API blueprint — Phase 1
+YSL Transfer API — Phase 2
 
-Add this file beside app.py and register it:
+Place this file beside the website's app.py, then register the blueprint:
 
     from transfer_api import transfer_api
     app.register_blueprint(transfer_api)
 
-Required environment variables:
-    SUPABASE_URL
-    SUPABASE_SECRET_KEY or SUPABASE_SERVICE_ROLE_KEY
-    BOT_API_KEY
-    TRANSFER_STAFF_ROLE_IDS=123,456
-
-The Discord bot and the future website Transfer Centre both call this API.
+This module is the single source of truth for:
+- manager/team lookup
+- budgets
+- offers
+- negotiations
+- player decisions
+- staff budget corrections
+- completed transfer details
 """
 
 from __future__ import annotations
@@ -89,9 +90,18 @@ def supabase_request(
             return json.loads(text) if text else None
     except urllib.error.HTTPError as exc:
         details = exc.read().decode("utf-8", errors="replace")
-        raise TransferAPIError(
-            f"Supabase returned HTTP {exc.code}: {details}"
-        ) from exc
+        try:
+            parsed = json.loads(details)
+            message = (
+                parsed.get("message")
+                or parsed.get("details")
+                or parsed.get("hint")
+                or details
+            )
+        except ValueError:
+            message = details
+
+        raise TransferAPIError(str(message)) from exc
     except urllib.error.URLError as exc:
         raise TransferAPIError(
             f"Could not connect to Supabase: {exc.reason}"
@@ -99,16 +109,11 @@ def supabase_request(
 
 
 def rpc(name: str, payload: dict[str, Any]) -> Any:
-    return supabase_request(
-        "POST",
-        f"rpc/{name}",
-        body=payload,
-    )
+    return supabase_request("POST", f"rpc/{name}", body=payload)
 
 
 def bot_authorised() -> bool:
     supplied = request.headers.get("X-Bot-Key", "")
-
     return bool(
         BOT_API_KEY
         and supplied
@@ -127,12 +132,105 @@ def json_body() -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def rpc_error(exc: TransferAPIError) -> tuple[Any, int]:
-    message = str(exc)
+def one(rows: Any) -> dict[str, Any] | None:
+    return rows[0] if isinstance(rows, list) and rows else None
 
-    # PostgREST returns PostgreSQL exception text inside its JSON response.
-    # Keep it visible so Discord can show the manager the real reason.
-    return jsonify({"error": message}), 400
+
+def api_error(exc: Exception, status: int = 400) -> tuple[Any, int]:
+    return jsonify({"error": str(exc)}), status
+
+
+def get_team(team_id: str) -> dict[str, Any] | None:
+    safe_id = urllib.parse.quote(str(team_id), safe="")
+    return one(supabase_request(
+        "GET",
+        "teams?"
+        f"id=eq.{safe_id}"
+        "&select=id,name,logo_url,discord_role_id,budget,reserved_budget,active",
+    ))
+
+
+def get_manager_team(discord_id: str) -> dict[str, Any] | None:
+    safe_id = urllib.parse.quote(str(discord_id), safe="")
+    manager = one(supabase_request(
+        "GET",
+        "team_managers?"
+        f"discord_id=eq.{safe_id}&active=eq.true"
+        "&select=team_id,staff_role",
+    ))
+
+    if not manager:
+        return None
+
+    team = get_team(str(manager["team_id"]))
+    if team:
+        team["manager_role"] = manager.get("staff_role")
+    return team
+
+
+def get_active_manager(team_id: str) -> dict[str, Any] | None:
+    safe_id = urllib.parse.quote(str(team_id), safe="")
+    return one(supabase_request(
+        "GET",
+        "team_managers?"
+        f"team_id=eq.{safe_id}&staff_role=eq.Manager&active=eq.true"
+        "&select=discord_id,staff_role",
+    ))
+
+
+def get_player_by_discord(discord_id: str) -> dict[str, Any] | None:
+    safe_id = urllib.parse.quote(str(discord_id), safe="")
+    return one(supabase_request(
+        "GET",
+        "players?"
+        f"discord_id=eq.{safe_id}"
+        "&select=id,username,roblox_user_id,discord_id,current_team_id,"
+        "team,player_role,rating,market_value,active,is_active",
+    ))
+
+
+def get_offer_details(offer_id: str) -> dict[str, Any] | None:
+    safe_id = urllib.parse.quote(str(offer_id), safe="")
+    offer = one(supabase_request(
+        "GET",
+        "transfer_offers?"
+        f"id=eq.{safe_id}"
+        "&select=*",
+    ))
+
+    if not offer:
+        return None
+
+    player_id = urllib.parse.quote(str(offer["player_id"]), safe="")
+    player = one(supabase_request(
+        "GET",
+        "players?"
+        f"id=eq.{player_id}"
+        "&select=id,username,roblox_user_id,discord_id,current_team_id,"
+        "team,player_role,rating,market_value",
+    ))
+
+    buying_team = get_team(str(offer["buying_team_id"]))
+    selling_team = (
+        get_team(str(offer["selling_team_id"]))
+        if offer.get("selling_team_id")
+        else None
+    )
+    buying_manager = get_active_manager(str(offer["buying_team_id"]))
+    selling_manager = (
+        get_active_manager(str(offer["selling_team_id"]))
+        if offer.get("selling_team_id")
+        else None
+    )
+
+    return {
+        "offer": offer,
+        "player": player,
+        "buyingTeam": buying_team,
+        "sellingTeam": selling_team,
+        "buyingManager": buying_manager,
+        "sellingManager": selling_manager,
+    }
 
 
 @transfer_api.get("/api/transfers/teams")
@@ -145,11 +243,9 @@ def list_teams():
         )
 
         teams = []
-
         for row in rows or []:
             budget = int(row.get("budget") or 0)
             reserved = int(row.get("reserved_budget") or 0)
-
             teams.append({
                 **row,
                 "available_budget": max(budget - reserved, 0),
@@ -157,27 +253,129 @@ def list_teams():
 
         return jsonify({"teams": teams})
     except TransferAPIError as exc:
-        return jsonify({"error": str(exc)}), 503
+        return api_error(exc, 503)
 
 
-@transfer_api.get("/api/transfers/offers/<discord_id>")
-def offers_for_discord(discord_id: str):
+@transfer_api.post("/api/bot/transfers/context")
+def transfer_context():
+    denied = require_bot()
+    if denied:
+        return denied
+
+    payload = json_body()
+    manager_id = str(payload.get("managerDiscordId") or "")
+    player_id = str(payload.get("playerDiscordId") or "")
+
+    try:
+        manager_team = get_manager_team(manager_id)
+        player = get_player_by_discord(player_id)
+
+        if not manager_team:
+            return jsonify({
+                "error": "You are not assigned as an active team manager."
+            }), 403
+
+        if not player:
+            return jsonify({
+                "error": "That Discord member has no linked YSL player record."
+            }), 404
+
+        selling_team = (
+            get_team(str(player["current_team_id"]))
+            if player.get("current_team_id")
+            else None
+        )
+        selling_manager = (
+            get_active_manager(str(player["current_team_id"]))
+            if player.get("current_team_id")
+            else None
+        )
+
+        budget = int(manager_team.get("budget") or 0)
+        reserved = int(manager_team.get("reserved_budget") or 0)
+
+        return jsonify({
+            "managerTeam": {
+                **manager_team,
+                "available_budget": max(budget - reserved, 0),
+            },
+            "player": player,
+            "sellingTeam": selling_team,
+            "sellingManager": selling_manager,
+        })
+    except TransferAPIError as exc:
+        return api_error(exc, 503)
+
+
+@transfer_api.post("/api/bot/transfers/manager-budget")
+def manager_budget():
+    denied = require_bot()
+    if denied:
+        return denied
+
+    payload = json_body()
+    discord_id = str(payload.get("managerDiscordId") or "")
+
+    try:
+        team = get_manager_team(discord_id)
+        if not team:
+            return jsonify({
+                "error": "You are not assigned to an active team."
+            }), 404
+
+        budget = int(team.get("budget") or 0)
+        reserved = int(team.get("reserved_budget") or 0)
+
+        return jsonify({
+            "team": {
+                **team,
+                "available_budget": max(budget - reserved, 0),
+            }
+        })
+    except TransferAPIError as exc:
+        return api_error(exc, 503)
+
+
+@transfer_api.get("/api/bot/transfers/offer/<offer_id>")
+def offer_details(offer_id: str):
+    denied = require_bot()
+    if denied:
+        return denied
+
+    try:
+        details = get_offer_details(offer_id)
+        if not details:
+            return jsonify({"error": "Offer not found."}), 404
+        return jsonify(details)
+    except TransferAPIError as exc:
+        return api_error(exc, 503)
+
+
+@transfer_api.get("/api/bot/transfers/pending/<discord_id>")
+def pending_for_user(discord_id: str):
+    denied = require_bot()
+    if denied:
+        return denied
+
     try:
         safe_id = urllib.parse.quote(discord_id, safe="")
         rows = supabase_request(
             "GET",
             "transfer_offers?"
             f"awaiting_discord_id=eq.{safe_id}"
-            "&select=*,player:players(id,username,roblox_user_id,discord_id,"
-            "team,player_role,rating,market_value),"
-            "buying_team:teams!transfer_offers_buying_team_id_fkey(id,name,logo_url),"
-            "selling_team:teams!transfer_offers_selling_team_id_fkey(id,name,logo_url)"
-            "&order=created_at.desc",
+            "&status=in.(pending_seller,pending_buyer,pending_player)"
+            "&select=id&order=created_at.desc",
         )
 
-        return jsonify({"offers": rows or []})
+        details = []
+        for row in rows or []:
+            item = get_offer_details(str(row["id"]))
+            if item:
+                details.append(item)
+
+        return jsonify({"offers": details})
     except TransferAPIError as exc:
-        return jsonify({"error": str(exc)}), 503
+        return api_error(exc, 503)
 
 
 @transfer_api.post("/api/bot/transfers/offer")
@@ -198,11 +396,15 @@ def create_offer():
             ),
         })
 
-        return jsonify({"ok": True, "offer": offer})
+        offer_id = offer.get("id") if isinstance(offer, dict) else None
+        return jsonify({
+            "ok": True,
+            "details": get_offer_details(str(offer_id)),
+        })
     except (ValueError, TypeError):
         return jsonify({"error": "Amount must be a whole number."}), 400
     except TransferAPIError as exc:
-        return rpc_error(exc)
+        return api_error(exc)
 
 
 @transfer_api.post("/api/bot/transfers/sign")
@@ -222,9 +424,13 @@ def create_free_agent_signing():
             ),
         })
 
-        return jsonify({"ok": True, "offer": offer})
+        offer_id = offer.get("id") if isinstance(offer, dict) else None
+        return jsonify({
+            "ok": True,
+            "details": get_offer_details(str(offer_id)),
+        })
     except TransferAPIError as exc:
-        return rpc_error(exc)
+        return api_error(exc)
 
 
 @transfer_api.post("/api/bot/transfers/seller-response")
@@ -237,7 +443,6 @@ def seller_response():
 
     try:
         counter_amount = payload.get("counterAmount")
-
         offer = rpc("ysl_seller_respond_offer", {
             "p_offer_id": payload.get("offerId"),
             "p_manager_discord_id": str(
@@ -252,13 +457,16 @@ def seller_response():
             "p_message": str(payload.get("message") or ""),
         })
 
-        return jsonify({"ok": True, "offer": offer})
+        return jsonify({
+            "ok": True,
+            "details": get_offer_details(str(offer.get("id"))),
+        })
     except (ValueError, TypeError):
         return jsonify({
             "error": "Counter amount must be a whole number."
         }), 400
     except TransferAPIError as exc:
-        return rpc_error(exc)
+        return api_error(exc)
 
 
 @transfer_api.post("/api/bot/transfers/buyer-response")
@@ -278,9 +486,12 @@ def buyer_response():
             "p_action": str(payload.get("action") or ""),
         })
 
-        return jsonify({"ok": True, "offer": offer})
+        return jsonify({
+            "ok": True,
+            "details": get_offer_details(str(offer.get("id"))),
+        })
     except TransferAPIError as exc:
-        return rpc_error(exc)
+        return api_error(exc)
 
 
 @transfer_api.post("/api/bot/transfers/player-response")
@@ -300,9 +511,12 @@ def player_response():
             "p_action": str(payload.get("action") or ""),
         })
 
-        return jsonify({"ok": True, "offer": offer})
+        return jsonify({
+            "ok": True,
+            "details": get_offer_details(str(offer.get("id"))),
+        })
     except TransferAPIError as exc:
-        return rpc_error(exc)
+        return api_error(exc)
 
 
 @transfer_api.post("/api/bot/budget/adjust")
@@ -341,7 +555,7 @@ def staff_adjust_budget():
             "error": "Budget adjustment must be a whole number."
         }), 400
     except TransferAPIError as exc:
-        return rpc_error(exc)
+        return api_error(exc)
 
 
 @transfer_api.get("/api/transfers/team/<team_id>/ledger")
@@ -357,4 +571,4 @@ def team_budget_ledger(team_id: str):
 
         return jsonify({"entries": rows or []})
     except TransferAPIError as exc:
-        return jsonify({"error": str(exc)}), 503
+        return api_error(exc, 503)

@@ -9,7 +9,7 @@ import secrets
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -280,7 +280,8 @@ def activate_playersheet_player(
         "active": True,
         "is_active": True,
         "left_at": None,
-        "updated_at": "now()",
+        "avatar_url": get_roblox_avatar_headshot(roblox_user_id),
+        "updated_at": utc_now_iso(),
     }
 
     if existing:
@@ -298,7 +299,9 @@ def activate_playersheet_player(
             "market_value": 50000,
             "team": "Free Agent",
             "player_role": "Player",
-            "joined_at": "now()",
+            "releases": 1,
+            "avatar_url": get_roblox_avatar_headshot(roblox_user_id),
+            "joined_at": utc_now_iso(),
             "must_change_password": True,
             "password_hash": hash_password(generate_temporary_password()),
         })
@@ -330,8 +333,8 @@ def deactivate_playersheet_player(discord_id: str) -> dict[str, Any] | None:
         body={
             "active": False,
             "is_active": False,
-            "left_at": "now()",
-            "updated_at": "now()",
+            "left_at": utc_now_iso(),
+            "updated_at": utc_now_iso(),
         },
         prefer="return=representation",
     )
@@ -341,6 +344,60 @@ def deactivate_playersheet_player(discord_id: str) -> dict[str, Any] | None:
 
     return rows[0]
 
+
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def get_roblox_avatar_headshot(roblox_user_id: str) -> str:
+    """
+    Resolve the current Roblox avatar headshot for a user ID.
+
+    Returns an empty string if Roblox has not generated the thumbnail yet
+    or if the request fails.
+    """
+    user_id = str(roblox_user_id).strip()
+
+    if not user_id.isdigit():
+        return ""
+
+    query = urllib.parse.urlencode({
+        "userIds": user_id,
+        "size": "150x150",
+        "format": "Png",
+        "isCircular": "false",
+    })
+
+    req = urllib.request.Request(
+        f"https://thumbnails.roblox.com/v1/users/avatar-headshot?{query}",
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "YSL-Website/1.0",
+        },
+        method="GET",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=12) as response:
+            body = json.loads(response.read().decode("utf-8"))
+
+        items = body.get("data") if isinstance(body, dict) else None
+
+        if not isinstance(items, list) or not items:
+            return ""
+
+        image_url = items[0].get("imageUrl")
+        return str(image_url or "")
+
+    except (
+        urllib.error.HTTPError,
+        urllib.error.URLError,
+        TimeoutError,
+        ValueError,
+        TypeError,
+    ):
+        return ""
 
 def admin_logged_in() -> bool:
     return bool(session.get("admin"))
@@ -493,7 +550,8 @@ def public_playersheet():
         rows = supabase_request(
             "GET",
             "players?select=id,username,roblox_user_id,team,player_role,"
-            "rating,market_value,active,is_active&order=rating.desc,username.asc",
+            "rating,market_value,releases,avatar_url,active,is_active"
+            "&order=rating.desc,username.asc",
         )
 
         players = []
@@ -507,6 +565,17 @@ def public_playersheet():
                 "role": row.get("player_role") or "Player",
                 "rating": row.get("rating") or 64,
                 "value": row.get("market_value") or 50000,
+                "releases": (
+                    1
+                    if row.get("releases") is None
+                    else max(0, int(row.get("releases")))
+                ),
+                "avatarUrl": (
+                    row.get("avatar_url")
+                    or get_roblox_avatar_headshot(
+                        str(row.get("roblox_user_id") or "")
+                    )
+                ),
                 "active": bool(
                     row.get("active", row.get("is_active", True))
                 ),
@@ -749,6 +818,8 @@ def bot_playersheet_activate():
                 "value": player.get("market_value", 50000),
                 "team": player.get("team", "Free Agent"),
                 "role": player.get("player_role", "Player"),
+                "releases": player.get("releases", 1),
+                "avatarUrl": player.get("avatar_url", ""),
                 "active": True,
             },
         })

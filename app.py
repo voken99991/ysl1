@@ -15,6 +15,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory, session
+from transfer_api import transfer_api
+app.register_blueprint(transfer_api)
 
 load_dotenv()
 

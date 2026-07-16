@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 app = Flask(__name__, static_folder=None)
 app.secret_key = os.getenv("YSL_SECRET_KEY", "replace-this-secret")
+app.register_blueprint(transfer_api)
 
 app.config.update(
     SESSION_COOKIE_NAME="ysl_session",

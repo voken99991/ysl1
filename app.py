@@ -16,6 +16,7 @@ from typing import Any
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory, session
 from transfer_api import transfer_api
+from team_admin_api import team_admin_api
 
 load_dotenv()
 
@@ -23,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 app = Flask(__name__, static_folder=None)
 app.register_blueprint(transfer_api)
+app.register_blueprint(team_admin_api)
 app.secret_key = os.getenv("YSL_SECRET_KEY", "replace-this-secret")
 
 app.config.update(

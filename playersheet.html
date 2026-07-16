@@ -41,10 +41,100 @@
 (()=>{
 const $=id=>document.getElementById(id);let site={settings:{websiteName:"YSL",leagueName:"Youth Soccer League"},theme:{mainPurple:"#8f5cf6",accentPurple:"#6f3ee8"},teams:[],players:[]},players=[];
 async function get(url){const r=await fetch(url,{cache:"no-store",credentials:"same-origin",headers:{Accept:"application/json"}});let b={};try{b=await r.json()}catch{}if(!r.ok)throw new Error(b.error||`Request failed (${r.status})`);return b}
-async function load(){let saved={};try{saved=await get("/api/site")}catch(e){console.error(e)}site={settings:{...site.settings,...(saved.settings||{})},theme:{...site.theme,...(saved.theme||{})},teams:Array.isArray(saved.teams)?saved.teams:[],players:Array.isArray(saved.players)?saved.players:[]};try{const registry=await get("/api/players");if(Array.isArray(registry.players))site.players=registry.players;else if(Array.isArray(registry))site.players=registry}catch{}brand();prepare();fillTeams();render()}
+async function load(){
+ let saved={};
+ try{saved=await get("/api/site")}catch(e){console.error(e)}
+
+ site={
+  settings:{...site.settings,...(saved.settings||{})},
+  theme:{...site.theme,...(saved.theme||{})},
+  teams:Array.isArray(saved.teams)?saved.teams:[],
+  players:Array.isArray(saved.players)?saved.players:[]
+ };
+
+ try{
+  const registry=await get("/api/playersheet");
+  if(Array.isArray(registry.teams))site.teams=registry.teams;
+  if(Array.isArray(registry.players))site.players=registry.players;
+ }catch(error){
+  console.warn("Dedicated playersheet endpoint unavailable.",error);
+
+  try{
+   const registry=await get("/api/players");
+   if(Array.isArray(registry.players))site.players=registry.players;
+   else if(Array.isArray(registry))site.players=registry;
+  }catch{}
+ }
+
+ brand();
+ prepare();
+ fillTeams();
+ render();
+}
 async function session(){try{const s=await get("/api/player/session");if(s.authenticated)$('accountText').textContent=`Logged in as ${s.player?.username||'Player'}`}catch{}}
 function brand(){$('leagueBrand').innerHTML=esc(site.settings.leagueName||'Youth Soccer League').replace(/\s+/g,'<br>');document.documentElement.style.setProperty('--purple',site.theme.mainPurple||'#8f5cf6');document.documentElement.style.setProperty('--purple2',site.theme.accentPurple||'#6f3ee8')}
-function prepare(){const logos=Object.fromEntries(site.teams.map(t=>[norm(t.name),t.logo||'']));players=site.players.map((p,i)=>{const username=p.roblox_username||p.robloxUsername||p.username||p.name||'Unknown Player';const robloxId=String(p.roblox_id||p.robloxId||p.roblox_user_id||p.robloxUserId||'');const team=p.team||p.teamName||'Free Agent';return{id:p.id||robloxId||i+1,username,robloxId,team,teamLogo:p.teamLogo||logos[norm(team)]||'',role:roleName(p.role||p.playerRole||'Player'),rating:Math.min(99,Math.max(1,Number(p.rating??64))),value:Math.max(0,Number(p.value??p.marketValue??50000)),releases:Math.max(0,Number(p.releases??1)),avatarUrl:p.avatarUrl||p.avatar_url||'',active:p.active??p.is_active??true}})}
+function prepare(){
+ const logos=Object.fromEntries(
+  site.teams.map(team=>[
+   norm(team.name),
+   team.logo_url||team.logoUrl||team.logo||""
+  ])
+ );
+
+ players=site.players.map((p,i)=>{
+  const username=
+   p.roblox_username||
+   p.robloxUsername||
+   p.username||
+   p.name||
+   "Unknown Player";
+
+  const robloxId=String(
+   p.roblox_id||
+   p.robloxId||
+   p.roblox_user_id||
+   p.robloxUserId||
+   ""
+  );
+
+  const team=p.team||p.teamName||"Free Agent";
+  const freeAgent=norm(team)==="free agent";
+
+  const displayedRole=
+   p.displayRole||
+   p.display_role||
+   p.staffRole||
+   p.staff_role||
+   p.role||
+   p.playerRole||
+   p.player_role||
+   "Player";
+
+  const teamLogo=freeAgent
+   ?"https://www.fifacm.com/content/media/imgs/fifa21/teams/256/l111592.png"
+   :(
+    p.teamLogo||
+    p.team_logo||
+    p.logo_url||
+    logos[norm(team)]||
+    ""
+   );
+
+  return{
+   id:p.id||robloxId||i+1,
+   username,
+   robloxId,
+   team,
+   teamLogo,
+   role:roleName(displayedRole),
+   rating:Math.min(99,Math.max(1,Number(p.rating??64))),
+   value:Math.max(0,Number(p.value??p.marketValue??p.market_value??50000)),
+   releases:Math.max(0,Number(p.releases??1)),
+   avatarUrl:p.avatarUrl||p.avatar_url||"",
+   active:p.active??p.is_active??true
+  };
+ });
+}
 function fillTeams(){const values=[...new Set(players.map(p=>p.team).filter(Boolean))].sort();$('teamFilter').innerHTML='<option value="all">All teams</option>';values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$('teamFilter').appendChild(o)})}
 function list(){const q=norm($('searchInput').value),team=$('teamFilter').value,role=$('roleFilter').value,sort=$('sortSelect').value;let out=players.filter(p=>(!q||`${p.username} ${p.robloxId}`.toLowerCase().includes(q))&&(team==='all'||p.team===team)&&(role==='all'||p.role===role));const s={'rating-desc':(a,b)=>b.rating-a.rating||a.username.localeCompare(b.username),'rating-asc':(a,b)=>a.rating-b.rating||a.username.localeCompare(b.username),'value-desc':(a,b)=>b.value-a.value,'value-asc':(a,b)=>a.value-b.value,'name':(a,b)=>a.username.localeCompare(b.username)};return [...out].sort(s[sort]||s['rating-desc'])}
 function render(){const rows=list();$('playerTable').innerHTML='';$('emptyState').classList.toggle('show',!rows.length);rows.forEach(p=>{const tr=document.createElement('tr');tr.className='player-row';tr.innerHTML=`<td><div class="rating ${ratingClass(p.rating)}">${p.rating}</div></td><td><a class="player-link" href="player.html?id=${encodeURIComponent(p.robloxId||p.id)}"><div class="avatar">${avatar(p)}</div><div class="player-copy"><strong>${esc(p.username)}</strong><span>${p.active?'Active member':'Former member'}</span></div></a></td><td><span class="roblox-id">${esc(p.robloxId||'Not available')}</span></td><td><div class="team"><div class="team-logo">${logo(p.teamLogo,p.team)}</div><span>${esc(p.team)}</span></div></td><td><span class="role ${norm(p.role).replace(/\s+/g,'-')}">${esc(p.role)}</span></td><td><span class="releases">${p.releases}</span></td><td><span class="value">${money(p.value)}</span></td>`;$('playerTable').appendChild(tr)});$('registeredCount').textContent=players.length;$('activeCount').textContent=`${players.filter(p=>p.active).length} active`;$('visibleCount').textContent=rows.length}
@@ -69,7 +159,7 @@ function avatar(p){
   }
   return initials(p.username)
 }
-function roleName(v){const r=norm(v);if(r==='manager')return'Manager';if(['assistant manager','assistant-manager','assistant'].includes(r))return'Assistant Manager';return'Player'}function ratingClass(v){return v>=90?'elite':v>=80?'gold':v>=70?'silver':'bronze'}function logo(url,name){return url?`<img src="${esc(url)}" alt="${esc(name)} logo" onerror="this.parentElement.textContent='${initials(name)}'">`:initials(name)}function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v||0))}function norm(v){return String(v||'').trim().toLowerCase()}function initials(v){return String(v||'YS').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()}function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+function roleName(v){const r=norm(v);if(r==="manager")return"Manager";if(["assistant manager","assistant-manager","assistant"].includes(r))return"Assistant Manager";return"Player"}function ratingClass(v){return v>=90?"elite":v>=80?"gold":v>=70?"silver":"bronze"}function logo(url,name){const finalUrl=norm(name)==="free agent"?`https://www.fifacm.com/content/media/imgs/fifa21/teams/256/l111592.png`:url;return finalUrl?`<img src="${esc(finalUrl)}" alt="${esc(name)} logo" onerror="this.style.display='none'">`:initials(name)}function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v||0))}function norm(v){return String(v||'').trim().toLowerCase()}function initials(v){return String(v||'YS').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()}function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
 ['searchInput','teamFilter','roleFilter','sortSelect'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',render));window.addEventListener('focus',load);load();session();
 })();
 </script>

@@ -110,15 +110,13 @@ function prepare(){
    p.player_role||
    "Player";
 
-  const teamLogo=freeAgent
-   ?"https://www.fifacm.com/content/media/imgs/fifa21/teams/256/l111592.png"
-   :(
-    p.teamLogo||
-    p.team_logo||
-    p.logo_url||
-    logos[norm(team)]||
-    ""
-   );
+  const teamLogo=
+   p.teamLogo||
+   p.team_logo||
+   p.logo_url||
+   logos[norm(team)]||
+   TEAM_ICON_URLS[norm(team)]||
+   "";
 
   return{
    id:p.id||robloxId||i+1,
@@ -131,13 +129,20 @@ function prepare(){
    value:Math.max(0,Number(p.value??p.marketValue??p.market_value??50000)),
    releases:Math.max(0,Number(p.releases??1)),
    avatarUrl:p.avatarUrl||p.avatar_url||"",
+   goals:Number(p.goals??0),
+   assists:Number(p.assists??0),
+   appearances:Number(p.appearances??p.apps??0),
+   potm:Number(p.potm??p.playerOfTheMatch??p.player_of_the_match??0),
+   position:p.position||p.pos||"Position not assigned",
+   availability:p.availability||p.status||"Available",
+   note:p.note||p.notes||"",
    active:p.active??p.is_active??true
   };
  });
 }
 function fillTeams(){const values=[...new Set(players.map(p=>p.team).filter(Boolean))].sort();$('teamFilter').innerHTML='<option value="all">All teams</option>';values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$('teamFilter').appendChild(o)})}
 function list(){const q=norm($('searchInput').value),team=$('teamFilter').value,role=$('roleFilter').value,sort=$('sortSelect').value;let out=players.filter(p=>(!q||`${p.username} ${p.robloxId}`.toLowerCase().includes(q))&&(team==='all'||p.team===team)&&(role==='all'||p.role===role));const s={'rating-desc':(a,b)=>b.rating-a.rating||a.username.localeCompare(b.username),'rating-asc':(a,b)=>a.rating-b.rating||a.username.localeCompare(b.username),'value-desc':(a,b)=>b.value-a.value,'value-asc':(a,b)=>a.value-b.value,'name':(a,b)=>a.username.localeCompare(b.username)};return [...out].sort(s[sort]||s['rating-desc'])}
-function render(){const rows=list();$('playerTable').innerHTML='';$('emptyState').classList.toggle('show',!rows.length);rows.forEach(p=>{const tr=document.createElement('tr');tr.className='player-row';tr.innerHTML=`<td><div class="rating ${ratingClass(p.rating)}">${p.rating}</div></td><td><a class="player-link" href="player.html?id=${encodeURIComponent(p.robloxId||p.id)}"><div class="avatar">${avatar(p)}</div><div class="player-copy"><strong>${esc(p.username)}</strong><span>${p.active?'Active member':'Former member'}</span></div></a></td><td><span class="roblox-id">${esc(p.robloxId||'Not available')}</span></td><td><div class="team"><div class="team-logo">${logo(p.teamLogo,p.team)}</div><span>${esc(p.team)}</span></div></td><td><span class="role ${norm(p.role).replace(/\s+/g,'-')}">${esc(p.role)}</span></td><td><span class="releases">${p.releases}</span></td><td><span class="value">${money(p.value)}</span></td>`;$('playerTable').appendChild(tr)});$('registeredCount').textContent=players.length;$('activeCount').textContent=`${players.filter(p=>p.active).length} active`;$('visibleCount').textContent=rows.length}
+function render(){const rows=list();$('playerTable').innerHTML='';$('emptyState').classList.toggle('show',!rows.length);rows.forEach(p=>{const tr=document.createElement('tr');tr.className='player-row';tr.innerHTML=`<td><div class="rating ${ratingClass(p.rating)}">${p.rating}</div></td><td><a class="player-link" href="player.html?id=${encodeURIComponent(p.id||p.robloxId)}"><div class="avatar">${avatar(p)}</div><div class="player-copy"><strong>${esc(p.username)}</strong><span>${p.active?'Active member':'Former member'}</span></div></a></td><td><span class="roblox-id">${esc(p.robloxId||'Not available')}</span></td><td><div class="team"><div class="team-logo">${logo(p.teamLogo,p.team)}</div><span>${esc(p.team)}</span></div></td><td><span class="role ${norm(p.role).replace(/\s+/g,'-')}">${esc(p.role)}</span></td><td><span class="value">${money(p.value)}</span></td>`;$('playerTable').appendChild(tr)});$('registeredCount').textContent=players.length;$('activeCount').textContent=`${players.filter(p=>p.active).length} active`;$('visibleCount').textContent=rows.length}
 function avatar(p){
   if(p.avatarUrl){
     return `<img src="${esc(p.avatarUrl)}" alt="${esc(p.username)} Roblox avatar" onerror="this.parentElement.textContent='${initials(p.username)}'">`
@@ -159,7 +164,29 @@ function avatar(p){
   }
   return initials(p.username)
 }
-function roleName(v){const r=norm(v);if(r==="manager")return"Manager";if(["assistant manager","assistant-manager","assistant"].includes(r))return"Assistant Manager";return"Player"}function ratingClass(v){return v>=90?"elite":v>=80?"gold":v>=70?"silver":"bronze"}function logo(url,name){const finalUrl=norm(name)==="free agent"?`https://www.fifacm.com/content/media/imgs/fifa21/teams/256/l111592.png`:url;return finalUrl?`<img src="${esc(finalUrl)}" alt="${esc(name)} logo" onerror="this.style.display='none'">`:initials(name)}function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v||0))}function norm(v){return String(v||'').trim().toLowerCase()}function initials(v){return String(v||'YS').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()}function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+const TEAM_ICON_URLS={
+ "arsenal":"https://cdn.discordapp.com/emojis/1313190736019062896.png?size=128&quality=lossless",
+ "chelsea":"https://cdn.discordapp.com/emojis/1313186798733885520.png?size=128&quality=lossless",
+ "chelsea fc":"https://cdn.discordapp.com/emojis/1313186798733885520.png?size=128&quality=lossless",
+ "liverpool":"https://cdn.discordapp.com/emojis/1313188977297330296.png?size=128&quality=lossless",
+ "liverpool fc":"https://cdn.discordapp.com/emojis/1313188977297330296.png?size=128&quality=lossless",
+ "manchester city":"https://cdn.discordapp.com/emojis/1313186951842496582.png?size=128&quality=lossless",
+ "man city":"https://cdn.discordapp.com/emojis/1313186951842496582.png?size=128&quality=lossless",
+ "manchester united":"https://cdn.discordapp.com/emojis/1313187459219198024.png?size=128&quality=lossless",
+ "man united":"https://cdn.discordapp.com/emojis/1313187459219198024.png?size=128&quality=lossless",
+ "newcastle united":"https://cdn.discordapp.com/emojis/1313189182008721419.png?size=128&quality=lossless",
+ "newcastle":"https://cdn.discordapp.com/emojis/1313189182008721419.png?size=128&quality=lossless",
+ "free agent":"https://cdn.discordapp.com/emojis/1527676672881459381.png?size=128&quality=lossless",
+ "free agents":"https://cdn.discordapp.com/emojis/1527676672881459381.png?size=128&quality=lossless"
+};
+function roleName(v){const r=norm(v);if(r==="manager")return"Manager";if(["assistant manager","assistant-manager","assistant"].includes(r))return"Assistant Manager";return"Player"}
+function ratingClass(v){return v>=90?"elite":v>=80?"gold":v>=70?"silver":"bronze"}
+function logo(url,name){
+ const mapped=TEAM_ICON_URLS[norm(name)]||"";
+ const finalUrl=url||mapped;
+ return `<img src="${esc(finalUrl||mapped)}" alt="${esc(name)} logo" loading="lazy" onerror="if(this.dataset.fallback){this.style.display='none';return;}this.dataset.fallback='1';this.src='${esc(mapped)}';">`;
+}
+function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v||0))}function norm(v){return String(v||'').trim().toLowerCase()}function initials(v){return String(v||'YS').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()}function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
 ['searchInput','teamFilter','roleFilter','sortSelect'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',render));window.addEventListener('focus',load);load();session();
 })();
 </script>

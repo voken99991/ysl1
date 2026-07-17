@@ -15,7 +15,6 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
 from typing import Any
 
 from flask import Blueprint, jsonify, request
@@ -199,16 +198,6 @@ def set_guild_settings():
             if body.get("budgetMessageId")
             else None
         ),
-        "manager_role_id": (
-            str(body["managerRoleId"])
-            if body.get("managerRoleId")
-            else None
-        ),
-        "assistant_manager_role_id": (
-            str(body["assistantManagerRoleId"])
-            if body.get("assistantManagerRoleId")
-            else None
-        ),
         "updated_at": "now()",
     }
 
@@ -258,355 +247,289 @@ def list_teams():
         return jsonify({"error": str(exc)}), 503
 
 
-def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def first_or_none(rows: Any) -> dict[str, Any] | None:
-    return rows[0] if isinstance(rows, list) and rows else None
-
-
-def find_active_staff(discord_id: str) -> dict[str, Any] | None:
-    safe_id = urllib.parse.quote(discord_id, safe="")
-    rows = sb(
-        "GET",
-        "team_managers?discord_id=eq."
-        f"{safe_id}&active=eq.true&select=id,team_id,discord_id,"
-        "staff_role,active,teams(id,name,logo_url,discord_role_id)",
-    )
-    return first_or_none(rows)
-
-
-def find_player(discord_id: str) -> dict[str, Any] | None:
-    safe_id = urllib.parse.quote(discord_id, safe="")
-    rows = sb(
-        "GET",
-        "players?discord_id=eq."
-        f"{safe_id}&select=id,username,discord_id,current_team_id,"
-        "team,player_role,active,is_active",
-    )
-    return first_or_none(rows)
-
-
-@team_admin_api.post("/api/bot/teams/delete")
-def delete_team():
-    denied = require_bot()
-    if denied:
-        return denied
-
-    body = payload()
-    team_id = str(body.get("teamId") or "").strip()
-    if not team_id:
-        return jsonify({"error": "teamId is required."}), 400
-
-    safe_team = urllib.parse.quote(team_id, safe="")
-    removed_at = utc_now()
-
+@team_admin_api.get("/api/playersheet")
+def public_playersheet():
+    """
+    Return Playersheet data with manager roles derived from team_managers
+    and club logos derived from teams.
+    """
     try:
-        team_rows = sb(
+        teams = sb(
             "GET",
-            f"teams?id=eq.{safe_team}&select=id,name,discord_role_id,active",
-        )
-        team = first_or_none(team_rows)
-        if not team:
-            return jsonify({"error": "Team not found."}), 404
-
-        sb(
-            "PATCH",
-            f"team_managers?team_id=eq.{safe_team}&active=eq.true",
-            body={"active": False, "removed_at": removed_at},
-            prefer="return=minimal",
-        )
-
-        released_players = sb(
-            "PATCH",
-            f"players?current_team_id=eq.{safe_team}",
-            body={
-                "current_team_id": None,
-                "team": "Free Agent",
-                "player_role": "Player",
-            },
-            prefer="return=representation",
+            "teams?select=id,name,logo_url,active"
+            "&active=eq.true&order=name.asc",
         ) or []
 
-        rows = sb(
-            "PATCH",
-            f"teams?id=eq.{safe_team}",
-            body={"active": False, "updated_at": removed_at},
-            prefer="return=representation",
-        )
+        managers = sb(
+            "GET",
+            "team_managers?select=team_id,discord_id,staff_role,active"
+            "&active=eq.true",
+        ) or []
 
-        return jsonify({
-            "ok": True,
-            "team": rows[0],
-            "releasedPlayers": released_players,
-        })
-    except APIError as exc:
-        return jsonify({"error": str(exc)}), 400
+        players = sb(
+            "GET",
+            "players?select=*&order=rating.desc,username.asc",
+        ) or []
 
+        teams_by_id = {
+            str(team["id"]): team
+            for team in teams
+        }
 
-@team_admin_api.post("/api/bot/managers/sack")
-def sack_manager():
-    denied = require_bot()
-    if denied:
-        return denied
+        staff_by_discord = {
+            str(manager["discord_id"]): manager
+            for manager in managers
+            if manager.get("discord_id")
+        }
 
-    body = payload()
-    discord_id = str(body.get("discordId") or "").strip()
-    expected_role = str(body.get("staffRole") or "").strip()
+        output = []
 
-    if not discord_id:
-        return jsonify({"error": "discordId is required."}), 400
+        for player in players:
+            staff = staff_by_discord.get(
+                str(player.get("discord_id") or "")
+            )
 
-    try:
-        assignment = find_active_staff(discord_id)
-        if not assignment:
-            return jsonify({"error": "This member has no active staff role."}), 404
+            team_id = (
+                str(player.get("current_team_id"))
+                if player.get("current_team_id")
+                else ""
+            )
 
-        if expected_role and assignment.get("staff_role") != expected_role:
-            return jsonify({
-                "error": (
-                    f"This member is registered as {assignment.get('staff_role')}, "
-                    f"not {expected_role}."
+            if staff:
+                team_id = str(staff.get("team_id") or team_id)
+                displayed_role = staff.get("staff_role") or "Player"
+            else:
+                displayed_role = player.get("player_role") or "Player"
+
+            team_record = teams_by_id.get(team_id)
+
+            team_name = (
+                team_record.get("name")
+                if team_record
+                else player.get("team") or "Free Agent"
+            )
+
+            is_free_agent = (
+                str(team_name).strip().lower() == "free agent"
+            )
+
+            team_logo = (
+                "https://www.fifacm.com/content/media/imgs/fifa21/teams/256/l111592.png"
+                if is_free_agent
+                else (
+                    team_record.get("logo_url")
+                    if team_record
+                    else ""
                 )
-            }), 400
-
-        safe_assignment = urllib.parse.quote(str(assignment["id"]), safe="")
-        rows = sb(
-            "PATCH",
-            f"team_managers?id=eq.{safe_assignment}",
-            body={"active": False, "removed_at": utc_now()},
-            prefer="return=representation",
-        )
-
-        player = find_player(discord_id)
-        if player:
-            safe_player = urllib.parse.quote(str(player["id"]), safe="")
-            sb(
-                "PATCH",
-                f"players?id=eq.{safe_player}",
-                body={"player_role": "Player"},
-                prefer="return=minimal",
             )
+
+            output.append({
+                "id": player.get("id"),
+                "username": player.get("username"),
+                "roblox_user_id": player.get("roblox_user_id"),
+                "team": team_name,
+                "teamLogo": team_logo or "",
+                "role": displayed_role,
+                "rating": player.get("rating") or 64,
+                "value": player.get("market_value") or 50000,
+                "releases": (
+                    1
+                    if player.get("releases") is None
+                    else max(0, int(player.get("releases")))
+                ),
+                "avatarUrl": player.get("avatar_url") or "",
+                "position": (
+                    player.get("position")
+                    or player.get("pos")
+                    or "Position not assigned"
+                ),
+                "goals": int(player.get("goals") or 0),
+                "assists": int(player.get("assists") or 0),
+                "appearances": int(
+                    player.get("appearances")
+                    or player.get("apps")
+                    or 0
+                ),
+                "potm": int(
+                    player.get("potm")
+                    or player.get("player_of_the_match")
+                    or 0
+                ),
+                "availability": (
+                    player.get("availability")
+                    or player.get("status")
+                    or "Available"
+                ),
+                "note": player.get("note") or player.get("notes") or "",
+                "active": bool(
+                    player.get(
+                        "active",
+                        player.get("is_active", True),
+                    )
+                ),
+            })
 
         return jsonify({
-            "ok": True,
-            "assignment": rows[0],
-            "team": assignment.get("teams"),
-            "member": player,
+            "teams": [
+                {
+                    "id": team.get("id"),
+                    "name": team.get("name"),
+                    "logo_url": team.get("logo_url") or "",
+                }
+                for team in teams
+            ],
+            "players": output,
         })
-    except APIError as exc:
-        return jsonify({"error": str(exc)}), 400
-
-
-@team_admin_api.post("/api/bot/players/release")
-def release_player():
-    denied = require_bot()
-    if denied:
-        return denied
-
-    body = payload()
-    discord_id = str(body.get("discordId") or "").strip()
-    if not discord_id:
-        return jsonify({"error": "discordId is required."}), 400
-
-    try:
-        player = find_player(discord_id)
-        if not player:
-            return jsonify({"error": "Player not found."}), 404
-
-        old_team = player.get("team") or "Free Agent"
-        safe_player = urllib.parse.quote(str(player["id"]), safe="")
-        rows = sb(
-            "PATCH",
-            f"players?id=eq.{safe_player}",
-            body={
-                "current_team_id": None,
-                "team": "Free Agent",
-                "player_role": "Player",
-            },
-            prefer="return=representation",
-        )
-
-        return jsonify({
-            "ok": True,
-            "player": rows[0],
-            "oldTeam": old_team,
-        })
-    except APIError as exc:
-        return jsonify({"error": str(exc)}), 400
-
-
-@team_admin_api.post("/api/bot/members/left")
-def member_left():
-    denied = require_bot()
-    if denied:
-        return denied
-
-    body = payload()
-    discord_id = str(body.get("discordId") or "").strip()
-    if not discord_id:
-        return jsonify({"error": "discordId is required."}), 400
-
-    try:
-        staff = find_active_staff(discord_id)
-        player = find_player(discord_id)
-        timestamp = utc_now()
-
-        event_type = None
-        role_name = None
-        team_name = None
-        username = None
-
-        if staff:
-            role_name = staff.get("staff_role") or "Manager"
-            team = staff.get("teams") or {}
-            team_name = team.get("name") or "Unknown Club"
-            username = (
-                (player or {}).get("username")
-                or str(body.get("displayName") or "Unknown member")
-            )
-            event_type = "manager_left"
-
-            safe_assignment = urllib.parse.quote(str(staff["id"]), safe="")
-            sb(
-                "PATCH",
-                f"team_managers?id=eq.{safe_assignment}",
-                body={"active": False, "removed_at": timestamp},
-                prefer="return=minimal",
-            )
-
-        if player:
-            username = player.get("username") or username
-            if not event_type:
-                event_type = "player_left"
-                role_name = "Player"
-                team_name = player.get("team") or "Free Agent"
-
-            safe_player = urllib.parse.quote(str(player["id"]), safe="")
-            sb(
-                "PATCH",
-                f"players?id=eq.{safe_player}",
-                body={
-                    "active": False,
-                    "is_active": False,
-                    "left_at": timestamp,
-                    "current_team_id": None,
-                    "team": "Free Agent",
-                    "player_role": "Player",
-                },
-                prefer="return=minimal",
-            )
-
-        return jsonify({
-            "ok": True,
-            "matched": bool(staff or player),
-            "eventType": event_type,
-            "username": username,
-            "role": role_name,
-            "team": team_name,
-            "discordId": discord_id,
-        })
-    except APIError as exc:
-        return jsonify({"error": str(exc)}), 400
-
-
-def member_role_state(discord_id: str) -> dict[str, Any]:
-    """
-    Resolve the exact Discord roles a member should have.
-
-    A Free Agent has no team role. Staff get their club role plus the
-    configured Manager or Assistant Manager role.
-    """
-    player = find_player(discord_id)
-    staff = find_active_staff(discord_id)
-
-    team_id = None
-    team_name = "Free Agent"
-    team_role_id = None
-    staff_role = None
-
-    if staff:
-        staff_role = staff.get("staff_role")
-        team = staff.get("teams") or {}
-        team_id = team.get("id") or staff.get("team_id")
-        team_name = team.get("name") or "Unknown Club"
-        team_role_id = team.get("discord_role_id")
-    elif player:
-        team_id = player.get("current_team_id")
-        team_name = player.get("team") or "Free Agent"
-
-        if team_id:
-            safe_team = urllib.parse.quote(str(team_id), safe="")
-            rows = sb(
-                "GET",
-                f"teams?id=eq.{safe_team}&active=eq.true"
-                "&select=id,name,discord_role_id",
-            )
-            team = first_or_none(rows)
-            if team:
-                team_name = team.get("name") or team_name
-                team_role_id = team.get("discord_role_id")
-
-    if str(team_name).strip().lower() == "free agent":
-        team_id = None
-        team_role_id = None
-
-    return {
-        "discordId": discord_id,
-        "matched": bool(player or staff),
-        "username": (
-            (player or {}).get("username")
-            or f"Discord member {discord_id}"
-        ),
-        "teamId": str(team_id) if team_id else None,
-        "team": team_name,
-        "teamRoleId": str(team_role_id) if team_role_id else None,
-        "staffRole": staff_role,
-        "active": bool((player or {}).get("active", True)),
-    }
-
-
-@team_admin_api.get("/api/bot/roles/member/<discord_id>")
-def get_member_role_state(discord_id: str):
-    denied = require_bot()
-    if denied:
-        return denied
-
-    try:
-        return jsonify({"state": member_role_state(discord_id)})
-    except APIError as exc:
+    except (APIError, ValueError, TypeError) as exc:
         return jsonify({"error": str(exc)}), 503
 
 
-@team_admin_api.get("/api/bot/roles/all")
-def get_all_role_states():
-    denied = require_bot()
-    if denied:
-        return denied
-
+@team_admin_api.get("/api/players/<player_id>")
+def public_player_profile(player_id: str):
+    """
+    Return one public player profile by database UUID, Roblox ID or username.
+    No Discord ID or private account information is exposed.
+    """
     try:
-        players = sb(
+        safe_value = urllib.parse.quote(str(player_id), safe="")
+
+        rows = sb(
             "GET",
-            "players?select=discord_id&discord_id=not.is.null",
-        ) or []
-        managers = sb(
-            "GET",
-            "team_managers?select=discord_id&active=eq.true"
-            "&discord_id=not.is.null",
+            f"players?id=eq.{safe_value}&select=*",
         ) or []
 
-        discord_ids = {
-            str(row.get("discord_id"))
-            for row in [*players, *managers]
-            if row.get("discord_id")
-        }
+        if not rows and str(player_id).isdigit():
+            rows = sb(
+                "GET",
+                f"players?roblox_user_id=eq.{safe_value}&select=*",
+            ) or []
+
+        if not rows:
+            rows = sb(
+                "GET",
+                f"players?username=ilike.{safe_value}&select=*",
+            ) or []
+
+        if not rows:
+            return jsonify({"error": "Player not found."}), 404
+
+        player = rows[0]
+        team_record = None
+        team_id = player.get("current_team_id")
+
+        if team_id:
+            safe_team = urllib.parse.quote(str(team_id), safe="")
+            team_rows = sb(
+                "GET",
+                f"teams?id=eq.{safe_team}"
+                "&select=id,name,logo_url,active",
+            ) or []
+            team_record = team_rows[0] if team_rows else None
+
+        manager_rows = []
+        if player.get("discord_id"):
+            safe_discord = urllib.parse.quote(
+                str(player["discord_id"]),
+                safe="",
+            )
+            manager_rows = sb(
+                "GET",
+                "team_managers?discord_id=eq."
+                f"{safe_discord}&active=eq.true"
+                "&select=team_id,staff_role",
+            ) or []
+
+        staff = manager_rows[0] if manager_rows else None
+        if staff:
+            displayed_role = staff.get("staff_role") or "Player"
+            staff_team_id = staff.get("team_id")
+            if staff_team_id and str(staff_team_id) != str(team_id or ""):
+                safe_team = urllib.parse.quote(str(staff_team_id), safe="")
+                team_rows = sb(
+                    "GET",
+                    f"teams?id=eq.{safe_team}"
+                    "&select=id,name,logo_url,active",
+                ) or []
+                team_record = team_rows[0] if team_rows else team_record
+        else:
+            displayed_role = player.get("player_role") or "Player"
+
+        team_name = (
+            team_record.get("name")
+            if team_record
+            else player.get("team") or "Free Agent"
+        )
+        is_free_agent = str(team_name).strip().lower() == "free agent"
 
         return jsonify({
-            "states": [
-                member_role_state(discord_id)
-                for discord_id in sorted(discord_ids)
-            ]
+            "player": {
+                "id": player.get("id"),
+                "username": player.get("username"),
+                "roblox_user_id": player.get("roblox_user_id"),
+                "avatarUrl": player.get("avatar_url") or "",
+                "team": team_name,
+                "teamLogo": (
+                    ""
+                    if is_free_agent
+                    else (
+                        team_record.get("logo_url")
+                        if team_record
+                        else ""
+                    )
+                ),
+                "role": displayed_role,
+                "position": (
+                    player.get("position")
+                    or player.get("pos")
+                    or "Position not assigned"
+                ),
+                "rating": int(player.get("rating") or 64),
+                "value": int(
+                    player.get("market_value")
+                    or player.get("value")
+                    or 50000
+                ),
+                "releases": int(player.get("releases") or 0),
+                "goals": int(player.get("goals") or 0),
+                "assists": int(player.get("assists") or 0),
+                "appearances": int(
+                    player.get("appearances")
+                    or player.get("apps")
+                    or 0
+                ),
+                "potm": int(
+                    player.get("potm")
+                    or player.get("player_of_the_match")
+                    or 0
+                ),
+                "yellowCards": int(
+                    player.get("yellow_cards")
+                    or player.get("yellowCards")
+                    or 0
+                ),
+                "redCards": int(
+                    player.get("red_cards")
+                    or player.get("redCards")
+                    or 0
+                ),
+                "cleanSheets": int(
+                    player.get("clean_sheets")
+                    or player.get("cleanSheets")
+                    or 0
+                ),
+                "availability": (
+                    player.get("availability")
+                    or player.get("status")
+                    or "Available"
+                ),
+                "note": player.get("note") or player.get("notes") or "",
+                "active": bool(
+                    player.get(
+                        "active",
+                        player.get("is_active", True),
+                    )
+                ),
+            }
         })
     except APIError as exc:
         return jsonify({"error": str(exc)}), 503

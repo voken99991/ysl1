@@ -199,6 +199,16 @@ def set_guild_settings():
             if body.get("budgetMessageId")
             else None
         ),
+        "manager_role_id": (
+            str(body["managerRoleId"])
+            if body.get("managerRoleId")
+            else None
+        ),
+        "assistant_manager_role_id": (
+            str(body["assistantManagerRoleId"])
+            if body.get("assistantManagerRoleId")
+            else None
+        ),
         "updated_at": "now()",
     }
 
@@ -499,3 +509,104 @@ def member_left():
         })
     except APIError as exc:
         return jsonify({"error": str(exc)}), 400
+
+
+def member_role_state(discord_id: str) -> dict[str, Any]:
+    """
+    Resolve the exact Discord roles a member should have.
+
+    A Free Agent has no team role. Staff get their club role plus the
+    configured Manager or Assistant Manager role.
+    """
+    player = find_player(discord_id)
+    staff = find_active_staff(discord_id)
+
+    team_id = None
+    team_name = "Free Agent"
+    team_role_id = None
+    staff_role = None
+
+    if staff:
+        staff_role = staff.get("staff_role")
+        team = staff.get("teams") or {}
+        team_id = team.get("id") or staff.get("team_id")
+        team_name = team.get("name") or "Unknown Club"
+        team_role_id = team.get("discord_role_id")
+    elif player:
+        team_id = player.get("current_team_id")
+        team_name = player.get("team") or "Free Agent"
+
+        if team_id:
+            safe_team = urllib.parse.quote(str(team_id), safe="")
+            rows = sb(
+                "GET",
+                f"teams?id=eq.{safe_team}&active=eq.true"
+                "&select=id,name,discord_role_id",
+            )
+            team = first_or_none(rows)
+            if team:
+                team_name = team.get("name") or team_name
+                team_role_id = team.get("discord_role_id")
+
+    if str(team_name).strip().lower() == "free agent":
+        team_id = None
+        team_role_id = None
+
+    return {
+        "discordId": discord_id,
+        "matched": bool(player or staff),
+        "username": (
+            (player or {}).get("username")
+            or f"Discord member {discord_id}"
+        ),
+        "teamId": str(team_id) if team_id else None,
+        "team": team_name,
+        "teamRoleId": str(team_role_id) if team_role_id else None,
+        "staffRole": staff_role,
+        "active": bool((player or {}).get("active", True)),
+    }
+
+
+@team_admin_api.get("/api/bot/roles/member/<discord_id>")
+def get_member_role_state(discord_id: str):
+    denied = require_bot()
+    if denied:
+        return denied
+
+    try:
+        return jsonify({"state": member_role_state(discord_id)})
+    except APIError as exc:
+        return jsonify({"error": str(exc)}), 503
+
+
+@team_admin_api.get("/api/bot/roles/all")
+def get_all_role_states():
+    denied = require_bot()
+    if denied:
+        return denied
+
+    try:
+        players = sb(
+            "GET",
+            "players?select=discord_id&discord_id=not.is.null",
+        ) or []
+        managers = sb(
+            "GET",
+            "team_managers?select=discord_id&active=eq.true"
+            "&discord_id=not.is.null",
+        ) or []
+
+        discord_ids = {
+            str(row.get("discord_id"))
+            for row in [*players, *managers]
+            if row.get("discord_id")
+        }
+
+        return jsonify({
+            "states": [
+                member_role_state(discord_id)
+                for discord_id in sorted(discord_ids)
+            ]
+        })
+    except APIError as exc:
+        return jsonify({"error": str(exc)}), 503

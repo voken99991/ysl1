@@ -1,194 +1,234 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f0818">
-<title>Playersheet — YSL</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0711">
+<meta name="description" content="Youth Soccer League playersheet">
+<title>Players — YSL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0818;--surface:#171021;--surface2:#1d1429;--surface3:#241832;--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.15);--text:#f7f3fb;--muted:#a99cb5;--purple:#8f5cf6;--purple2:#6f3ee8;--success:#58d39b;--shadow:0 24px 70px rgba(0,0,0,.34)}
-*{box-sizing:border-box}html{background:var(--bg);color-scheme:dark}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 84% 12%,rgba(143,92,246,.09),transparent 28%),linear-gradient(180deg,#0f0818,#110a1a);font-family:Inter,sans-serif}a{color:inherit;text-decoration:none}button,input,select{font:inherit}
-.site{min-height:100vh;display:grid;grid-template-rows:82px 1fr}.topbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:32px;padding:0 4vw;border-bottom:1px solid var(--line);background:rgba(15,8,24,.84);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:13px}.brand-mark{font:800 2.2rem/1 Manrope;letter-spacing:-.09em}.brand-mark span{color:var(--purple)}.brand-line{width:1px;height:38px;background:var(--line2)}.brand-copy{color:var(--muted);font-size:.62rem;font-weight:700;line-height:1.18;text-transform:uppercase}.nav{justify-self:center;display:flex;gap:30px}.nav a{position:relative;padding:31px 0 28px;color:#c9c0d2;font-size:.68rem;font-weight:700;text-transform:uppercase}.nav a:after{content:"";position:absolute;left:50%;right:50%;bottom:0;height:2px;background:var(--purple);transition:.2s}.nav a:hover,.nav a.active{color:#fff}.nav a:hover:after,.nav a.active:after{left:0;right:0}.actions{display:flex;gap:10px}.actions a{min-height:42px;display:inline-flex;align-items:center;padding:0 15px;border-radius:10px;font-size:.67rem;font-weight:800}.login{border:1px solid var(--line2);background:rgba(255,255,255,.03)}.dashboard{background:linear-gradient(135deg,var(--purple),var(--purple2))}
-.page{padding:44px 4vw 58px}.shell{width:min(1480px,100%);margin:auto}.heading{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:24px}.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:#cdbbff;font-size:.64rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.eyebrow:before{content:"";width:34px;height:1px;background:var(--purple)}.heading h1{margin:0;font:800 clamp(3.4rem,6vw,6.6rem)/.92 Manrope;letter-spacing:-.075em}.heading p{max-width:650px;margin:15px 0 0;color:#c4bacd;line-height:1.7}.count-card{min-width:250px;padding:18px;border:1px solid var(--line);border-radius:18px;background:rgba(23,16,33,.9);box-shadow:var(--shadow)}.count-card span{color:var(--muted);font-size:.6rem;font-weight:800;text-transform:uppercase}.count-card strong{display:block;margin-top:8px;font:800 1.85rem Manrope}.count-card small{display:block;margin-top:5px;color:#c8b7ff}
-.panel{overflow:hidden;border:1px solid var(--line);border-radius:22px;background:rgba(23,16,33,.9);box-shadow:var(--shadow)}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--line)}.toolbar-left,.toolbar-right{display:flex;gap:9px;flex-wrap:wrap}.search{min-width:290px;height:42px;display:flex;align-items:center;gap:9px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface2)}.search input{width:100%;border:0;outline:0;color:var(--text);background:transparent}.toolbar select{min-height:42px;padding:0 13px;border:1px solid var(--line);border-radius:11px;color:#ddd3e4;background:var(--surface2);font-size:.67rem;font-weight:800}
-.table-wrap{overflow:auto}.players{width:100%;min-width:980px;border-collapse:collapse}.players th{height:50px;padding:0 16px;border-bottom:1px solid var(--line);color:var(--muted);background:var(--surface2);font-size:.59rem;font-weight:800;text-align:left;text-transform:uppercase}.players th:first-child,.players td:first-child{text-align:center}.players th:last-child,.players td:last-child{text-align:right}.players td{height:78px;padding:0 16px;border-bottom:1px solid var(--line);font-size:.7rem}.player-row:hover{background:rgba(143,92,246,.055)}.rating{width:48px;height:48px;display:grid;place-items:center;margin:auto;border:1px solid rgba(255,255,255,.13);border-radius:14px;font:800 1rem Manrope}.bronze{color:#f0c6a0;background:linear-gradient(145deg,#5c3324,#2a1916)}.silver{color:#e2e7ef;background:linear-gradient(145deg,#4c5561,#20252c)}.gold{color:#ffe59a;background:linear-gradient(145deg,#6b5518,#2f260e)}.elite{color:#e2d4ff;background:linear-gradient(145deg,#6732b5,#27113f);box-shadow:0 0 24px rgba(143,92,246,.18)}.player-link{display:flex;align-items:center;gap:12px}.avatar{width:44px;height:44px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:13px;background:var(--surface3);font-size:.68rem;font-weight:800}.avatar img{width:100%;height:100%;object-fit:cover}.player-copy strong{display:block;font-size:.76rem}.player-copy span{display:block;margin-top:4px;color:var(--muted);font-size:.57rem}.player-link:hover strong{color:#cdbbff}.roblox-id{color:#cfc5d7;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.team{display:flex;align-items:center;gap:9px}.team-logo{width:34px;height:34px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:9px;background:var(--surface3);font-size:.55rem;font-weight:800}.team-logo img{width:100%;height:100%;object-fit:contain;padding:3px}.role{width:max-content;min-height:28px;display:inline-flex;align-items:center;padding:0 10px;border-radius:9px;font-size:.58rem;font-weight:800;text-transform:uppercase}.role.player{color:#d2c0ff;background:rgba(143,92,246,.12)}.role.manager{color:#8ee3ba;background:rgba(88,211,155,.11)}.role.assistant-manager{color:#f1c879;background:rgba(229,184,90,.11)}.releases{display:inline-grid;place-items:center;min-width:34px;height:30px;padding:0 9px;border:1px solid rgba(143,92,246,.22);border-radius:9px;color:#d8c8ff;background:rgba(143,92,246,.09);font:800 .72rem Manrope}.value{font:800 .78rem Manrope}.empty{display:none;padding:70px 24px;text-align:center;color:var(--muted)}.empty.show{display:block}.footer{display:flex;align-items:center;justify-content:space-between;padding:16px 17px;border-top:1px solid var(--line);color:var(--muted);font-size:.62rem}.footer strong{color:#fff}
-@media(max-width:1100px){.nav{gap:18px}.login{display:none}}@media(max-width:850px){.topbar{grid-template-columns:1fr auto}.nav,.actions{display:none}.page{padding:32px 18px}.heading{align-items:start;flex-direction:column}.count-card{width:100%}.toolbar{align-items:stretch;flex-direction:column}.toolbar-left,.toolbar-right{display:grid;grid-template-columns:1fr 1fr}.search{grid-column:1/-1;min-width:0}}@media(max-width:560px){.brand-copy,.brand-line{display:none}.toolbar-left,.toolbar-right{grid-template-columns:1fr}.search{grid-column:auto}.footer{align-items:start;flex-direction:column;gap:8px}}
+:root{
+  --bg:#0b0711;--bg2:#100916;--paper:#f2ede6;--ink:#121014;
+  --text:#f7f1fb;--muted:#a69aaa;--purple:#8756e8;--purple-hot:#a47cff;
+  --line:rgba(255,255,255,.10);--line-strong:rgba(255,255,255,.20);
+  --green:#b9ff62;--red:#ff7189;--amber:#ffca68;--max:1440px;
+  --ease:cubic-bezier(.22,.84,.26,1)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg);color-scheme:dark}
+body{margin:0;min-height:100vh;overflow-x:hidden;color:var(--text);background:radial-gradient(circle at 13% 5%,rgba(135,86,232,.14),transparent 26rem),linear-gradient(180deg,var(--bg),var(--bg2) 60%,#09060e);font-family:"DM Sans",system-ui,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.08;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E")}
+a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}.shell{width:min(var(--max),calc(100% - 42px));margin:auto}
+
+.site-header{position:fixed;inset:0 0 auto;z-index:60;border-bottom:1px solid transparent;transition:.35s}
+.site-header.scrolled{background:rgba(11,7,17,.84);border-color:var(--line);backdrop-filter:blur(18px)}
+.nav{min-height:78px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:30px}
+.brand{font-family:"Archivo Black";font-size:1.55rem;letter-spacing:-.08em;text-transform:uppercase}
+.nav-links{justify-self:center;display:flex;gap:25px}
+.nav-links a{position:relative;padding:29px 0 26px;color:#c8becb;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:21px;height:2px;background:var(--purple-hot);transform:scaleX(0);transform-origin:right;transition:transform .28s var(--ease)}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-links a:hover:after,.nav-links a.active:after{transform:scaleX(1);transform-origin:left}
+.nav-actions{display:flex;gap:10px}.nav-button{min-height:42px;display:inline-flex;align-items:center;padding:0 15px;border:1px solid var(--line-strong);border-radius:999px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:.2s}
+.nav-button:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+.menu-button{display:none;width:42px;height:42px;border:1px solid var(--line-strong);border-radius:50%;background:transparent;color:#fff}
+
+.page-head{padding:160px 0 44px}
+.page-head-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:60px;align-items:end}
+.page-title{margin:0;font-family:"Archivo Black";font-size:clamp(4.8rem,10vw,10rem);line-height:.8;letter-spacing:-.085em;text-transform:uppercase}
+.page-title span{display:block;color:transparent;-webkit-text-stroke:1.4px rgba(255,255,255,.68)}
+.page-copy{max-width:430px;color:#c8bdcb;line-height:1.75;font-size:.98rem;padding-bottom:7px}
+.page-meta{margin-top:40px;padding:16px 0;display:flex;flex-wrap:wrap;gap:22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.meta-item{display:flex;align-items:center;gap:9px;color:#bcb0c0;font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.meta-dot{width:7px;height:7px;border-radius:50%;background:var(--purple-hot);box-shadow:0 0 15px rgba(164,124,255,.45)}
+
+.toolbar-wrap{position:sticky;top:78px;z-index:45;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(11,7,17,.88);backdrop-filter:blur(18px)}
+.toolbar{min-height:76px;display:grid;grid-template-columns:minmax(230px,1fr) repeat(3,190px) auto;align-items:center;gap:9px}
+.control{height:42px;width:100%;padding:0 13px;border:1px solid var(--line);border-radius:0;outline:none;color:#fff;background:#15101b;font-size:.67rem}
+.control:focus{border-color:rgba(164,124,255,.65)}
+.view-switch{display:flex;border:1px solid var(--line)}
+.view-button{width:42px;height:40px;border:0;color:#867c8b;background:transparent}
+.view-button.active{color:#fff;background:rgba(255,255,255,.06)}
+
+.content{padding:52px 0 90px}
+.summary{display:grid;grid-template-columns:1.2fr repeat(3,.6fr);border-left:1px solid var(--line);border-top:1px solid var(--line);margin-bottom:42px}
+.summary-card{min-height:140px;padding:22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.018)}
+.summary-card.primary{position:relative;overflow:hidden}
+.summary-card.primary:after{content:"";position:absolute;width:220px;height:220px;right:-80px;top:-110px;border:1px solid rgba(255,255,255,.09);border-radius:50%;box-shadow:inset 0 0 0 55px rgba(135,86,232,.04)}
+.metric-label{color:#938899;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+.metric-value{margin-top:26px;font-family:"Archivo Black";font-size:2.7rem;line-height:.9;letter-spacing:-.06em}
+.metric-note{margin-top:8px;color:#8c818f;font-size:.6rem}
+.featured-player{display:flex;align-items:center;gap:14px;margin-top:22px}
+.featured-avatar{width:60px;height:60px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);background:#17111d;font-family:"Archivo Black";font-size:.7rem}
+.featured-avatar img{width:100%;height:100%;object-fit:cover}
+.featured-name{font-family:"Archivo Black";font-size:1.7rem;line-height:.95;letter-spacing:-.05em;text-transform:uppercase}
+.featured-meta{margin-top:6px;color:#8c818f;font-size:.6rem}
+
+.table-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:14px}
+.table-heading h2{margin:0;font-family:"Archivo Black";font-size:clamp(1.8rem,3.6vw,3.4rem);letter-spacing:-.055em;text-transform:uppercase}
+.result-count{color:#8c818f;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+
+.table-shell{overflow:auto;border-top:1px solid var(--line)}
+.players-table{width:100%;min-width:1180px;border-collapse:collapse}
+.players-table th{height:54px;padding:0 14px;color:#8f8493;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;text-align:center;border-bottom:1px solid var(--line)}
+.players-table th.player{text-align:left}
+.players-table td{height:88px;padding:0 14px;border-bottom:1px solid var(--line);text-align:center;font-size:.71rem}
+.players-table tbody tr{transition:background .22s ease,transform .22s var(--ease)}
+.players-table tbody tr:hover{background:rgba(255,255,255,.027)}
+.player-cell{display:flex;align-items:center;gap:14px;min-width:260px}
+.avatar{width:52px;height:52px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);background:#17111d;font-family:"Archivo Black";font-size:.64rem}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.player-copy{text-align:left;min-width:0}.player-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem}.player-copy span{display:block;margin-top:5px;color:#7f7483;font-size:.55rem}
+.club-cell{display:flex;align-items:center;gap:10px;min-width:175px;text-align:left}
+.club-logo{width:38px;height:38px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);background:#17111d;font-family:"Archivo Black";font-size:.52rem}
+.club-logo img{width:100%;height:100%;object-fit:contain;padding:5px}
+.rating{font-family:"Archivo Black";font-size:1.15rem}
+.rating.high{color:var(--green)}
+.value{font-weight:700}
+.availability{display:inline-flex;align-items:center;gap:7px;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.availability:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.availability.injured,.availability.suspended,.availability.unavailable{color:var(--red)}
+.availability.injured:before,.availability.suspended:before,.availability.unavailable:before{background:var(--red)}
+.profile-link{padding-bottom:4px;border-bottom:1px solid var(--line-strong);font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+
+.cards{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.player-card{position:relative;min-height:310px;padding:20px;border:1px solid var(--line);background:rgba(255,255,255,.018);transition:transform .25s var(--ease),background .25s ease}
+.player-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.04)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.card-rating{font-family:"Archivo Black";font-size:2.2rem;letter-spacing:-.06em}
+.card-main{display:flex;align-items:center;gap:14px;margin-top:22px}
+.card-main .avatar{width:68px;height:68px}
+.card-name{font-family:"Archivo Black";font-size:1.15rem;letter-spacing:-.04em;text-transform:uppercase}
+.card-team{margin-top:7px;color:#8c818f;font-size:.62rem}
+.card-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:24px;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.card-stat{padding:13px 9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.card-stat strong{display:block;font-family:"Archivo Black";font-size:1.1rem}
+.card-stat span{display:block;margin-top:5px;color:#817686;font-size:.5rem;text-transform:uppercase}
+.card-footer{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-top:20px}
+
+.empty,.error{padding:72px 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:#9f94a3;text-align:center}
+.loading-row{height:88px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,transparent,rgba(255,255,255,.035),transparent);background-size:240% 100%;animation:loading 1.3s infinite}
+@keyframes loading{to{background-position:-240% 0}}
+
+.footer{padding:48px 0 32px;border-top:1px solid var(--line)}
+.footer-top{display:grid;grid-template-columns:1fr auto;align-items:end;gap:30px}
+.footer-word{font-family:"Archivo Black";font-size:clamp(5rem,15vw,13rem);line-height:.72;letter-spacing:-.09em;color:rgba(255,255,255,.07)}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:16px;color:#b9adbe;font-size:.62rem;font-weight:700;text-transform:uppercase}
+.footer-copy{margin-top:24px;color:#716775;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .75s var(--ease),transform .75s var(--ease)}.reveal.in{opacity:1;transform:none}
+.cursor-glow{position:fixed;width:340px;height:340px;margin:-170px 0 0 -170px;pointer-events:none;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(135,86,232,.09),transparent 66%);opacity:0;transition:opacity .25s}
+
+@media(max-width:1150px){
+.nav-links{display:none}.menu-button{display:grid;place-items:center}.page-head-grid{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 1fr 1fr}.toolbar .search{grid-column:1/-1}.view-switch{display:none}.summary{grid-template-columns:1fr 1fr}.summary-card.primary{grid-column:1/-1}.table-shell{display:none}.cards{display:grid}
+}
+@media(max-width:760px){
+.shell{width:min(100% - 24px,var(--max))}.nav-actions .nav-button{display:none}.page-head{padding:135px 0 36px}.page-title{font-size:clamp(4rem,20vw,7rem)}.toolbar-wrap{top:0}.toolbar{grid-template-columns:1fr;padding:12px 0}.toolbar .search{grid-column:auto}.summary{grid-template-columns:1fr}.summary-card.primary{grid-column:auto}.cards{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr}.footer-links{justify-content:flex-start}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.reveal{opacity:1;transform:none}}
+.card-mode .table-shell{display:none}.card-mode .cards{display:grid}
+@media(min-width:1151px){.card-mode .cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<div class="site">
-<header class="topbar">
-<a class="brand" href="index.html"><div class="brand-mark"><span>Y</span>SL</div><div class="brand-line"></div><div class="brand-copy" id="leagueBrand">Youth<br>Soccer League</div></a>
-<nav class="nav"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a class="active" href="playersheet.html">Playersheet</a><a href="transfers.html">Transfers</a><a href="news.html">News</a><a href="about.html">About</a></nav>
-<div class="actions"><a class="login" id="accountText" href="login.html">Player login</a><a class="dashboard" href="dashboard.html">Dashboard</a></div>
-</header>
-<main class="page">
-<div class="shell">
-<section class="heading"><div><div class="eyebrow">Official League Registry</div><h1>Playersheet</h1><p>Only the essentials are shown here. Click a Roblox username to open that member’s full profile, statistics and history.</p></div><article class="count-card"><span>Registered members</span><strong id="registeredCount">0</strong><small id="activeCount">0 active</small></article></section>
-<section class="panel">
-<div class="toolbar"><div class="toolbar-left"><label class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search Roblox name or ID"></label><select id="teamFilter"><option value="all">All teams</option></select><select id="roleFilter"><option value="all">All roles</option><option value="Player">Player</option><option value="Manager">Manager</option><option value="Assistant Manager">Assistant Manager</option></select></div><div class="toolbar-right"><select id="sortSelect"><option value="rating-desc">Highest rating</option><option value="rating-asc">Lowest rating</option><option value="value-desc">Highest value</option><option value="value-asc">Lowest value</option><option value="name">Name A–Z</option></select></div></div>
-<div class="table-wrap"><table class="players"><thead><tr><th>Rating</th><th>Roblox user</th><th>Roblox ID</th><th>Team</th><th>Role</th><th>Releases</th><th>Value</th></tr></thead><tbody id="playerTable"></tbody></table></div>
-<div class="empty" id="emptyState">No players match the selected filters.</div>
-<footer class="footer"><span>Showing <strong id="visibleCount">0</strong> registered members</span><span>Click a username to view the full profile.</span></footer>
-</section>
+<div class="cursor-glow" id="cursorGlow"></div>
+<header class="site-header" id="header"><div class="shell nav">
+<a class="brand" href="index.html">YSL</a>
+<nav class="nav-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a class="active" href="playersheet.html">Players</a><a href="transfers.html">Transfers</a><a href="about.html">About</a></nav>
+<div class="nav-actions"><a class="nav-button" href="login.html">Player login</a><a class="nav-button" href="admin.html">Admin</a><button class="menu-button" id="menuButton">☰</button></div>
+</div></header>
+
+<main>
+<section class="page-head"><div class="shell">
+<div class="page-head-grid"><div><h1 class="page-title reveal">Player<span>Sheet</span></h1></div><p class="page-copy reveal">Every registered player, club assignment and season statistic.</p></div>
+<div class="page-meta reveal"><span class="meta-item"><span class="meta-dot"></span><span id="seasonLabel">Current season</span></span><span class="meta-item" id="playerCountMeta">Loading players</span><span class="meta-item" id="clubCountMeta">Loading clubs</span></div>
+</div></section>
+
+<div class="toolbar-wrap"><div class="shell toolbar">
+<input id="search" class="control search" placeholder="Search player, Roblox ID or club…">
+<select id="teamFilter" class="control"><option value="">All clubs</option></select>
+<select id="roleFilter" class="control"><option value="">All roles</option></select>
+<select id="sortFilter" class="control"><option value="rating">Highest rating</option><option value="value">Highest value</option><option value="goals">Most goals</option><option value="assists">Most assists</option><option value="appearances">Most appearances</option><option value="name">Player name</option></select>
+<div class="view-switch"><button id="tableView" class="view-button active" type="button">☰</button><button id="cardView" class="view-button" type="button">▦</button></div>
+</div></div>
+
+<section class="content"><div class="shell">
+<div class="summary reveal">
+<article class="summary-card primary"><div class="metric-label">Highest rated player</div><div class="featured-player"><div class="featured-avatar" id="featuredAvatar">—</div><div><div class="featured-name" id="featuredName">No players yet</div><div class="featured-meta" id="featuredMeta">Waiting for the playersheet</div></div></div></article>
+<article class="summary-card"><div class="metric-label">Active players</div><div class="metric-value" id="activeCount">0</div><div class="metric-note">Currently registered</div></article>
+<article class="summary-card"><div class="metric-label">Clubs</div><div class="metric-value" id="clubCount">0</div><div class="metric-note">Including Free Agent</div></article>
+<article class="summary-card"><div class="metric-label">Total goals</div><div class="metric-value" id="goalCount">0</div><div class="metric-note">From recorded player stats</div></article>
 </div>
+
+<div class="table-heading reveal"><h2>Registered players</h2><span class="result-count" id="resultCount">0 players</span></div>
+<div class="table-shell" id="tableShell"><div class="loading-row"></div><div class="loading-row"></div><div class="loading-row"></div><div class="loading-row"></div></div>
+<div class="cards" id="cards"></div>
+</div></section>
 </main>
-</div>
+
+<footer class="footer"><div class="shell"><div class="footer-top"><div class="footer-word">YSL</div><nav class="footer-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Players</a><a href="transfers.html">Transfers</a><a href="about.html">About</a><a href="login.html">Login</a><a href="admin.html">Admin</a></nav></div><div class="footer-copy">Youth Soccer League</div></div></footer>
+
 <script>
-(()=>{
-const $=id=>document.getElementById(id);let site={settings:{websiteName:"YSL",leagueName:"Youth Soccer League"},theme:{mainPurple:"#8f5cf6",accentPurple:"#6f3ee8"},teams:[],players:[]},players=[];
-async function get(url){const r=await fetch(url,{cache:"no-store",credentials:"same-origin",headers:{Accept:"application/json"}});let b={};try{b=await r.json()}catch{}if(!r.ok)throw new Error(b.error||`Request failed (${r.status})`);return b}
+const $=id=>document.getElementById(id),header=$("header"),glow=$("cursorGlow");
+let players=[],view="table";
+const FREE_AGENT_ICON="https://cdn.discordapp.com/emojis/1527676672881459381.png?size=128&quality=lossless";
+
+function updateHeader(){header.classList.toggle("scrolled",scrollY>20)}updateHeader();addEventListener("scroll",updateHeader,{passive:true});
+if(matchMedia("(pointer:fine)").matches){glow.style.opacity="1";addEventListener("pointermove",e=>glow.style.transform=`translate(${e.clientX}px,${e.clientY}px)`,{passive:true})}
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add("in")}),{threshold:.12});document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+
+$("menuButton").onclick=()=>{const links=[["Home","index.html"],["Fixtures","fixtures.html"],["Standings","standings.html"],["Players","playersheet.html"],["Transfers","transfers.html"],["About","about.html"],["Player login","login.html"],["Admin","admin.html"]],menu=document.createElement("div");menu.style.cssText="position:fixed;inset:0;z-index:100;background:#0b0711;padding:24px;display:flex;flex-direction:column";menu.innerHTML=`<button style="margin-left:auto;width:44px;height:44px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:transparent;color:white;font-size:1.2rem">×</button><nav style="display:grid;gap:8px;margin:auto 0">${links.map(([l,u],i)=>`<a href="${u}" style="font-family:'Archivo Black';font-size:clamp(2.4rem,12vw,5rem);line-height:.95;letter-spacing:-.06em;text-transform:uppercase;color:${i===3?"#fff":"#6d6370"}">${l}</a>`).join("")}</nav>`;menu.querySelector("button").onclick=()=>menu.remove();document.body.appendChild(menu)};
+
+const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const initials=v=>String(v||"?").split(/\s+/).filter(Boolean).map(x=>x[0]).join("").slice(0,3).toUpperCase();
+const money=v=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(Number(v||0));
+function image(url,name,type="avatar"){return url?`<img src="${esc(url)}" alt="${esc(name)}" onerror="this.parentElement.textContent='${esc(initials(name))}'">`:esc(initials(name))}
+function teamIcon(player){return player.teamLogo||(String(player.team).toLowerCase()==="free agent"?FREE_AGENT_ICON:"")}
+function availabilityClass(value){return String(value||"").trim().toLowerCase().replaceAll(" ","-")}
+
+function filtered(){
+const q=$("search").value.trim().toLowerCase(),team=$("teamFilter").value,role=$("roleFilter").value,sort=$("sortFilter").value;
+const list=players.filter(p=>(!q||p.username.toLowerCase().includes(q)||String(p.robloxId||"").includes(q)||p.team.toLowerCase().includes(q))&&(!team||p.team===team)&&(!role||p.role===role));
+list.sort((a,b)=>sort==="name"?a.username.localeCompare(b.username):sort==="value"?b.value-a.value:sort==="goals"?(b.stats?.goals||0)-(a.stats?.goals||0):sort==="assists"?(b.stats?.assists||0)-(a.stats?.assists||0):sort==="appearances"?(b.stats?.appearances||0)-(a.stats?.appearances||0):b.rating-a.rating||a.username.localeCompare(b.username));
+return list;
+}
+
+function tableMarkup(list){return`<table class="players-table"><thead><tr><th class="player">Player</th><th>Club</th><th>Pos</th><th>Role</th><th>Rating</th><th>Value</th><th>Apps</th><th>Goals</th><th>Assists</th><th>Status</th><th></th></tr></thead><tbody>${list.map(p=>`<tr><td><a class="player-cell" href="${esc(p.profileUrl||`player.html?id=${encodeURIComponent(p.id)}`)}"><div class="avatar">${image(p.avatarUrl,p.username)}</div><div class="player-copy"><strong>${esc(p.username)}</strong><span>Roblox ID ${esc(p.robloxId||"—")}</span></div></a></td><td><div class="club-cell"><div class="club-logo">${image(teamIcon(p),p.team,"logo")}</div><span>${esc(p.team)}</span></div></td><td>${esc(p.position||"—")}</td><td>${esc(p.role)}</td><td class="rating ${p.rating>=80?"high":""}">${esc(p.rating)}</td><td class="value">${money(p.value)}</td><td>${esc(p.stats?.appearances||0)}</td><td>${esc(p.stats?.goals||0)}</td><td>${esc(p.stats?.assists||0)}</td><td><span class="availability ${availabilityClass(p.availability)}">${esc(p.availability)}</span></td><td><a class="profile-link" href="${esc(p.profileUrl||`player.html?id=${encodeURIComponent(p.id)}`)}">Profile</a></td></tr>`).join("")}</tbody></table>`}
+
+function cardMarkup(p){return`<a class="player-card" href="${esc(p.profileUrl||`player.html?id=${encodeURIComponent(p.id)}`)}"><div class="card-top"><span class="availability ${availabilityClass(p.availability)}">${esc(p.availability)}</span><span class="card-rating">${esc(p.rating)}</span></div><div class="card-main"><div class="avatar">${image(p.avatarUrl,p.username)}</div><div><div class="card-name">${esc(p.username)}</div><div class="card-team">${esc(p.team)} · ${esc(p.position||"—")}</div></div></div><div class="card-stats"><div class="card-stat"><strong>${esc(p.stats?.appearances||0)}</strong><span>Apps</span></div><div class="card-stat"><strong>${esc(p.stats?.goals||0)}</strong><span>Goals</span></div><div class="card-stat"><strong>${esc(p.stats?.assists||0)}</strong><span>Assists</span></div></div><div class="card-footer"><span>${money(p.value)}</span><span class="profile-link">View profile</span></div></a>`}
+
+function render(){
+const list=filtered();$("resultCount").textContent=`${list.length} ${list.length===1?"player":"players"}`;
+if(!list.length){$("tableShell").innerHTML=`<div class="empty">No players match these filters.</div>`;$("cards").innerHTML=`<div class="empty">No players match these filters.</div>`;return}
+$("tableShell").innerHTML=tableMarkup(list);$("cards").innerHTML=list.map(cardMarkup).join("");
+}
+
+function fillFilters(){
+const teams=[...new Set(players.map(p=>p.team).filter(Boolean))].sort(),roles=[...new Set(players.map(p=>p.role).filter(Boolean))].sort();
+$("teamFilter").innerHTML=`<option value="">All clubs</option>`+teams.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+$("roleFilter").innerHTML=`<option value="">All roles</option>`+roles.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
+}
+
+function updateSummary(){
+const active=players.filter(p=>p.active).length,clubs=new Set(players.map(p=>p.team).filter(Boolean)),goals=players.reduce((sum,p)=>sum+Number(p.stats?.goals||0),0),featured=[...players].sort((a,b)=>b.rating-a.rating||a.username.localeCompare(b.username))[0];
+$("activeCount").textContent=active;$("clubCount").textContent=clubs.size;$("goalCount").textContent=goals;$("playerCountMeta").textContent=`${players.length} players`;$("clubCountMeta").textContent=`${clubs.size} clubs`;
+if(featured){$("featuredAvatar").innerHTML=image(featured.avatarUrl,featured.username);$("featuredName").textContent=featured.username;$("featuredMeta").textContent=`${featured.rating} rating · ${featured.team}`}
+}
+
 async function load(){
- let saved={};
- try{saved=await get("/api/site")}catch(e){console.error(e)}
-
- site={
-  settings:{...site.settings,...(saved.settings||{})},
-  theme:{...site.theme,...(saved.theme||{})},
-  teams:Array.isArray(saved.teams)?saved.teams:[],
-  players:Array.isArray(saved.players)?saved.players:[]
- };
-
- try{
-  const registry=await get("/api/playersheet");
-  if(Array.isArray(registry.teams))site.teams=registry.teams;
-  if(Array.isArray(registry.players))site.players=registry.players;
- }catch(error){
-  console.warn("Dedicated playersheet endpoint unavailable.",error);
-
-  try{
-   const registry=await get("/api/players");
-   if(Array.isArray(registry.players))site.players=registry.players;
-   else if(Array.isArray(registry))site.players=registry;
-  }catch{}
- }
-
- brand();
- prepare();
- fillTeams();
- render();
+try{
+const response=await fetch("/api/players",{cache:"no-store",headers:{Accept:"application/json"}}),payload=await response.json();
+if(!response.ok)throw new Error(payload.error||`Request failed (${response.status})`);
+players=(Array.isArray(payload)?payload:(payload.players||[])).filter(p=>p.active!==false);
+$("seasonLabel").textContent=payload.season||"Current season";fillFilters();updateSummary();render();
+}catch(error){$("tableShell").innerHTML=`<div class="error">${esc(error.message||"Could not load players.")}</div>`;$("cards").innerHTML=""}
 }
-async function session(){try{const s=await get("/api/player/session");if(s.authenticated)$('accountText').textContent=`Logged in as ${s.player?.username||'Player'}`}catch{}}
-function brand(){$('leagueBrand').innerHTML=esc(site.settings.leagueName||'Youth Soccer League').replace(/\s+/g,'<br>');document.documentElement.style.setProperty('--purple',site.theme.mainPurple||'#8f5cf6');document.documentElement.style.setProperty('--purple2',site.theme.accentPurple||'#6f3ee8')}
-function prepare(){
- const logos=Object.fromEntries(
-  site.teams.map(team=>[
-   norm(team.name),
-   team.logo_url||team.logoUrl||team.logo||""
-  ])
- );
-
- players=site.players.map((p,i)=>{
-  const username=
-   p.roblox_username||
-   p.robloxUsername||
-   p.username||
-   p.name||
-   "Unknown Player";
-
-  const robloxId=String(
-   p.roblox_id||
-   p.robloxId||
-   p.roblox_user_id||
-   p.robloxUserId||
-   ""
-  );
-
-  const team=p.team||p.teamName||"Free Agent";
-  const freeAgent=norm(team)==="free agent";
-
-  const displayedRole=
-   p.displayRole||
-   p.display_role||
-   p.staffRole||
-   p.staff_role||
-   p.role||
-   p.playerRole||
-   p.player_role||
-   "Player";
-
-  const teamLogo=
-   p.teamLogo||
-   p.team_logo||
-   p.logo_url||
-   logos[norm(team)]||
-   TEAM_ICON_URLS[norm(team)]||
-   "";
-
-  return{
-   id:p.id||robloxId||i+1,
-   username,
-   robloxId,
-   team,
-   teamLogo,
-   role:roleName(displayedRole),
-   rating:Math.min(99,Math.max(1,Number(p.rating??64))),
-   value:Math.max(0,Number(p.value??p.marketValue??p.market_value??50000)),
-   releases:Math.max(0,Number(p.releases??1)),
-   avatarUrl:p.avatarUrl||p.avatar_url||"",
-   goals:Number(p.goals??0),
-   assists:Number(p.assists??0),
-   appearances:Number(p.appearances??p.apps??0),
-   potm:Number(p.potm??p.playerOfTheMatch??p.player_of_the_match??0),
-   position:p.position||p.pos||"Position not assigned",
-   availability:p.availability||p.status||"Available",
-   note:p.note||p.notes||"",
-   active:p.active??p.is_active??true
-  };
- });
-}
-function fillTeams(){const values=[...new Set(players.map(p=>p.team).filter(Boolean))].sort();$('teamFilter').innerHTML='<option value="all">All teams</option>';values.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;$('teamFilter').appendChild(o)})}
-function list(){const q=norm($('searchInput').value),team=$('teamFilter').value,role=$('roleFilter').value,sort=$('sortSelect').value;let out=players.filter(p=>(!q||`${p.username} ${p.robloxId}`.toLowerCase().includes(q))&&(team==='all'||p.team===team)&&(role==='all'||p.role===role));const s={'rating-desc':(a,b)=>b.rating-a.rating||a.username.localeCompare(b.username),'rating-asc':(a,b)=>a.rating-b.rating||a.username.localeCompare(b.username),'value-desc':(a,b)=>b.value-a.value,'value-asc':(a,b)=>a.value-b.value,'name':(a,b)=>a.username.localeCompare(b.username)};return [...out].sort(s[sort]||s['rating-desc'])}
-function render(){const rows=list();$('playerTable').innerHTML='';$('emptyState').classList.toggle('show',!rows.length);rows.forEach(p=>{const tr=document.createElement('tr');tr.className='player-row';tr.innerHTML=`<td><div class="rating ${ratingClass(p.rating)}">${p.rating}</div></td><td><a class="player-link" href="player.html?id=${encodeURIComponent(p.id||p.robloxId)}"><div class="avatar">${avatar(p)}</div><div class="player-copy"><strong>${esc(p.username)}</strong><span>${p.active?'Active member':'Former member'}</span></div></a></td><td><span class="roblox-id">${esc(p.robloxId||'Not available')}</span></td><td><div class="team"><div class="team-logo">${logo(p.teamLogo,p.team)}</div><span>${esc(p.team)}</span></div></td><td><span class="role ${norm(p.role).replace(/\s+/g,'-')}">${esc(p.role)}</span></td><td><span class="value">${money(p.value)}</span></td>`;$('playerTable').appendChild(tr)});$('registeredCount').textContent=players.length;$('activeCount').textContent=`${players.filter(p=>p.active).length} active`;$('visibleCount').textContent=rows.length}
-function avatar(p){
-  if(p.avatarUrl){
-    return `<img src="${esc(p.avatarUrl)}" alt="${esc(p.username)} Roblox avatar" onerror="this.parentElement.textContent='${initials(p.username)}'">`
-  }
-  if(p.robloxId){
-    const endpoint=`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${encodeURIComponent(p.robloxId)}&size=150x150&format=Png&isCircular=false`;
-    fetch(endpoint,{headers:{Accept:'application/json'}})
-      .then(r=>r.ok?r.json():null)
-      .then(body=>{
-        const url=body?.data?.[0]?.imageUrl;
-        if(!url)return;
-        p.avatarUrl=url;
-        document.querySelectorAll(`[data-avatar-id="${CSS.escape(String(p.robloxId))}"]`).forEach(el=>{
-          el.innerHTML=`<img src="${esc(url)}" alt="${esc(p.username)} Roblox avatar">`;
-        });
-      })
-      .catch(()=>{});
-    return `<span data-avatar-id="${esc(p.robloxId)}">${initials(p.username)}</span>`;
-  }
-  return initials(p.username)
-}
-const TEAM_ICON_URLS={
- "arsenal":"https://cdn.discordapp.com/emojis/1313190736019062896.png?size=128&quality=lossless",
- "chelsea":"https://cdn.discordapp.com/emojis/1313186798733885520.png?size=128&quality=lossless",
- "chelsea fc":"https://cdn.discordapp.com/emojis/1313186798733885520.png?size=128&quality=lossless",
- "liverpool":"https://cdn.discordapp.com/emojis/1313188977297330296.png?size=128&quality=lossless",
- "liverpool fc":"https://cdn.discordapp.com/emojis/1313188977297330296.png?size=128&quality=lossless",
- "manchester city":"https://cdn.discordapp.com/emojis/1313186951842496582.png?size=128&quality=lossless",
- "man city":"https://cdn.discordapp.com/emojis/1313186951842496582.png?size=128&quality=lossless",
- "manchester united":"https://cdn.discordapp.com/emojis/1313187459219198024.png?size=128&quality=lossless",
- "man united":"https://cdn.discordapp.com/emojis/1313187459219198024.png?size=128&quality=lossless",
- "newcastle united":"https://cdn.discordapp.com/emojis/1313189182008721419.png?size=128&quality=lossless",
- "newcastle":"https://cdn.discordapp.com/emojis/1313189182008721419.png?size=128&quality=lossless",
- "free agent":"https://cdn.discordapp.com/emojis/1527676672881459381.png?size=128&quality=lossless",
- "free agents":"https://cdn.discordapp.com/emojis/1527676672881459381.png?size=128&quality=lossless"
-};
-function roleName(v){const r=norm(v);if(r==="manager")return"Manager";if(["assistant manager","assistant-manager","assistant"].includes(r))return"Assistant Manager";return"Player"}
-function ratingClass(v){return v>=90?"elite":v>=80?"gold":v>=70?"silver":"bronze"}
-function logo(url,name){
- const mapped=TEAM_ICON_URLS[norm(name)]||"";
- const finalUrl=url||mapped;
- return `<img src="${esc(finalUrl||mapped)}" alt="${esc(name)} logo" loading="lazy" onerror="if(this.dataset.fallback){this.style.display='none';return;}this.dataset.fallback='1';this.src='${esc(mapped)}';">`;
-}
-function money(v){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(v||0))}function norm(v){return String(v||'').trim().toLowerCase()}function initials(v){return String(v||'YS').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()}function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
-['searchInput','teamFilter','roleFilter','sortSelect'].forEach(id=>$(id).addEventListener(id==='searchInput'?'input':'change',render));window.addEventListener('focus',load);load();session();
-})();
+["search","teamFilter","roleFilter","sortFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+$("tableView").onclick=()=>{view="table";document.body.classList.remove("card-mode");$("tableView").classList.add("active");$("cardView").classList.remove("active")};
+$("cardView").onclick=()=>{view="card";document.body.classList.add("card-mode");$("cardView").classList.add("active");$("tableView").classList.remove("active");document.querySelector(".table-shell").style.display="none";document.querySelector(".cards").style.display="grid"};
+load();
 </script>
 </body>
 </html>

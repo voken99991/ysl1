@@ -670,9 +670,6 @@ button{cursor:pointer}
 <select id="competitionFilter" class="control" aria-label="Competition">
 <option value="">All competitions</option>
 </select>
-<select id="stageFilter" class="control" aria-label="Stage">
-<option value="">All stages</option>
-</select>
 <select id="teamFilter" class="control" aria-label="Team">
 <option value="">All teams</option>
 </select>
@@ -724,13 +721,11 @@ button{cursor:pointer}
 </div>
 </footer>
 
-<script src="competition-engine.js"></script>
 <script>
 const header=document.getElementById("header");
 const glow=document.getElementById("cursorGlow");
 const groups=document.getElementById("fixtureGroups");
 const competitionFilter=document.getElementById("competitionFilter");
-const stageFilter=document.getElementById("stageFilter");
 const teamFilter=document.getElementById("teamFilter");
 
 let fixtures=[];
@@ -868,14 +863,10 @@ function normaliseFixture(raw,index){
     homeLogo:String(homeLogo||""),
     awayLogo:String(awayLogo||""),
     competition:String(get(raw,["competition_name","competition","league","tournament"],"YSL")),
-    competitionId:String(get(raw,["competitionId","competition_id"],"")),
-    stage:String(get(raw,["stageName","stage_name","stage","round"],"")),
-    stageId:String(get(raw,["stageId","stage_id"],"")),
-    groupId:String(get(raw,["groupId","group_id"],"")),
-    tieId:String(get(raw,["tieId","tie_id"],"")),
-    legNumber:Number(get(raw,["legNumber","leg_number","leg"],1)||1),
-    aggregateHome:get(raw,["aggregateHome","aggregate_home"],null),
-    aggregateAway:get(raw,["aggregateAway","aggregate_away"],null),
+    stage:String(get(raw,["stage","round"],"")),
+    fixtureName:String(get(raw,["fixtureName","fixture_name","name"],"")),
+    homeSourceFixtureId:String(get(raw,["homeSourceFixtureId","home_source_fixture_id"],"")),
+    awaySourceFixtureId:String(get(raw,["awaySourceFixtureId","away_source_fixture_id"],"")),
     venue:String(get(raw,["venue","stadium","location"],"")),
     round:String(get(raw,["round","matchday","gameweek","stage"],"")),
     status:statusType(get(raw,["status","fixture_status","match_status"],""),homeScore,awayScore,date),
@@ -893,18 +884,7 @@ function normalisePayload(payload){
   else if(Array.isArray(payload?.data))rows=payload.data;
   else if(Array.isArray(payload?.results))rows=payload.results;
   else if(Array.isArray(payload?.items))rows=payload.items;
-  if(payload&&typeof payload==="object"&&!Array.isArray(payload)){YSLCompetitionEngine.normalise(payload);YSLCompetitionEngine.process(payload)}
-  const competitions=Array.isArray(payload?.competitions)?payload.competitions:[];
-  const stageNames=new Map();
-  competitions.forEach(c=>(c.stages||[]).forEach(s=>stageNames.set(`${c.id||c.key||c.name}:${s.id}`,s.name)));
-  return rows.map((row,index)=>{
-    const normalised=normaliseFixture(row,index);
-    normalised.stage=normalised.stage||YSLCompetitionEngine.stageName(payload,normalised);
-    if(!normalised.stage&&normalised.stageId){
-      normalised.stage=stageNames.get(`${normalised.competitionId||normalised.competition}:${normalised.stageId}`)||"";
-    }
-    return normalised;
-  });
+  return rows.map(normaliseFixture);
 }
 
 function initials(name){
@@ -979,7 +959,7 @@ function fixtureCard(fixture){
     <div class="fixture-main">
       <div class="team">
         <div class="team-logo">${logo(fixture.homeLogo,fixture.home)}</div>
-        <div class="team-name">${esc(fixture.home)}</div>
+        <div class="team-name">${esc(fixture.home||"Unassigned")}</div>
       </div>
 
       <div class="score">
@@ -988,14 +968,14 @@ function fixtureCard(fixture){
       </div>
 
       <div class="team away">
-        <div class="team-name">${esc(fixture.away)}</div>
+        <div class="team-name">${esc(fixture.away||"Unassigned")}</div>
         <div class="team-logo">${logo(fixture.awayLogo,fixture.away)}</div>
       </div>
     </div>
 
     <div class="fixture-info">
-      <div class="competition">${esc(fixture.competition)}${fixture.stage?` · ${esc(fixture.stage)}`:""}${fixture.legNumber>1?` · Leg ${fixture.legNumber}`:""}</div>
-      <div class="venue">${fixture.aggregateHome!==null&&fixture.aggregateAway!==null?`Aggregate ${esc(fixture.aggregateHome)}–${esc(fixture.aggregateAway)} · `:""}${esc(fixture.venue||formatFullDate(fixture.date))}</div>
+      <div class="competition">${esc(fixture.competition)}${fixture.stage?` · ${esc(fixture.stage)}`:""}${fixture.fixtureName?` · ${esc(fixture.fixtureName)}`:""}</div>
+      <div class="venue">${esc(fixture.venue||formatFullDate(fixture.date))}</div>
       <a class="details-link" href="fixture.html?id=${encodeURIComponent(fixture.id)}">Match details</a>
     </div>
   </article>`;
@@ -1003,7 +983,6 @@ function fixtureCard(fixture){
 
 function filteredFixtures(){
   const competition=competitionFilter.value;
-  const stage=stageFilter.value;
   const team=teamFilter.value;
 
   return fixtures.filter(fixture=>{
@@ -1013,10 +992,9 @@ function filteredFixtures(){
       (activeTab==="results"&&fixture.status==="completed");
 
     const competitionMatch=!competition||fixture.competition===competition;
-    const stageMatch=!stage||fixture.stage===stage||fixture.stageId===stage;
     const teamMatch=!team||fixture.home===team||fixture.away===team;
 
-    return tabMatch&&competitionMatch&&stageMatch&&teamMatch;
+    return tabMatch&&competitionMatch&&teamMatch;
   });
 }
 
@@ -1063,19 +1041,9 @@ function fillFilters(){
 
   competitionFilter.innerHTML=`<option value="">All competitions</option>`+
     competitions.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join("");
-  populateStageFilter();
 
   teamFilter.innerHTML=`<option value="">All teams</option>`+
     teams.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join("");
-}
-
-
-function populateStageFilter(){
-  const selectedCompetition=competitionFilter.value;
-  const selected=stageFilter.value;
-  const stages=[...new Set(fixtures.filter(f=>!selectedCompetition||f.competition===selectedCompetition).map(f=>f.stage).filter(Boolean))].sort();
-  stageFilter.innerHTML=`<option value="">All stages</option>`+stages.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join("");
-  if(stages.includes(selected))stageFilter.value=selected;
 }
 
 function updateSummary(){
@@ -1141,8 +1109,7 @@ document.querySelectorAll(".tab").forEach(button=>{
   });
 });
 
-competitionFilter.addEventListener("change",()=>{populateStageFilter();render()});
-stageFilter.addEventListener("change",render);
+competitionFilter.addEventListener("change",render);
 teamFilter.addEventListener("change",render);
 
 document.getElementById("listView").addEventListener("click",()=>{

@@ -525,6 +525,33 @@ def get_site():
         return jsonify({"error": str(exc)}), 503
 
 
+@app.get("/api/fixtures")
+def public_fixtures():
+    """Return fixtures saved by the admin panel from site_content."""
+    try:
+        content = read_site_content()
+        fixtures = content.get("fixtures", [])
+        teams = content.get("teams", [])
+        settings = content.get("settings", {})
+
+        if not isinstance(fixtures, list):
+            fixtures = []
+        if not isinstance(teams, list):
+            teams = []
+        if not isinstance(settings, dict):
+            settings = {}
+
+        return jsonify({
+            "fixtures": fixtures,
+            "teams": teams,
+            "season": settings.get("seasonName", "Current season"),
+            "count": len(fixtures),
+        })
+    except RuntimeError as exc:
+        app.logger.exception("Failed to read public fixtures.")
+        return jsonify({"error": str(exc)}), 503
+
+
 @app.post("/api/site")
 def save_site():
     if not admin_logged_in():

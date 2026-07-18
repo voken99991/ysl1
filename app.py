@@ -18,6 +18,7 @@ from flask import Flask, jsonify, request, send_from_directory, session
 from transfer_api import transfer_api
 from team_admin_api import team_admin_api
 from transfer_history_api import transfer_history_api
+from player_stats_admin_api import player_stats_admin_api
 
 load_dotenv()
 
@@ -27,6 +28,7 @@ app = Flask(__name__, static_folder=None)
 app.register_blueprint(transfer_api)
 app.register_blueprint(team_admin_api)
 app.register_blueprint(transfer_history_api)
+app.register_blueprint(player_stats_admin_api)
 app.secret_key = os.getenv("YSL_SECRET_KEY", "replace-this-secret")
 
 app.config.update(

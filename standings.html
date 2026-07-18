@@ -6,81 +6,57 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0711;--panel:#15101b;--panel2:#1b1422;--text:#f7f1fb;--muted:#9d91a1;--line:rgba(255,255,255,.1);--purple:#8756e8;--green:#b9ff62;--red:#ff7189;--amber:#ffca68}
+:root{--bg:#0b0711;--panel:#15101b;--panel2:#1b1422;--text:#f7f1fb;--muted:#9d91a1;--line:rgba(255,255,255,.1);--green:#b9ff62;--red:#ff7189;--amber:#ffca68}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 12% 0,rgba(135,86,232,.15),transparent 30rem),var(--bg);font-family:"DM Sans",sans-serif}a{color:inherit;text-decoration:none}
-header{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 4vw;border-bottom:1px solid var(--line)}.brand{font-family:"Archivo Black";font-size:1.5rem;letter-spacing:-.08em}.nav{display:flex;gap:24px;color:var(--muted);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
-main{width:min(1450px,92vw);margin:auto;padding:55px 0 70px}.hero{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:28px}.hero h1{margin:0;font-family:"Archivo Black";font-size:clamp(3.5rem,8vw,8rem);line-height:.82;letter-spacing:-.075em;text-transform:uppercase}.hero p{max-width:560px;color:var(--muted);line-height:1.7}
-.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}.filters select{min-height:46px;min-width:230px;padding:0 13px;border:1px solid var(--line);background:var(--panel);color:#fff;font:inherit;font-size:.67rem;font-weight:700;text-transform:uppercase}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 4vw;border-bottom:1px solid var(--line)}.brand{font-family:"Archivo Black";font-size:1.5rem;letter-spacing:-.08em}.nav{display:flex;gap:24px;color:var(--muted);font-size:.65rem;font-weight:700;text-transform:uppercase}
+main{width:min(1400px,92vw);margin:auto;padding:55px 0 70px}.hero{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:28px}.hero h1{margin:0;font-family:"Archivo Black";font-size:clamp(3.5rem,8vw,8rem);line-height:.82;letter-spacing:-.075em;text-transform:uppercase}.hero p{max-width:520px;color:var(--muted);line-height:1.7}
+.controls{display:flex;gap:10px;margin-bottom:16px}.controls select{min-height:48px;min-width:260px;padding:0 14px;border:1px solid var(--line);background:var(--panel);color:#fff;font:inherit;font-size:.7rem;font-weight:700}
 .panel{overflow:hidden;border:1px solid var(--line);background:var(--panel)}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px;border-bottom:1px solid var(--line)}.panel-head h2{margin:0;font-family:"Archivo Black";font-size:1rem;text-transform:uppercase}.panel-head span{color:var(--muted);font-size:.6rem;text-transform:uppercase}
-.table-wrap{overflow:auto}table{width:100%;min-width:920px;border-collapse:collapse}th,td{height:62px;padding:0 14px;border-bottom:1px solid var(--line);text-align:center;font-size:.7rem}th{height:48px;color:#817586;background:var(--panel2);font-size:.54rem;text-transform:uppercase;letter-spacing:.08em}th:nth-child(2),td:nth-child(2){text-align:left}.club{display:flex;align-items:center;gap:11px}.club img{width:38px;height:38px;padding:4px;object-fit:contain;border:1px solid var(--line)}.form{display:flex;justify-content:center;gap:4px}.badge{width:24px;height:24px;display:grid;place-items:center;font-size:.5rem;font-weight:700}.W{background:var(--green);color:#111}.D{background:var(--amber);color:#111}.L{background:var(--red);color:#111}.empty{padding:70px 20px;text-align:center;color:var(--muted)}.empty strong{display:block;color:#fff;font-family:"Archivo Black";font-size:1.5rem;text-transform:uppercase}
-.groups{display:grid;gap:16px}.group-title{margin:0;padding:15px 18px;border:1px solid var(--line);border-bottom:0;background:var(--panel2);font-family:"Archivo Black";font-size:.8rem;text-transform:uppercase}
-.bracket{display:flex;gap:16px;overflow:auto;padding:20px}.round{min-width:250px;display:grid;align-content:center;gap:12px}.round h3{margin:0 0 5px;color:var(--muted);font-size:.6rem;text-transform:uppercase}.tie{padding:12px;border:1px solid var(--line);background:var(--panel2)}.tie-row{display:flex;align-items:center;justify-content:space-between;min-height:32px;gap:10px;font-size:.67rem}.tie-row span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.winner{color:var(--green)}.aggregate{padding-top:8px;border-top:1px solid var(--line);color:var(--muted);font-size:.53rem;text-transform:uppercase}.error{padding:16px;color:var(--red)}
-@media(max-width:760px){.nav{display:none}.hero{align-items:flex-start;flex-direction:column}.filters select{width:100%}}
+.table-wrap{overflow:auto}table{width:100%;min-width:920px;border-collapse:collapse}th,td{height:62px;padding:0 14px;border-bottom:1px solid var(--line);text-align:center;font-size:.7rem}th{height:48px;color:#817586;background:var(--panel2);font-size:.54rem;text-transform:uppercase}th:nth-child(2),td:nth-child(2){text-align:left}.club{display:flex;align-items:center;gap:11px}.club img{width:38px;height:38px;padding:4px;object-fit:contain;border:1px solid var(--line)}.form{display:flex;justify-content:center;gap:4px}.badge{width:24px;height:24px;display:grid;place-items:center;font-size:.5rem;font-weight:700}.W{background:var(--green);color:#111}.D{background:var(--amber);color:#111}.L{background:var(--red);color:#111}.empty{padding:70px 20px;text-align:center;color:var(--muted)}.empty strong{display:block;margin-bottom:8px;color:#fff;font-family:"Archivo Black";font-size:1.4rem;text-transform:uppercase}
+@media(max-width:760px){.nav{display:none}.hero{align-items:flex-start;flex-direction:column}.controls select{width:100%}}
 </style>
 </head>
 <body>
 <header><a class="brand" href="index.html">YSL</a><nav class="nav"><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Players</a><a href="transfers.html">Transfers</a><a href="about.html">About</a></nav></header>
 <main>
-<section class="hero"><div><h1>Standings</h1><p>Select any competition and stage. League tables, group tables and knockout brackets are generated from the same fixtures.</p></div></section>
-<div class="filters"><select id="competitionSelect"></select><select id="stageSelect"></select><select id="groupSelect" hidden></select></div>
-<section class="panel"><div class="panel-head"><h2 id="panelTitle">Competition</h2><span id="panelMeta"></span></div><div id="content"><div class="empty"><strong>Loading</strong></div></div></section>
+<section class="hero"><div><h1>Standings</h1><p>Select a competition to see its table. Results are calculated automatically from completed fixtures in that competition.</p></div></section>
+<div class="controls"><select id="competitionSelect"></select></div>
+<section class="panel"><div class="panel-head"><h2 id="title">Standings</h2><span id="meta"></span></div><div id="content"><div class="empty"><strong>Loading</strong></div></div></section>
 </main>
-<script src="competition-engine.js"></script>
 <script>
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
-let site={};
-const competitionSelect=document.getElementById("competitionSelect"),stageSelect=document.getElementById("stageSelect"),groupSelect=document.getElementById("groupSelect"),content=document.getElementById("content");
+let site={};const select=document.getElementById("competitionSelect"),content=document.getElementById("content");
 async function load(){
  try{
   const response=await fetch("/api/site",{cache:"no-store"}),type=response.headers.get("content-type")||"";
-  if(!response.ok||!type.includes("application/json"))throw new Error("The standings data could not be loaded.");
-  site=await response.json();YSLCompetitionEngine.normalise(site);YSLCompetitionEngine.process(site);
-  renderCompetitionOptions()
- }catch(error){content.innerHTML=`<div class="error">${esc(error.message)}</div>`}
+  if(!response.ok||!type.includes("application/json"))throw new Error("The standings could not be loaded.");
+  site=await response.json();site.teams=Array.isArray(site.teams)?site.teams:[];site.fixtures=Array.isArray(site.fixtures)?site.fixtures:[];site.competitions=Array.isArray(site.competitions)?site.competitions:[];
+  const names=site.competitions.filter(c=>c.enabled!==false).map(c=>c.name).filter(Boolean);
+  if(!names.length)names.push(...new Set(site.fixtures.map(f=>f.competition).filter(Boolean)));
+  select.innerHTML=names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join("");render()
+ }catch(error){content.innerHTML=`<div class="empty"><strong>Error</strong>${esc(error.message)}</div>`}
 }
-function renderCompetitionOptions(){
- const competitions=site.competitions.filter(c=>c.enabled!==false);
- competitionSelect.innerHTML=competitions.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
- renderStageOptions()
-}
-function currentCompetition(){return site.competitions.find(c=>String(c.id)===competitionSelect.value)}
-function currentStage(){return currentCompetition()?.stages.find(s=>String(s.id)===stageSelect.value)}
-function renderStageOptions(){
- const c=currentCompetition(),stages=[...(c?.stages||[])].sort((a,b)=>a.order-b.order);
- stageSelect.innerHTML=stages.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("");
- renderGroupOptions()
-}
-function renderGroupOptions(){
- const s=currentStage();
- if(s?.type==="groups"&&(s.groups||[]).length){
-  groupSelect.hidden=false;groupSelect.innerHTML=`<option value="">All groups</option>`+s.groups.map(g=>`<option value="${esc(g.id)}">${esc(g.name)}</option>`).join("")
- }else{groupSelect.hidden=true;groupSelect.innerHTML=""}
- render()
+function buildTable(competition){
+ const logos=Object.fromEntries(site.teams.map(t=>[t.name,t.logo||""]));
+ const relevant=site.fixtures.filter(f=>f.competition===competition);
+ const confirmed=new Set(relevant.flatMap(f=>[f.home,f.away]).filter(Boolean));
+ const table=new Map([...confirmed].map(name=>[name,{name,logo:logos[name]||"",played:0,wins:0,draws:0,losses:0,gf:0,ga:0,points:0,form:[]}]));
+ relevant.filter(f=>["complete","completed"].includes(String(f.status||"").toLowerCase())&&f.home&&f.away&&f.homeScore!==""&&f.awayScore!=="").sort((a,b)=>`${a.date||""} ${a.time||""}`.localeCompare(`${b.date||""} ${b.time||""}`)).forEach(f=>{
+  if(!table.has(f.home))table.set(f.home,{name:f.home,logo:logos[f.home]||"",played:0,wins:0,draws:0,losses:0,gf:0,ga:0,points:0,form:[]});
+  if(!table.has(f.away))table.set(f.away,{name:f.away,logo:logos[f.away]||"",played:0,wins:0,draws:0,losses:0,gf:0,ga:0,points:0,form:[]});
+  const h=table.get(f.home),a=table.get(f.away),hs=Number(f.homeScore),as=Number(f.awayScore);
+  h.played++;a.played++;h.gf+=hs;h.ga+=as;a.gf+=as;a.ga+=hs;
+  if(hs>as){h.wins++;a.losses++;h.points+=3;h.form.push("W");a.form.push("L")}
+  else if(as>hs){a.wins++;h.losses++;a.points+=3;a.form.push("W");h.form.push("L")}
+  else{h.draws++;a.draws++;h.points++;a.points++;h.form.push("D");a.form.push("D")}
+ });
+ return [...table.values()].map(t=>({...t,gd:t.gf-t.ga,form:t.form.slice(-5)})).sort((a,b)=>b.points-a.points||b.gd-a.gd||b.gf-a.gf||a.name.localeCompare(b.name)).map((t,i)=>({...t,position:i+1}))
 }
 function render(){
- const c=currentCompetition(),s=currentStage();if(!c||!s){content.innerHTML='<div class="empty"><strong>No competition structure</strong></div>';return}
- document.getElementById("panelTitle").textContent=`${c.name} · ${s.name}`;
- document.getElementById("panelMeta").textContent=s.type;
- if(["knockout","playoff","custom"].includes(s.type)){renderBracket(c);return}
- if(s.type==="groups"&&!groupSelect.value){renderAllGroups(c,s);return}
- renderTable(c,s,groupSelect.value)
+ const competition=select.value,rows=buildTable(competition);document.getElementById("title").textContent=competition||"Standings";document.getElementById("meta").textContent=`${rows.length} teams`;
+ if(!rows.length){content.innerHTML='<div class="empty"><strong>No confirmed teams</strong>This competition has no confirmed fixture teams yet.</div>';return}
+ content.innerHTML=`<div class="table-wrap"><table><thead><tr><th>Pos</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.position}</td><td><div class="club">${r.logo?`<img src="${esc(r.logo)}" alt="">`:""}<strong>${esc(r.name)}</strong></div></td><td>${r.played}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.gd>0?"+":""}${r.gd}</td><td><strong>${r.points}</strong></td><td><div class="form">${r.form.map(x=>`<span class="badge ${x}">${x}</span>`).join("")||"—"}</div></td></tr>`).join("")}</tbody></table></div>`
 }
-function tableHtml(rows){
- if(!rows.length)return '<div class="empty"><strong>No confirmed teams</strong>Teams appear when they are assigned to this stage.</div>';
- return `<div class="table-wrap"><table><thead><tr><th>Pos</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>PTS</th><th>Form</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.position}</td><td><div class="club">${r.logo?`<img src="${esc(r.logo)}" alt="">`:""}<strong>${esc(r.name)}</strong></div></td><td>${r.played}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.gf}</td><td>${r.ga}</td><td>${r.gd>0?"+":""}${r.gd}</td><td><strong>${r.points}</strong></td><td><div class="form">${r.form.map(x=>`<span class="badge ${x}">${x}</span>`).join("")||"—"}</div></td></tr>`).join("")}</tbody></table></div>`
-}
-function renderTable(c,s,groupId){content.innerHTML=tableHtml(YSLCompetitionEngine.calculateTable(site,c.id,s.id,groupId))}
-function renderAllGroups(c,s){
- content.innerHTML=`<div class="groups">${s.groups.map(g=>`<section><h3 class="group-title">${esc(g.name)}</h3>${tableHtml(YSLCompetitionEngine.calculateTable(site,c.id,s.id,g.id))}</section>`).join("")||'<div class="empty"><strong>No groups</strong></div>'}</div>`
-}
-function renderBracket(c){
- const stages=[...c.stages].filter(x=>["knockout","playoff","custom"].includes(x.type)).sort((a,b)=>a.order-b.order);
- content.innerHTML=`<div class="bracket">${stages.map(stage=>`<section class="round"><h3>${esc(stage.name)}</h3>${(stage.ties||[]).map(t=>{
-  const result=YSLCompetitionEngine.tieResult(site,c,t.id),home=t.home||"",away=t.away||"";
-  return `<article class="tie"><div class="tie-row ${result?.winner===home?"winner":""}"><span>${esc(home||"Unassigned")}</span><strong>${result?.complete?result.aggregateHome:""}</strong></div><div class="tie-row ${result?.winner===away?"winner":""}"><span>${esc(away||"Unassigned")}</span><strong>${result?.complete?result.aggregateAway:""}</strong></div>${result?.complete?`<div class="aggregate">${esc(result.winner)} advances</div>`:""}</article>`
- }).join("")||'<div class="tie">No ties created</div>'}</section>`).join("")}</div>`
-}
-competitionSelect.onchange=renderStageOptions;stageSelect.onchange=renderGroupOptions;groupSelect.onchange=render;
-load();
+select.onchange=render;load();
 </script>
 </body></html>

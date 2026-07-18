@@ -130,6 +130,38 @@ textarea{min-height:100px;resize:vertical}
 @media(max-width:1250px){.stats{grid-template-columns:repeat(3,1fr)}.quick-grid{grid-template-columns:repeat(2,1fr)}.fixture-grid,.grid4{grid-template-columns:repeat(2,1fr)}.team-editor-grid{grid-template-columns:60px 1fr 1fr}}
 @media(max-width:900px){.app{grid-template-columns:82px 1fr}.side-brand span,.nav button span:last-child,.side-footer{display:none}.nav button{justify-content:center}.content{padding:18px}.topbar{padding:0 14px}.top-actions a{display:none}.grid2,.grid3,.grid4,.fixture-grid,.stats-columns,.data-actions,.check-grid{grid-template-columns:1fr}.heading{align-items:flex-start;flex-direction:column}.team-editor-grid{grid-template-columns:1fr}}
 @media(max-width:620px){.stats,.quick-grid{grid-template-columns:1fr}.top-actions .status{display:none}.fixture-preview{grid-template-columns:1fr}.preview-team,.preview-team.away{justify-content:flex-start;text-align:left}.preview-team.away{flex-direction:row}.heading h1{font-size:3rem}}
+
+.competition-builder{display:grid;gap:16px}
+.competition-shell{border:1px solid var(--line);background:var(--panel2)}
+.competition-shell-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.018)}
+.competition-shell-head h3{margin:0;font-family:"Archivo Black";font-size:1rem;letter-spacing:-.04em;text-transform:uppercase}
+.competition-shell-head p{margin:5px 0 0;color:#807585;font-size:.58rem}
+.competition-config{padding:16px;border-bottom:1px solid var(--line)}
+.stage-list{display:grid;gap:10px;padding:16px}
+.stage-card{position:relative;padding:15px;border:1px solid var(--line);background:#120d17}
+.stage-card:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--purple-hot)}
+.stage-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.stage-head h4{margin:0;font-family:"Archivo Black";font-size:.76rem;text-transform:uppercase}
+.stage-head small{display:block;margin-top:5px;color:#786e7d;font-family:"DM Sans";font-size:.53rem;text-transform:none}
+.stage-rules{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.stage-flags{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.stage-flag{display:flex;align-items:center;gap:7px;min-height:40px;padding:8px;border:1px solid var(--line);background:var(--panel2);font-size:.56rem;color:#cfc4d2}
+.stage-flag input{width:auto;min-height:0}
+.group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.group-card{padding:12px;border:1px solid var(--line);background:var(--panel2)}
+.group-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.group-card-head strong{font-size:.64rem}
+.group-card textarea{min-height:78px}
+.tie-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.tie-card{padding:11px;border:1px solid var(--line);background:var(--panel2)}
+.tie-card strong{display:block;margin-bottom:8px;font-size:.61rem}
+.structure-preview{display:flex;align-items:center;gap:8px;overflow:auto;padding:14px 16px;border-top:1px solid var(--line)}
+.structure-node{min-width:120px;padding:10px;border:1px solid var(--line);background:#15101b;text-align:center}
+.structure-node strong{display:block;font-size:.58rem}.structure-node span{display:block;margin-top:4px;color:#766b7a;font-size:.5rem}
+.structure-arrow{color:var(--purple-hot)}
+@media(max-width:1250px){.stage-flags{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.stage-flags,.group-grid,.tie-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -233,8 +265,8 @@ textarea{min-height:100px;resize:vertical}
 </section>
 
 <section class="page" id="competitions">
-<div class="heading"><div><h1>Competitions</h1><p>Control competition names, labels and whether they can be selected for new fixtures.</p></div><button class="btn primary" id="addCompetition">Add competition</button></div>
-<div class="card"><div class="card-head"><h3>Competition settings</h3></div><div class="card-body"><div class="editor-list" id="competitionEditors"></div></div></div>
+<div class="heading"><div><h1>Competition Builder</h1><p>Create leagues, groups, knockout brackets, two-legged aggregate ties and completely custom multi-stage tournaments. Every stage is linked directly to the fixture editor.</p></div><div class="heading-actions"><button class="btn" id="competitionTemplate">Use tournament template</button><button class="btn primary" id="addCompetition">Create competition</button></div></div>
+<div class="card"><div class="card-head"><h3>Tournament structures</h3><span>Unlimited competitions and stages</span></div><div class="card-body"><div class="competition-builder" id="competitionEditors"></div></div></div>
 </section>
 
 <section class="page" id="navigation">
@@ -275,12 +307,8 @@ textarea{min-height:100px;resize:vertical}
 let csrf="",data=null;
 const $=id=>document.getElementById(id);
 const defaultCompetitions=[
- {name:"Premier League",key:"premier-league",enabled:true},
- {name:"Carabao Cup",key:"carabao-cup",enabled:true},
- {name:"FA Cup",key:"fa-cup",enabled:true},
- {name:"UCL",key:"ucl",enabled:true},
- {name:"World Cup",key:"world-cup",enabled:true},
- {name:"Euros",key:"euros",enabled:true}
+ {id:"premier-league",name:"Premier League",key:"premier-league",enabled:true,season:"Current season",logo:"",colour:"#8756e8",stages:[{id:"league",name:"League",type:"league",order:1,teams:[],groups:[],ties:[],rules:{roundRobin:"double",qualify:0,relegate:0,legs:1,aggregate:false,awayGoals:false,extraTime:false,penalties:false,thirdPlace:false,autoProgress:false}}]},
+ {id:"fa-cup",name:"FA Cup",key:"fa-cup",enabled:true,season:"Current season",logo:"",colour:"#f24a50",stages:[{id:"round-1",name:"Round 1",type:"knockout",order:1,teams:[],groups:[],ties:[],rules:{roundRobin:"single",qualify:0,relegate:0,legs:1,aggregate:false,awayGoals:false,extraTime:true,penalties:true,thirdPlace:false,autoProgress:true}}]}
 ];
 const defaultNavigation=[
  {label:"Home",url:"index.html",enabled:true},
@@ -327,10 +355,19 @@ function normalize(){
  data.fixtures=Array.isArray(data.fixtures)?data.fixtures:[];
  data.players=Array.isArray(data.players)?data.players:(Array.isArray(data.playerStats)?data.playerStats:[]);
  data.competitions=Array.isArray(data.competitions)&&data.competitions.length?data.competitions:structuredClone(defaultCompetitions);
+ data.competitions=data.competitions.map((c,ci)=>({
+  id:c.id||c.key||uid(),name:c.name||`Competition ${ci+1}`,key:c.key||`competition-${ci+1}`,enabled:c.enabled!==false,
+  season:c.season||data.settings.seasonName||"Current season",logo:c.logo||"",colour:c.colour||c.color||"#8756e8",
+  stages:(Array.isArray(c.stages)&&c.stages.length?c.stages:[{id:uid(),name:c.format==="league"?"League":"Main stage",type:c.format||"league",order:1,teams:[],groups:[],ties:[],rules:{}}]).map((s,si)=>({
+   id:s.id||uid(),name:s.name||`Stage ${si+1}`,type:s.type||"league",order:Number(s.order||si+1),
+   teams:Array.isArray(s.teams)?s.teams:[],groups:Array.isArray(s.groups)?s.groups:[],ties:Array.isArray(s.ties)?s.ties:[],
+   rules:{roundRobin:"single",qualify:0,relegate:0,legs:1,aggregate:false,awayGoals:false,extraTime:true,penalties:true,thirdPlace:false,autoProgress:false,...(s.rules||{})}
+  }))
+ }));
  data.navigation=Array.isArray(data.navigation)&&data.navigation.length?data.navigation:structuredClone(defaultNavigation);
  data.teams=data.teams.map(t=>({id:t.id||uid(),name:t.name||"",logo:t.logo||t.logo_url||t.icon||"",shortName:t.shortName||t.abbreviation||"",budget:Number(t.budget||300000)}));
  data.fixtures=data.fixtures.map(f=>({
-  id:f.id||uid(),matchday:Number(f.matchday||1),competition:f.competition||"Premier League",date:f.date||"",time:f.time||"",
+  id:f.id||uid(),matchday:Number(f.matchday||1),competition:f.competition||"Premier League",competitionId:f.competitionId||"",stageId:f.stageId||"",groupId:f.groupId||"",tieId:f.tieId||"",legNumber:Number(f.legNumber||1),date:f.date||"",time:f.time||"",
   home:f.home||"",away:f.away||"",venue:f.venue||"",status:f.status||"upcoming",homeScore:f.homeScore??"",awayScore:f.awayScore??"",
   homeLogo:f.homeLogo||"",awayLogo:f.awayLogo||"",round:f.round||"",streamUrl:f.streamUrl||"",
   stats:{goals:Array.isArray(f.stats?.goals)?f.stats.goals:[],cards:Array.isArray(f.stats?.cards)?f.stats.cards:[],substitutions:Array.isArray(f.stats?.substitutions)?f.stats.substitutions:[],lineups:{home:Array.isArray(f.stats?.lineups?.home)?f.stats.lineups.home:[],away:Array.isArray(f.stats?.lineups?.away)?f.stats.lineups.away:[]}}
@@ -367,7 +404,11 @@ function renderTeams(){
 }
 function teamOptions(selected){return `<option value="">Unassigned</option>`+data.teams.map(t=>`<option value="${safe(t.name)}" ${t.name===selected?"selected":""}>${safe(t.name)}</option>`).join("")}
 function enabledCompetitionNames(){return data.competitions.filter(c=>c.enabled!==false).map(c=>c.name)}
-function competitionOptions(selected){return enabledCompetitionNames().map(c=>`<option value="${safe(c)}" ${c===selected?"selected":""}>${safe(c)}</option>`).join("")}
+function competitionOptions(selected){return data.competitions.filter(c=>c.enabled!==false).map(c=>`<option value="${safe(c.name)}" ${c.name===selected?"selected":""}>${safe(c.name)}</option>`).join("")}
+function competitionByName(name){return data.competitions.find(c=>c.name===name)}
+function stageOptions(competitionName,selected){const c=competitionByName(competitionName);return `<option value="">No stage</option>`+(c?.stages||[]).sort((a,b)=>a.order-b.order).map(s=>`<option value="${safe(s.id)}" ${s.id===selected?"selected":""}>${safe(s.name)} · ${safe(s.type)}</option>`).join("")}
+function tieOptions(competitionName,stageId,selected){const stage=competitionByName(competitionName)?.stages.find(s=>s.id===stageId);return `<option value="">No tie</option>`+(stage?.ties||[]).map(t=>`<option value="${safe(t.id)}" ${t.id===selected?"selected":""}>${safe(t.name||`${t.home||"TBC"} vs ${t.away||"TBC"}`)}</option>`).join("")}
+function groupOptions(competitionName,stageId,selected){const stage=competitionByName(competitionName)?.stages.find(s=>s.id===stageId);return `<option value="">No group</option>`+(stage?.groups||[]).map(g=>`<option value="${safe(g.id)}" ${g.id===selected?"selected":""}>${safe(g.name)}</option>`).join("")}
 function competitionClass(v){return data.competitions.find(c=>c.name===v)?.key||"premier-league"}
 
 function renderFixtures(){
@@ -378,7 +419,11 @@ function renderFixtures(){
   card.innerHTML=`<div class="editor-title"><div><h4>${safe(f.home||"Home Team")} vs ${safe(f.away||"Away Team")}</h4><small>${safe(f.competition)} · Matchday ${f.matchday}</small></div><div class="row-actions"><button class="btn small" data-toggle-stats="${index}">Match details</button><button class="btn small" data-copy-fixture="${index}">Duplicate</button><button class="btn danger small" data-delete-fixture="${index}">Delete</button></div></div>
   <div class="fixture-preview"><div class="preview-team"><div class="logo-preview">${previewLogo(f.homeLogo,f.home)}</div><strong>${safe(f.home||"Home Team")}</strong></div><div class="preview-score">${safe(score)}<span>${safe(f.status)}</span></div><div class="preview-team away"><strong>${safe(f.away||"Away Team")}</strong><div class="logo-preview">${previewLogo(f.awayLogo,f.away)}</div></div></div>
   <div class="fixture-grid">
-  <label>Competition<select data-fixture="${index}" data-key="competition">${competitionOptions(f.competition)}</select></label>
+  <label>Competition<select data-fixture="${index}" data-key="competition" data-fixture-competition="${index}">${competitionOptions(f.competition)}</select></label>
+  <label>Stage<select data-fixture="${index}" data-key="stageId" data-fixture-stage="${index}">${stageOptions(f.competition,f.stageId)}</select></label>
+  <label>Group<select data-fixture="${index}" data-key="groupId">${groupOptions(f.competition,f.stageId,f.groupId)}</select></label>
+  <label>Tie<select data-fixture="${index}" data-key="tieId">${tieOptions(f.competition,f.stageId,f.tieId)}</select></label>
+  <label>Leg number<input type="number" min="1" max="9" data-fixture="${index}" data-key="legNumber" value="${f.legNumber||1}"></label>
   <label>Matchday<input type="number" min="1" data-fixture="${index}" data-key="matchday" value="${f.matchday}"></label>
   <label>Round / stage<input data-fixture="${index}" data-key="round" value="${safe(f.round)}"></label>
   <label>Status<select data-fixture="${index}" data-key="status"><option value="upcoming" ${f.status==="upcoming"?"selected":""}>Upcoming</option><option value="live" ${f.status==="live"?"selected":""}>Live</option><option value="complete" ${["complete","completed"].includes(f.status)?"selected":""}>Complete</option><option value="postponed" ${f.status==="postponed"?"selected":""}>Postponed</option><option value="cancelled" ${f.status==="cancelled"?"selected":""}>Cancelled</option></select></label>
@@ -402,7 +447,9 @@ function renderFixtures(){
  });
  document.querySelectorAll("[data-toggle-stats]").forEach(btn=>btn.onclick=()=>$(`stats-${btn.dataset.toggleStats}`).classList.toggle("open"));
  document.querySelectorAll("[data-delete-fixture]").forEach(btn=>btn.onclick=()=>{if(confirm("Delete this fixture?")){collect();data.fixtures.splice(Number(btn.dataset.deleteFixture),1);rebuildStandings();renderAll()}});
- document.querySelectorAll("[data-copy-fixture]").forEach(btn=>btn.onclick=()=>{collect();const f=structuredClone(data.fixtures[Number(btn.dataset.copyFixture)]);f.id=uid();data.fixtures.push(f);renderAll()})
+ document.querySelectorAll("[data-copy-fixture]").forEach(btn=>btn.onclick=()=>{collect();const f=structuredClone(data.fixtures[Number(btn.dataset.copyFixture)]);f.id=uid();data.fixtures.push(f);renderAll()});
+ document.querySelectorAll("[data-fixture-competition]").forEach(select=>select.onchange=()=>{collect();const i=Number(select.dataset.fixtureCompetition),c=competitionByName(data.fixtures[i].competition);data.fixtures[i].competitionId=c?.id||"";data.fixtures[i].stageId=c?.stages?.[0]?.id||"";data.fixtures[i].groupId="";data.fixtures[i].tieId="";renderFixtures()});
+ document.querySelectorAll("[data-fixture-stage]").forEach(select=>select.onchange=()=>{collect();const i=Number(select.dataset.fixtureStage);data.fixtures[i].groupId="";data.fixtures[i].tieId="";renderFixtures()})
 }
 
 function renderPlayers(){
@@ -415,14 +462,39 @@ function renderPlayers(){
  document.querySelectorAll("[data-delete-player]").forEach(btn=>btn.onclick=()=>{if(confirm("Delete this website profile?")){collect();data.players.splice(Number(btn.dataset.deletePlayer),1);renderAll()}})
 }
 
+function blankStage(type="league",name="New stage"){return{id:uid(),name,type,order:1,teams:[],groups:[],ties:[],rules:{roundRobin:"single",qualify:0,relegate:0,legs:type==="knockout"?1:1,aggregate:false,awayGoals:false,extraTime:true,penalties:true,thirdPlace:false,autoProgress:false}}}
 function renderCompetitions(){
  $("competitionEditors").innerHTML="";
- data.competitions.forEach((c,index)=>{
-  const card=document.createElement("article");card.className="editor-card";
-  card.innerHTML=`<div class="editor-title"><h4>${safe(c.name)}</h4><button class="btn danger small" data-delete-competition="${index}">Delete</button></div><div class="grid3"><label>Competition name<input data-competition="${index}" data-key="name" value="${safe(c.name)}"></label><label>Style key<input data-competition="${index}" data-key="key" value="${safe(c.key)}"></label><label>Enabled<select data-competition="${index}" data-key="enabled"><option value="true" ${c.enabled!==false?"selected":""}>Yes</option><option value="false" ${c.enabled===false?"selected":""}>No</option></select></label></div>`;
-  $("competitionEditors").appendChild(card)
+ data.competitions.forEach((c,ci)=>{
+  const shell=document.createElement("article");shell.className="competition-shell";
+  shell.innerHTML=`<div class="competition-shell-head"><div><h3>${safe(c.name)}</h3><p>${c.stages.length} stage${c.stages.length===1?"":"s"} · ${c.enabled?"Public":"Hidden"}</p></div><div class="row-actions"><button class="btn small" data-add-stage="${ci}">Add stage</button><button class="btn small" data-duplicate-competition="${ci}">Duplicate</button><button class="btn danger small" data-delete-competition="${ci}">Delete</button></div></div>
+  <div class="competition-config grid4"><label>Name<input data-competition="${ci}" data-key="name" value="${safe(c.name)}"></label><label>Season<input data-competition="${ci}" data-key="season" value="${safe(c.season)}"></label><label>Logo URL<input data-competition="${ci}" data-key="logo" value="${safe(c.logo)}"></label><label>Colour<input type="color" data-competition="${ci}" data-key="colour" value="${safe(c.colour)}"></label><label>Style key<input data-competition="${ci}" data-key="key" value="${safe(c.key)}"></label><label>Public<select data-competition="${ci}" data-key="enabled"><option value="true" ${c.enabled?"selected":""}>Yes</option><option value="false" ${!c.enabled?"selected":""}>No</option></select></label></div>
+  <div class="stage-list" id="stage-list-${ci}"></div>
+  <div class="structure-preview">${c.stages.sort((a,b)=>a.order-b.order).map((s,i)=>`${i?'<span class="structure-arrow">→</span>':""}<div class="structure-node"><strong>${safe(s.name)}</strong><span>${safe(s.type)}</span></div>`).join("")||'<span>No stages yet</span>'}</div>`;
+  $("competitionEditors").appendChild(shell);
+  const list=$(`stage-list-${ci}`);
+  c.stages.sort((a,b)=>a.order-b.order).forEach((s,si)=>{
+   const stage=document.createElement("section");stage.className="stage-card";
+   stage.innerHTML=`<div class="stage-head"><div><h4>${safe(s.name)}</h4><small>Stage ${si+1} · ${safe(s.type)}</small></div><div class="row-actions"><button class="btn small" data-add-group="${ci}:${si}">Add group</button><button class="btn small" data-add-tie="${ci}:${si}">Add tie</button><button class="btn small" data-copy-stage="${ci}:${si}">Duplicate</button><button class="btn danger small" data-delete-stage="${ci}:${si}">Delete</button></div></div>
+   <div class="grid4"><label>Stage name<input data-stage="${ci}:${si}" data-key="name" value="${safe(s.name)}"></label><label>Type<select data-stage="${ci}:${si}" data-key="type"><option value="league" ${s.type==="league"?"selected":""}>League table</option><option value="groups" ${s.type==="groups"?"selected":""}>Group stage</option><option value="knockout" ${s.type==="knockout"?"selected":""}>Knockout</option><option value="swiss" ${s.type==="swiss"?"selected":""}>Swiss / league phase</option><option value="playoff" ${s.type==="playoff"?"selected":""}>Playoff</option><option value="custom" ${s.type==="custom"?"selected":""}>Custom</option></select></label><label>Order<input type="number" min="1" data-stage="${ci}:${si}" data-key="order" value="${s.order}"></label><label>Round robin<select data-stage-rule="${ci}:${si}" data-key="roundRobin"><option value="none" ${s.rules.roundRobin==="none"?"selected":""}>None</option><option value="single" ${s.rules.roundRobin==="single"?"selected":""}>Single</option><option value="double" ${s.rules.roundRobin==="double"?"selected":""}>Double</option></select></label><label>Qualifying positions<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="qualify" value="${s.rules.qualify||0}"></label><label>Relegated / eliminated<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="relegate" value="${s.rules.relegate||0}"></label><label>Number of legs<input type="number" min="1" max="9" data-stage-rule="${ci}:${si}" data-key="legs" value="${s.rules.legs||1}"></label></div>
+   <div class="stage-rules"><div class="stage-flags">${[["aggregate","Aggregate score"],["awayGoals","Away goals"],["extraTime","Extra time"],["penalties","Penalties"],["thirdPlace","Third-place match"],["autoProgress","Automatic progression"]].map(([key,label])=>`<label class="stage-flag"><input type="checkbox" data-stage-rule="${ci}:${si}" data-key="${key}" ${s.rules[key]?"checked":""}>${label}</label>`).join("")}</div></div>
+   <div class="group-grid">${s.groups.map((g,gi)=>`<div class="group-card"><div class="group-card-head"><strong>${safe(g.name)}</strong><button class="btn danger small" data-delete-group="${ci}:${si}:${gi}">Delete</button></div><label>Name<input data-group="${ci}:${si}:${gi}" data-key="name" value="${safe(g.name)}"></label><label>Teams, one per line<textarea data-group="${ci}:${si}:${gi}" data-key="teams">${safe((g.teams||[]).join("\\n"))}</textarea></label><label>Teams qualifying<input type="number" min="0" data-group="${ci}:${si}:${gi}" data-key="qualify" value="${Number(g.qualify||2)}"></label></div>`).join("")}</div>
+   <div class="tie-grid">${s.ties.map((t,ti)=>`<div class="tie-card"><strong>${safe(t.name||`Tie ${ti+1}`)}</strong><div class="grid2"><label>Name<input data-tie="${ci}:${si}:${ti}" data-key="name" value="${safe(t.name||"")}"></label><label>Next tie ID<input data-tie="${ci}:${si}:${ti}" data-key="nextTieId" value="${safe(t.nextTieId||"")}"></label><label>Home / seed A<select data-tie="${ci}:${si}:${ti}" data-key="home">${teamOptions(t.home||"")}</select></label><label>Away / seed B<select data-tie="${ci}:${si}:${ti}" data-key="away">${teamOptions(t.away||"")}</select></label></div><button class="btn danger small" data-delete-tie="${ci}:${si}:${ti}">Delete tie</button></div>`).join("")}</div>`;
+   list.appendChild(stage)
+  })
  });
- document.querySelectorAll("[data-delete-competition]").forEach(btn=>btn.onclick=()=>{if(confirm("Delete this competition option?")){collect();data.competitions.splice(Number(btn.dataset.deleteCompetition),1);renderAll()}})
+ bindCompetitionBuilder()
+}
+function bindCompetitionBuilder(){
+ document.querySelectorAll("[data-add-stage]").forEach(b=>b.onclick=()=>{collect();const c=data.competitions[+b.dataset.addStage];const s=blankStage("league",`Stage ${c.stages.length+1}`);s.order=c.stages.length+1;c.stages.push(s);renderAll()});
+ document.querySelectorAll("[data-delete-competition]").forEach(b=>b.onclick=()=>{if(confirm("Delete this competition and its structure?")){collect();data.competitions.splice(+b.dataset.deleteCompetition,1);renderAll()}});
+ document.querySelectorAll("[data-duplicate-competition]").forEach(b=>b.onclick=()=>{collect();const c=structuredClone(data.competitions[+b.dataset.duplicateCompetition]);c.id=uid();c.name+=" Copy";c.stages.forEach(s=>{s.id=uid();s.groups.forEach(g=>g.id=uid());s.ties.forEach(t=>t.id=uid())});data.competitions.push(c);renderAll()});
+ document.querySelectorAll("[data-copy-stage]").forEach(b=>b.onclick=()=>{collect();const [ci,si]=b.dataset.copyStage.split(":").map(Number),s=structuredClone(data.competitions[ci].stages[si]);s.id=uid();s.name+=" Copy";s.order=data.competitions[ci].stages.length+1;data.competitions[ci].stages.push(s);renderAll()});
+ document.querySelectorAll("[data-delete-stage]").forEach(b=>b.onclick=()=>{if(confirm("Delete this stage?")){collect();const [ci,si]=b.dataset.deleteStage.split(":").map(Number);data.competitions[ci].stages.splice(si,1);renderAll()}});
+ document.querySelectorAll("[data-add-group]").forEach(b=>b.onclick=()=>{collect();const [ci,si]=b.dataset.addGroup.split(":").map(Number),s=data.competitions[ci].stages[si];s.type="groups";s.groups.push({id:uid(),name:`Group ${String.fromCharCode(65+s.groups.length)}`,teams:[],qualify:2});renderAll()});
+ document.querySelectorAll("[data-delete-group]").forEach(b=>b.onclick=()=>{collect();const [ci,si,gi]=b.dataset.deleteGroup.split(":").map(Number);data.competitions[ci].stages[si].groups.splice(gi,1);renderAll()});
+ document.querySelectorAll("[data-add-tie]").forEach(b=>b.onclick=()=>{collect();const [ci,si]=b.dataset.addTie.split(":").map(Number),s=data.competitions[ci].stages[si];s.type="knockout";s.ties.push({id:uid(),name:`Tie ${s.ties.length+1}`,home:"",away:"",nextTieId:""});renderAll()});
+ document.querySelectorAll("[data-delete-tie]").forEach(b=>b.onclick=()=>{collect();const [ci,si,ti]=b.dataset.deleteTie.split(":").map(Number);data.competitions[ci].stages[si].ties.splice(ti,1);renderAll()})
 }
 function renderNavigation(){
  $("navigationEditors").innerHTML="";
@@ -436,9 +508,13 @@ function renderNavigation(){
 
 function collect(){
  document.querySelectorAll("[data-team]").forEach(input=>{const key=input.dataset.key;data.teams[Number(input.dataset.team)][key]=key==="budget"?Number(input.value||0):input.value.trim()});
- document.querySelectorAll("[data-fixture]").forEach(input=>{const key=input.dataset.key,index=Number(input.dataset.fixture);data.fixtures[index][key]=["matchday","homeScore","awayScore"].includes(key)&&input.value!==""?Number(input.value):input.value});
+ document.querySelectorAll("[data-fixture]").forEach(input=>{const key=input.dataset.key,index=Number(input.dataset.fixture);data.fixtures[index][key]=["matchday","homeScore","awayScore","legNumber"].includes(key)&&input.value!==""?Number(input.value):input.value});
  document.querySelectorAll("[data-player]").forEach(input=>{const key=input.dataset.key,index=Number(input.dataset.player);data.players[index][key]=key==="featured"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-competition]").forEach(input=>{const key=input.dataset.key;data.competitions[Number(input.dataset.competition)][key]=key==="enabled"?input.value==="true":input.value.trim()});
+ document.querySelectorAll("[data-stage]").forEach(input=>{const [ci,si]=input.dataset.stage.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si][key]=key==="order"?Number(input.value||1):input.value.trim()});
+ document.querySelectorAll("[data-stage-rule]").forEach(input=>{const [ci,si]=input.dataset.stageRule.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].rules[key]=input.type==="checkbox"?input.checked:(["qualify","relegate","legs"].includes(key)?Number(input.value||0):input.value)});
+ document.querySelectorAll("[data-group]").forEach(input=>{const [ci,si,gi]=input.dataset.group.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].groups[gi][key]=key==="teams"?input.value.split("\n").map(x=>x.trim()).filter(Boolean):(key==="qualify"?Number(input.value||0):input.value.trim())});
+ document.querySelectorAll("[data-tie]").forEach(input=>{const [ci,si,ti]=input.dataset.tie.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].ties[ti][key]=input.value.trim()});
  document.querySelectorAll("[data-nav]").forEach(input=>{const key=input.dataset.key;data.navigation[Number(input.dataset.nav)][key]=key==="enabled"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-stats]").forEach(input=>{const i=Number(input.dataset.stats),key=input.dataset.statKey;try{const parsed=JSON.parse(input.value||"[]");if(key==="homeLineup")data.fixtures[i].stats.lineups.home=parsed;else if(key==="awayLineup")data.fixtures[i].stats.lineups.away=parsed;else data.fixtures[i].stats[key]=parsed}catch{throw new Error(`Fixture ${i+1} contains invalid ${key} JSON.`)}});
  data.hero={top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim(),tickerText:$("tickerText").value.trim(),homeFixtureLimit:Number($("homeFixtureLimit").value||3),announcement:$("announcement").value.trim()};
@@ -482,12 +558,17 @@ function openPage(id){document.querySelectorAll("[data-page]").forEach(x=>x.clas
 $("refreshData").onclick=loadSite;
 $("addTeam").onclick=()=>{collect();data.teams.push({id:uid(),name:`New Team ${data.teams.length+1}`,logo:"",shortName:"",budget:300000});renderAll()};
 $("sortTeams").onclick=()=>{collect();data.teams.sort((a,b)=>a.name.localeCompare(b.name));renderAll()};
-$("addFixture").onclick=()=>{collect();data.fixtures.push({id:uid(),competition:enabledCompetitionNames()[0]||"Premier League",matchday:1,date:"",time:"",home:data.teams[0]?.name||"",away:data.teams[1]?.name||"",venue:data.settings.defaultVenue||"",status:"upcoming",homeScore:"",awayScore:"",homeLogo:"",awayLogo:"",round:"",streamUrl:"",stats:{goals:[],cards:[],substitutions:[],lineups:{home:[],away:[]}}});renderAll()};
+$("addFixture").onclick=()=>{collect();data.fixtures.push({id:uid(),competition:enabledCompetitionNames()[0]||"Premier League",competitionId:data.competitions.find(c=>c.enabled!==false)?.id||"",stageId:data.competitions.find(c=>c.enabled!==false)?.stages?.[0]?.id||"",groupId:"",tieId:"",legNumber:1,matchday:1,date:"",time:"",home:data.teams[0]?.name||"",away:data.teams[1]?.name||"",venue:data.settings.defaultVenue||"",status:"upcoming",homeScore:"",awayScore:"",homeLogo:"",awayLogo:"",round:"",streamUrl:"",stats:{goals:[],cards:[],substitutions:[],lineups:{home:[],away:[]}}});renderAll()};
 $("duplicateLastFixture").onclick=()=>{collect();if(!data.fixtures.length)return;const f=structuredClone(data.fixtures.at(-1));f.id=uid();data.fixtures.push(f);renderAll()};
 $("sortFixtures").onclick=()=>{collect();data.fixtures.sort((a,b)=>`${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));renderAll()};
 $("addPlayer").onclick=()=>{collect();data.players.push({id:uid(),username:"",team:"",position:"",availability:"Available",note:"",featured:false});renderAll()};
 $("rebuildTable").onclick=()=>{collect();renderStandings();updateStats()};
-$("addCompetition").onclick=()=>{collect();data.competitions.push({name:"New Competition",key:"premier-league",enabled:true});renderAll()};
+$("addCompetition").onclick=()=>{collect();data.competitions.push({id:uid(),name:"New Competition",key:`competition-${data.competitions.length+1}`,enabled:true,season:data.settings.seasonName,logo:"",colour:"#8756e8",stages:[blankStage("league","League stage")]});renderAll()};
+$("competitionTemplate").onclick=()=>{collect();data.competitions.push({id:uid(),name:"New Tournament",key:`tournament-${data.competitions.length+1}`,enabled:true,season:data.settings.seasonName,logo:"",colour:"#8756e8",stages:[
+ {...blankStage("groups","Group Stage"),order:1,groups:[{id:uid(),name:"Group A",teams:[],qualify:2},{id:uid(),name:"Group B",teams:[],qualify:2}]},
+ {...blankStage("knockout","Semi Finals"),order:2,ties:[{id:uid(),name:"Semi Final 1",home:"",away:"",nextTieId:"final"},{id:uid(),name:"Semi Final 2",home:"",away:"",nextTieId:"final"}]},
+ {...blankStage("knockout","Final"),id:"final",order:3,ties:[{id:uid(),name:"Final",home:"",away:"",nextTieId:""}]}
+ ]});renderAll()};
 $("exportData").onclick=()=>{collect();const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`ysl-site-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)};
 $("importButton").onclick=()=>$("importFile").click();
 $("importFile").onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const parsed=JSON.parse(await file.text());if(!parsed||typeof parsed!=="object")throw new Error("Invalid backup.");data=parsed;normalize();renderAll();$("notice").textContent="Backup loaded. Save changes to publish it.";$("notice").classList.add("show")}catch(error){showError(error.message)}};

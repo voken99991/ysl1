@@ -343,18 +343,21 @@ def public_playersheet():
                     or player.get("pos")
                     or "Position not assigned"
                 ),
-                "goals": int(player.get("goals") or 0),
-                "assists": int(player.get("assists") or 0),
+                "goals": int(stats.get("goals") or 0),
+                "assists": int(stats.get("assists") or 0),
                 "appearances": int(
-                    player.get("appearances")
-                    or player.get("apps")
+                    stats.get("appearances")
                     or 0
                 ),
                 "potm": int(
-                    player.get("potm")
-                    or player.get("player_of_the_match")
+                    stats.get("player_of_the_match")
                     or 0
                 ),
+                "starts": int(stats.get("starts") or 0),
+                "minutesPlayed": int(stats.get("minutes_played") or 0),
+                "wins": int(stats.get("wins") or 0),
+                "draws": int(stats.get("draws") or 0),
+                "losses": int(stats.get("losses") or 0),
                 "availability": (
                     player.get("availability")
                     or player.get("status")
@@ -414,6 +417,13 @@ def public_player_profile(player_id: str):
             return jsonify({"error": "Player not found."}), 404
 
         player = rows[0]
+
+        stats_rows = sb(
+            "GET",
+            f"player_stats?player_id=eq.{safe_value}&select=*",
+        ) or []
+        stats = stats_rows[0] if stats_rows else {}
+
         team_record = None
         team_id = player.get("current_team_id")
 
@@ -503,18 +513,15 @@ def public_player_profile(player_id: str):
                     or 0
                 ),
                 "yellowCards": int(
-                    player.get("yellow_cards")
-                    or player.get("yellowCards")
+                    stats.get("yellow_cards")
                     or 0
                 ),
                 "redCards": int(
-                    player.get("red_cards")
-                    or player.get("redCards")
+                    stats.get("red_cards")
                     or 0
                 ),
                 "cleanSheets": int(
-                    player.get("clean_sheets")
-                    or player.get("cleanSheets")
+                    stats.get("clean_sheets")
                     or 0
                 ),
                 "availability": (

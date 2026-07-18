@@ -809,7 +809,7 @@ function parseDate(raw){
 function statusType(status,homeScore,awayScore,date){
   const value=String(status||"").toLowerCase();
   if(["live","in progress","in_progress","halftime","half-time"].includes(value))return"live";
-  if(["completed","finished","full-time","full_time","ft"].includes(value))return"completed";
+  if(["complete","completed","finished","full-time","full_time","ft"].includes(value))return"completed";
   if(["postponed","cancelled","canceled"].includes(value))return"postponed";
   if(homeScore!==null&&awayScore!==null)return"completed";
   if(date&&date.getTime()<Date.now()-21600000)return"completed";
@@ -844,7 +844,12 @@ function normaliseFixture(raw,index){
     getObjectLogo(raw,"team2");
 
   const rawDate=get(raw,["kickoff","kickoff_at","start_time","scheduled_at","fixture_date","match_date","date","datetime"]);
-  const date=parseDate(rawDate);
+  const rawTime=get(raw,["time","kickoff_time","startTime"],"");
+  let combinedDate=rawDate;
+  if(rawDate&&rawTime&&/^\d{4}-\d{2}-\d{2}$/.test(String(rawDate))){
+    combinedDate=`${rawDate}T${rawTime}`;
+  }
+  const date=parseDate(combinedDate);
 
   const homeScoreRaw=get(raw,["home_score","homeScore","team1_score","score_home"],null);
   const awayScoreRaw=get(raw,["away_score","awayScore","team2_score","score_away"],null);
@@ -1055,7 +1060,8 @@ async function loadFixtures(){
     "/api/fixtures?limit=500",
     "/api/fixtures",
     "/api/public/fixtures",
-    "/api/fixtures/all"
+    "/api/fixtures/all",
+    "/api/site"
   ];
 
   let loaded=[];
@@ -1064,7 +1070,13 @@ async function loadFixtures(){
     try{
       const response=await fetch(endpoint,{cache:"no-store",headers:{Accept:"application/json"}});
       if(!response.ok)continue;
-      const parsed=normalisePayload(await response.json());
+      const payload=await response.json();
+      const parsed=normalisePayload(payload);
+      if(payload&&payload.season){
+        document.getElementById("seasonLabel").textContent=String(payload.season);
+      }else if(payload&&payload.settings&&payload.settings.seasonName){
+        document.getElementById("seasonLabel").textContent=String(payload.settings.seasonName);
+      }
       if(parsed.length){
         loaded=parsed;
         break;

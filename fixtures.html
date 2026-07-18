@@ -724,6 +724,7 @@ button{cursor:pointer}
 </div>
 </footer>
 
+<script src="competition-engine.js"></script>
 <script>
 const header=document.getElementById("header");
 const glow=document.getElementById("cursorGlow");
@@ -892,11 +893,13 @@ function normalisePayload(payload){
   else if(Array.isArray(payload?.data))rows=payload.data;
   else if(Array.isArray(payload?.results))rows=payload.results;
   else if(Array.isArray(payload?.items))rows=payload.items;
+  if(payload&&typeof payload==="object"&&!Array.isArray(payload)){YSLCompetitionEngine.normalise(payload);YSLCompetitionEngine.process(payload)}
   const competitions=Array.isArray(payload?.competitions)?payload.competitions:[];
   const stageNames=new Map();
   competitions.forEach(c=>(c.stages||[]).forEach(s=>stageNames.set(`${c.id||c.key||c.name}:${s.id}`,s.name)));
   return rows.map((row,index)=>{
     const normalised=normaliseFixture(row,index);
+    normalised.stage=normalised.stage||YSLCompetitionEngine.stageName(payload,normalised);
     if(!normalised.stage&&normalised.stageId){
       normalised.stage=stageNames.get(`${normalised.competitionId||normalised.competition}:${normalised.stageId}`)||"";
     }

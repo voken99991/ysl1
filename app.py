@@ -525,9 +525,9 @@ def get_site():
         return jsonify({"error": str(exc)}), 503
 
 
-@app.get("/api/fixtures")
-def public_fixtures():
-    """Return fixtures saved by the admin panel from site_content."""
+@app.get("/api/standings")
+def public_standings():
+    """Calculate the league table from completed Premier League fixtures."""
     try:
         content = read_site_content()
         fixtures = content.get("fixtures", [])
@@ -541,14 +541,167 @@ def public_fixtures():
         if not isinstance(settings, dict):
             settings = {}
 
+        table: dict[str, dict[str, Any]] = {}
+
+        for team in teams:
+            if not isinstance(team, dict):
+                continue
+
+            name = str(team.get("name", "")).strip()
+            if not name:
+                continue
+
+            table[name] = {
+                "name": name,
+                "logo": str(team.get("logo", "") or ""),
+                "played": 0,
+                "wins": 0,
+                "draws": 0,
+                "losses": 0,
+                "gf": 0,
+                "ga": 0,
+                "gd": 0,
+                "points": 0,
+                "form": [],
+            }
+
+        completed_statuses = {
+            "complete",
+            "completed",
+            "finished",
+            "full-time",
+            "full_time",
+            "ft",
+        }
+
+        ordered_fixtures = sorted(
+            [f for f in fixtures if isinstance(f, dict)],
+            key=lambda f: (
+                str(f.get("date", "")),
+                str(f.get("time", "")),
+            ),
+        )
+
+        for fixture in ordered_fixtures:
+            competition = str(
+                fixture.get("competition", "Premier League")
+            ).strip()
+            status = str(fixture.get("status", "")).strip().lower()
+
+            if competition != "Premier League":
+                continue
+            if status not in completed_statuses:
+                continue
+
+            home = str(fixture.get("home", "")).strip()
+            away = str(fixture.get("away", "")).strip()
+
+            if not home or not away:
+                continue
+
+            try:
+                home_score = int(fixture.get("homeScore"))
+                away_score = int(fixture.get("awayScore"))
+            except (TypeError, ValueError):
+                continue
+
+            if home not in table:
+                table[home] = {
+                    "name": home,
+                    "logo": str(fixture.get("homeLogo", "") or ""),
+                    "played": 0,
+                    "wins": 0,
+                    "draws": 0,
+                    "losses": 0,
+                    "gf": 0,
+                    "ga": 0,
+                    "gd": 0,
+                    "points": 0,
+                    "form": [],
+                }
+
+            if away not in table:
+                table[away] = {
+                    "name": away,
+                    "logo": str(fixture.get("awayLogo", "") or ""),
+                    "played": 0,
+                    "wins": 0,
+                    "draws": 0,
+                    "losses": 0,
+                    "gf": 0,
+                    "ga": 0,
+                    "gd": 0,
+                    "points": 0,
+                    "form": [],
+                }
+
+            home_row = table[home]
+            away_row = table[away]
+
+            home_row["played"] += 1
+            away_row["played"] += 1
+            home_row["gf"] += home_score
+            home_row["ga"] += away_score
+            away_row["gf"] += away_score
+            away_row["ga"] += home_score
+
+            if home_score > away_score:
+                home_row["wins"] += 1
+                away_row["losses"] += 1
+                home_row["points"] += 3
+                home_row["form"].append("W")
+                away_row["form"].append("L")
+            elif home_score < away_score:
+                away_row["wins"] += 1
+                home_row["losses"] += 1
+                away_row["points"] += 3
+                away_row["form"].append("W")
+                home_row["form"].append("L")
+            else:
+                home_row["draws"] += 1
+                away_row["draws"] += 1
+                home_row["points"] += 1
+                away_row["points"] += 1
+                home_row["form"].append("D")
+                away_row["form"].append("D")
+
+        standings = list(table.values())
+
+        for row in standings:
+            row["gd"] = row["gf"] - row["ga"]
+            row["form"] = row["form"][-5:]
+
+        standings.sort(
+            key=lambda row: (
+                -row["points"],
+                -row["gd"],
+                -row["gf"],
+                row["name"].lower(),
+            )
+        )
+
+        for position, row in enumerate(standings, start=1):
+            row["position"] = position
+
+        completed_league_fixtures = sum(
+            1
+            for fixture in ordered_fixtures
+            if str(
+                fixture.get("competition", "Premier League")
+            ).strip() == "Premier League"
+            and str(
+                fixture.get("status", "")
+            ).strip().lower() in completed_statuses
+        )
+
         return jsonify({
-            "fixtures": fixtures,
-            "teams": teams,
+            "standings": standings,
             "season": settings.get("seasonName", "Current season"),
-            "count": len(fixtures),
+            "completedFixtures": completed_league_fixtures,
+            "teamCount": len(standings),
         })
     except RuntimeError as exc:
-        app.logger.exception("Failed to read public fixtures.")
+        app.logger.exception("Failed to calculate public standings.")
         return jsonify({"error": str(exc)}), 503
 
 

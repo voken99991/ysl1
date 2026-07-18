@@ -1,47 +1,242 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0f0818">
-<title>Transfer History — YSL</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0711">
+<meta name="description" content="Youth Soccer League transfer history">
+<title>Transfers — YSL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0714;--surface:#171020;--surface2:#1d1428;--surface3:#251934;--line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.15);--text:#f7f3fb;--muted:#a99db4;--purple:#9162f5;--purple2:#6e3de4;--green:#62dda4;--red:#ff7187;--gold:#f0c96a;--shadow:0 24px 70px rgba(0,0,0,.33)}
-*{box-sizing:border-box}html{background:var(--bg);color-scheme:dark}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 79% 8%,rgba(145,98,245,.13),transparent 25%),linear-gradient(180deg,#0d0714,#110919);font-family:Inter,sans-serif}a{color:inherit;text-decoration:none}button,input,select{font:inherit}
-.topbar{height:82px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:28px;padding:0 4vw;border-bottom:1px solid var(--line);background:rgba(13,7,20,.86);backdrop-filter:blur(18px);position:sticky;top:0;z-index:20}.brand{display:flex;align-items:center;gap:13px}.brand-mark{font:800 2.2rem/1 Manrope;letter-spacing:-.09em}.brand-mark span{color:var(--purple)}.brand-line{width:1px;height:38px;background:var(--line2)}.brand-copy{color:var(--muted);font-size:.62rem;font-weight:700;line-height:1.18;text-transform:uppercase}.nav{justify-self:center;display:flex;gap:29px}.nav a{padding:31px 0 28px;color:#c9c0d1;font-size:.67rem;font-weight:700;text-transform:uppercase}.nav a.active,.nav a:hover{color:#fff}.nav a.active{border-bottom:2px solid var(--purple)}.login{min-height:42px;display:inline-flex;align-items:center;padding:0 15px;border:1px solid var(--line2);border-radius:10px;font-size:.67rem;font-weight:800}
-.page{padding:58px 4vw 75px}.shell{width:min(1380px,100%);margin:auto}.hero{display:grid;grid-template-columns:1fr auto;align-items:end;gap:30px;margin-bottom:30px}.eyebrow{color:#cdbdff;font-size:.62rem;font-weight:800;letter-spacing:.17em;text-transform:uppercase}.hero h1{max-width:780px;margin:12px 0 13px;font:800 clamp(3rem,7vw,6.6rem)/.87 Manrope;letter-spacing:-.08em}.hero p{max-width:620px;margin:0;color:var(--muted);font-size:.76rem;line-height:1.7}.record{width:310px;padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,rgba(145,98,245,.18),rgba(23,16,32,.95));box-shadow:var(--shadow)}.record-label{color:#cdbdff;font-size:.57rem;font-weight:800;text-transform:uppercase}.record-player{display:flex;align-items:center;gap:12px;margin-top:15px}.record-avatar{width:48px;height:48px;display:grid;place-items:center;overflow:hidden;border-radius:13px;background:var(--surface3);font-weight:800}.record-avatar img{width:100%;height:100%;object-fit:cover}.record-copy strong{display:block;font:800 .9rem Manrope}.record-copy span{display:block;margin-top:5px;color:var(--muted);font-size:.59rem}.record-value{margin-top:17px;font:800 1.8rem Manrope}
-.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}.metric{min-height:110px;padding:18px;border:1px solid var(--line);border-radius:17px;background:rgba(23,16,32,.88)}.metric span{color:var(--muted);font-size:.55rem;font-weight:800;text-transform:uppercase}.metric strong{display:block;margin-top:18px;font:800 1.8rem Manrope}.toolbar{display:grid;grid-template-columns:minmax(240px,1fr) 190px 220px auto;gap:10px;margin-bottom:18px;padding:13px;border:1px solid var(--line);border-radius:18px;background:rgba(23,16,32,.88)}.field{height:46px;padding:0 14px;border:1px solid var(--line);border-radius:11px;outline:none;color:#fff;background:var(--surface2)}.field:focus{border-color:rgba(145,98,245,.7)}.clear{padding:0 17px;border:1px solid var(--line2);border-radius:11px;color:#fff;background:transparent;font-size:.65rem;font-weight:800;cursor:pointer}.clear:hover{background:rgba(255,255,255,.05)}
-.timeline{display:grid;gap:11px}.move{display:grid;grid-template-columns:minmax(190px,1.1fr) minmax(340px,1.7fr) 150px 150px;align-items:center;gap:18px;min-height:105px;padding:16px 19px;border:1px solid var(--line);border-radius:18px;background:rgba(23,16,32,.88);transition:.18s ease}.move:hover{transform:translateY(-2px);border-color:rgba(145,98,245,.34);background:rgba(29,20,40,.96)}.player{display:flex;align-items:center;gap:13px;min-width:0}.avatar{width:53px;height:53px;flex:0 0 auto;display:grid;place-items:center;overflow:hidden;border-radius:15px;background:var(--surface3);font:800 .7rem Manrope}.avatar img{width:100%;height:100%;object-fit:cover}.player-copy{min-width:0}.player-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;font:800 .81rem Manrope;white-space:nowrap}.player-copy span{display:block;margin-top:5px;color:var(--muted);font-size:.57rem}.route{display:grid;grid-template-columns:1fr 34px 1fr;align-items:center;gap:12px}.club{display:flex;align-items:center;gap:11px;min-width:0}.club.to{justify-content:flex-start}.club-logo{width:44px;height:44px;flex:0 0 auto;display:grid;place-items:center;overflow:hidden;border-radius:12px;background:var(--surface3)}.club-logo img{width:100%;height:100%;object-fit:contain;padding:4px}.club strong{overflow:hidden;text-overflow:ellipsis;font-size:.68rem;white-space:nowrap}.arrow{height:34px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;color:#d6c6ff;background:rgba(145,98,245,.09)}.type{justify-self:start;padding:8px 10px;border:1px solid var(--line);border-radius:999px;font-size:.54rem;font-weight:800;text-transform:uppercase}.type.transfer{color:#d7c9ff;background:rgba(145,98,245,.1)}.type.signing{color:var(--green);background:rgba(98,221,164,.08)}.type.release{color:var(--red);background:rgba(255,113,135,.08)}.amount{text-align:right}.amount strong{display:block;font:800 .9rem Manrope}.amount span{display:block;margin-top:6px;color:var(--muted);font-size:.55rem}
-.empty,.loading,.error{padding:70px 20px;text-align:center;border:1px solid var(--line);border-radius:18px;color:var(--muted);background:rgba(23,16,32,.65)}.pagination{display:flex;justify-content:center;align-items:center;gap:9px;margin-top:23px}.page-btn{min-width:42px;height:42px;padding:0 13px;border:1px solid var(--line);border-radius:10px;color:#fff;background:var(--surface);font-size:.63rem;font-weight:800;cursor:pointer}.page-btn:disabled{opacity:.36;cursor:not-allowed}.page-info{padding:0 10px;color:var(--muted);font-size:.62rem}
-@media(max-width:1100px){.metrics{grid-template-columns:repeat(3,1fr)}.move{grid-template-columns:1fr 1.7fr 120px}.amount{grid-column:3}.hero{grid-template-columns:1fr}.record{width:100%}}@media(max-width:800px){.nav{display:none}.topbar{grid-template-columns:1fr auto}.page{padding:38px 18px 55px}.metrics{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.move{grid-template-columns:1fr}.amount{text-align:left;grid-column:auto}.route{grid-template-columns:1fr 30px 1fr}.type{justify-self:start}}@media(max-width:520px){.metrics,.toolbar{grid-template-columns:1fr}.toolbar input{grid-column:auto}.hero h1{font-size:3.2rem}.route{gap:6px}.club{flex-direction:column;align-items:flex-start}.club.to{align-items:flex-start}.club-logo{width:38px;height:38px}}
+:root{
+  --bg:#0b0711;--bg2:#100916;--paper:#f2ede6;--ink:#121014;
+  --text:#f7f1fb;--muted:#a69aaa;--purple:#8756e8;--purple-hot:#a47cff;
+  --line:rgba(255,255,255,.10);--line2:rgba(255,255,255,.20);
+  --green:#b9ff62;--red:#ff7189;--amber:#ffca68;
+  --max:1440px;--ease:cubic-bezier(.22,.84,.26,1)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg);color-scheme:dark}
+body{margin:0;min-height:100vh;overflow-x:hidden;color:var(--text);background:radial-gradient(circle at 13% 5%,rgba(135,86,232,.14),transparent 26rem),linear-gradient(180deg,var(--bg),var(--bg2) 60%,#09060e);font-family:"DM Sans",system-ui,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.08;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E")}
+a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}.shell{width:min(var(--max),calc(100% - 42px));margin:auto}
+
+.site-header{position:fixed;inset:0 0 auto;z-index:60;border-bottom:1px solid transparent;transition:.35s}
+.site-header.scrolled{background:rgba(11,7,17,.84);border-color:var(--line);backdrop-filter:blur(18px)}
+.nav{min-height:78px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:30px}
+.brand{font-family:"Archivo Black";font-size:1.55rem;letter-spacing:-.08em;text-transform:uppercase}
+.nav-links{justify-self:center;display:flex;gap:25px}
+.nav-links a{position:relative;padding:29px 0 26px;color:#c8becb;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:21px;height:2px;background:var(--purple-hot);transform:scaleX(0);transform-origin:right;transition:transform .28s var(--ease)}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-links a:hover:after,.nav-links a.active:after{transform:scaleX(1);transform-origin:left}
+.nav-actions{display:flex;gap:10px}
+.nav-button{min-height:42px;display:inline-flex;align-items:center;padding:0 15px;border:1px solid var(--line2);border-radius:999px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:.2s}
+.nav-button:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+.menu-button{display:none;width:42px;height:42px;border:1px solid var(--line2);border-radius:50%;background:transparent;color:#fff}
+
+.page-head{padding:160px 0 44px}
+.page-head-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:60px;align-items:end}
+.page-title{margin:0;font-family:"Archivo Black";font-size:clamp(4.8rem,10vw,10rem);line-height:.8;letter-spacing:-.085em;text-transform:uppercase}
+.page-title span{display:block;color:transparent;-webkit-text-stroke:1.4px rgba(255,255,255,.68)}
+.page-copy{max-width:430px;color:#c8bdcb;line-height:1.75;font-size:.98rem;padding-bottom:7px}
+.page-meta{margin-top:40px;padding:16px 0;display:flex;flex-wrap:wrap;gap:22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.meta-item{display:flex;align-items:center;gap:9px;color:#bcb0c0;font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.meta-dot{width:7px;height:7px;border-radius:50%;background:var(--purple-hot);box-shadow:0 0 15px rgba(164,124,255,.45)}
+
+.toolbar-wrap{position:sticky;top:78px;z-index:45;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(11,7,17,.88);backdrop-filter:blur(18px)}
+.toolbar{min-height:76px;display:grid;grid-template-columns:minmax(240px,1fr) 210px 210px auto;gap:9px;align-items:center}
+.control{height:42px;width:100%;padding:0 13px;border:1px solid var(--line);border-radius:0;outline:none;color:#fff;background:#15101b;font-size:.67rem}
+.control:focus{border-color:rgba(164,124,255,.65)}
+.clear{height:42px;padding:0 15px;border:1px solid var(--line2);background:transparent;color:#fff;font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+
+.content{padding:52px 0 90px}
+.summary{display:grid;grid-template-columns:1.2fr repeat(3,.6fr);border-left:1px solid var(--line);border-top:1px solid var(--line);margin-bottom:44px}
+.summary-card{min-height:145px;padding:22px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.018)}
+.summary-card.primary{position:relative;overflow:hidden}
+.summary-card.primary:after{content:"";position:absolute;width:230px;height:230px;right:-90px;top:-120px;border:1px solid rgba(255,255,255,.09);border-radius:50%;box-shadow:inset 0 0 0 58px rgba(135,86,232,.04)}
+.metric-label{color:#938899;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+.metric-value{margin-top:26px;font-family:"Archivo Black";font-size:2.7rem;line-height:.9;letter-spacing:-.06em}
+.metric-note{margin-top:8px;color:#8c818f;font-size:.6rem}
+.record-player{display:flex;align-items:center;gap:14px;margin-top:22px}
+.record-avatar{width:60px;height:60px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);background:#17111d;font-family:"Archivo Black";font-size:.7rem}
+.record-avatar img{width:100%;height:100%;object-fit:cover}
+.record-copy strong{display:block;font-family:"Archivo Black";font-size:1.45rem;line-height:.95;letter-spacing:-.04em;text-transform:uppercase}
+.record-copy span{display:block;margin-top:7px;color:#8c818f;font-size:.6rem}
+
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:14px}
+.section-head h2{margin:0;font-family:"Archivo Black";font-size:clamp(1.8rem,3.6vw,3.4rem);letter-spacing:-.055em;text-transform:uppercase}
+.result-count{color:#8c818f;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+
+.timeline{display:grid}
+.transfer-row{position:relative;display:grid;grid-template-columns:220px minmax(0,1fr) 150px 180px;align-items:center;gap:18px;min-height:122px;padding:18px 0;border-top:1px solid var(--line);transition:background .22s ease,transform .22s var(--ease),padding .22s var(--ease)}
+.transfer-row:last-child{border-bottom:1px solid var(--line)}
+.transfer-row:hover{background:rgba(255,255,255,.025);padding-left:14px;padding-right:14px;transform:translateX(3px)}
+.player-cell{display:flex;align-items:center;gap:13px;min-width:0}
+.avatar{width:52px;height:52px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);background:#17111d;font-family:"Archivo Black";font-size:.62rem}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.player-copy{min-width:0}.player-copy strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem}.player-copy span{display:block;margin-top:5px;color:#7f7483;font-size:.55rem}
+.route{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);align-items:center;gap:14px}
+.club{display:flex;align-items:center;gap:11px;min-width:0}
+.club.to{justify-content:flex-end;text-align:right}
+.club-logo{width:46px;height:46px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);background:#17111d;font-family:"Archivo Black";font-size:.52rem;flex:0 0 auto}
+.club-logo img{width:100%;height:100%;object-fit:contain;padding:6px}
+.club strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.68rem}
+.arrow{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);color:#cdbdff}
+.type{justify-self:start;padding:8px 10px;border:1px solid var(--line);font-size:.54rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.type.transfer{color:#d8caff;background:rgba(135,86,232,.08)}
+.type.signing{color:var(--green);background:rgba(185,255,98,.06)}
+.type.release{color:var(--red);background:rgba(255,113,137,.06)}
+.amount{text-align:right}.amount strong{display:block;font-family:"Archivo Black";font-size:1rem;letter-spacing:-.03em}.amount span{display:block;margin-top:6px;color:#7e7382;font-size:.54rem}
+
+.pagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:26px}
+.page-button{height:42px;padding:0 14px;border:1px solid var(--line);background:#15101b;color:#fff;font-size:.61rem;font-weight:700;text-transform:uppercase}
+.page-button:disabled{opacity:.35;cursor:not-allowed}
+.page-info{color:#817686;font-size:.58rem;text-transform:uppercase;letter-spacing:.07em}
+.empty,.error,.loading{padding:72px 24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:#9f94a3;text-align:center}
+
+.footer{padding:48px 0 32px;border-top:1px solid var(--line)}
+.footer-top{display:grid;grid-template-columns:1fr auto;align-items:end;gap:30px}
+.footer-word{font-family:"Archivo Black";font-size:clamp(5rem,15vw,13rem);line-height:.72;letter-spacing:-.09em;color:rgba(255,255,255,.07)}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:16px;color:#b9adbe;font-size:.62rem;font-weight:700;text-transform:uppercase}
+.footer-copy{margin-top:24px;color:#716775;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .75s var(--ease),transform .75s var(--ease)}.reveal.in{opacity:1;transform:none}
+.cursor-glow{position:fixed;width:340px;height:340px;margin:-170px 0 0 -170px;pointer-events:none;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(135,86,232,.09),transparent 66%);opacity:0;transition:opacity .25s}
+
+@media(max-width:1100px){
+.nav-links{display:none}.menu-button{display:grid;place-items:center}.page-head-grid{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.summary-card.primary{grid-column:1/-1}.transfer-row{grid-template-columns:190px 1fr}.type,.amount{grid-column:2}.amount{text-align:left}
+}
+@media(max-width:760px){
+.shell{width:min(100% - 24px,var(--max))}.nav-actions .nav-button{display:none}.page-head{padding:135px 0 36px}.page-title{font-size:clamp(4rem,20vw,7rem)}.toolbar-wrap{top:0}.toolbar{grid-template-columns:1fr;padding:12px 0}.summary{grid-template-columns:1fr}.summary-card.primary{grid-column:auto}.section-head{align-items:flex-start;flex-direction:column}.transfer-row{grid-template-columns:1fr;padding:22px 0}.route,.type,.amount{grid-column:auto}.route{grid-template-columns:1fr 34px 1fr}.club,.club.to{flex-direction:column;align-items:flex-start;text-align:left}.amount{text-align:left}.footer-top{grid-template-columns:1fr}.footer-links{justify-content:flex-start}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.reveal{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<header class="topbar">
-<a class="brand" href="index.html"><div class="brand-mark"><span>Y</span>SL</div><div class="brand-line"></div><div class="brand-copy">Youth<br>Soccer League</div></a>
-<nav class="nav"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Playersheet</a><a class="active" href="transfers.html">Transfers</a></nav>
-<a class="login" href="login.html">Player Login</a>
+<div class="cursor-glow" id="cursorGlow"></div>
+<header class="site-header" id="header">
+<div class="shell nav">
+<a class="brand" href="index.html">YSL</a>
+<nav class="nav-links">
+<a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Players</a><a class="active" href="transfers.html">Transfers</a><a href="about.html">About</a>
+</nav>
+<div class="nav-actions"><a class="nav-button" href="login.html">Player login</a><a class="nav-button" href="admin.html">Admin</a><button class="menu-button" id="menuButton">☰</button></div>
+</div>
 </header>
-<main class="page"><div class="shell">
-<section class="hero"><div><div class="eyebrow">Every move. Permanently recorded.</div><h1>Transfer<br>History</h1><p>Browse every permanent transfer, free-agent signing and player release across the Youth Soccer League.</p></div><aside class="record" id="recordCard"><div class="record-label">Record transfer</div><div class="record-player"><div class="record-avatar" id="recordAvatar">—</div><div class="record-copy"><strong id="recordName">No paid transfers yet</strong><span id="recordRoute">Waiting for the first deal</span></div></div><div class="record-value" id="recordValue">$0</div></aside></section>
-<section class="metrics"><article class="metric"><span>All moves</span><strong id="total">0</strong></article><article class="metric"><span>Club transfers</span><strong id="transfers">0</strong></article><article class="metric"><span>Free-agent signings</span><strong id="signings">0</strong></article><article class="metric"><span>Player releases</span><strong id="releases">0</strong></article><article class="metric"><span>Total transfer spend</span><strong id="spent">$0</strong></article></section>
-<section class="toolbar"><input class="field" id="search" placeholder="Search player or club…"><select class="field" id="type"><option value="all">All movement types</option><option value="transfer">Club transfers</option><option value="signing">Free-agent signings</option><option value="release">Player releases</option></select><select class="field" id="team"><option value="">Every club</option></select><button class="clear" id="clear">Clear filters</button></section>
-<div id="status" class="loading">Loading transfer history…</div><section id="timeline" class="timeline" hidden></section><div id="pagination" class="pagination" hidden><button class="page-btn" id="previous">Previous</button><span class="page-info" id="pageInfo"></span><button class="page-btn" id="next">Next</button></div>
-</div></main>
+
+<main>
+<section class="page-head"><div class="shell">
+<div class="page-head-grid"><div><h1 class="page-title reveal">Transfer<span>History</span></h1></div><p class="page-copy reveal">Every completed transfer, free-agent signing and player release.</p></div>
+<div class="page-meta reveal"><span class="meta-item"><span class="meta-dot"></span>All completed moves</span><span class="meta-item" id="moveCountMeta">Loading transfers</span><span class="meta-item" id="updatedMeta">Updating now</span></div>
+</div></section>
+
+<div class="toolbar-wrap"><div class="shell toolbar">
+<input id="search" class="control" placeholder="Search player or club…">
+<select id="typeFilter" class="control"><option value="all">All movement types</option><option value="transfer">Club transfers</option><option value="signing">Free-agent signings</option><option value="release">Player releases</option></select>
+<select id="teamFilter" class="control"><option value="">All clubs</option></select>
+<button id="clear" class="clear" type="button">Clear filters</button>
+</div></div>
+
+<section class="content"><div class="shell">
+<div class="summary reveal">
+<article class="summary-card primary"><div class="metric-label">Record transfer</div><div class="record-player"><div class="record-avatar" id="recordAvatar">—</div><div class="record-copy"><strong id="recordName">No paid transfers yet</strong><span id="recordRoute">Waiting for the first completed deal</span></div></div></article>
+<article class="summary-card"><div class="metric-label">All moves</div><div class="metric-value" id="totalMoves">0</div><div class="metric-note">Permanent records</div></article>
+<article class="summary-card"><div class="metric-label">Free-agent moves</div><div class="metric-value" id="freeMoves">0</div><div class="metric-note">Signings and releases</div></article>
+<article class="summary-card"><div class="metric-label">Transfer spend</div><div class="metric-value" id="totalSpend">£0</div><div class="metric-note">Paid club transfers</div></article>
+</div>
+
+<div class="section-head reveal"><h2>Completed moves</h2><span class="result-count" id="resultCount">0 moves</span></div>
+<div id="timeline" class="timeline"><div class="loading">Loading transfer history…</div></div>
+<div id="pagination" class="pagination" hidden><button id="previous" class="page-button" type="button">Previous</button><span id="pageInfo" class="page-info"></span><button id="next" class="page-button" type="button">Next</button></div>
+</div></section>
+</main>
+
+<footer class="footer"><div class="shell"><div class="footer-top"><div class="footer-word">YSL</div><nav class="footer-links"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Players</a><a href="transfers.html">Transfers</a><a href="about.html">About</a><a href="login.html">Login</a><a href="admin.html">Admin</a></nav></div><div class="footer-copy">Youth Soccer League</div></div></footer>
+
 <script>
-const $=id=>document.getElementById(id),norm=v=>String(v||"").trim().toLowerCase(),esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"),money=v=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(Number(v||0)),date=v=>v?new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(v)):"Unknown date",initials=v=>String(v||"?").replace(/[^a-z0-9]/gi,"").slice(0,2).toUpperCase()||"?";
-const FREE="https://cdn.discordapp.com/emojis/1527676672881459381.png?size=128&quality=lossless";let page=1,pages=1,timer;
-async function get(url){const r=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});let b={};try{b=await r.json()}catch{}if(!r.ok)throw new Error(b.error||`Request failed (${r.status})`);return b}
-function img(url,alt,fallback,cover=false){return url?`<img src="${esc(url)}" alt="${esc(alt)}" style="object-fit:${cover?"cover":"contain"}" onerror="this.parentElement.textContent='${esc(fallback)}'">`:esc(fallback)}
-function club(name,url){const final=url||FREE;return `<div class="club-logo">${img(final,`${name} logo`,"")}</div><strong>${esc(name||"Free Agent")}</strong>`}
-function card(t){return `<article class="move"><a class="player" href="${esc(t.profileUrl||"#")}"><div class="avatar">${img(t.avatarUrl,`${t.playerName} avatar`,initials(t.playerName),true)}</div><div class="player-copy"><strong>${esc(t.playerName)}</strong><span>Rating ${esc(t.rating)} · View full profile</span></div></a><div class="route"><div class="club">${club(t.fromTeam,t.fromTeamIcon)}</div><div class="arrow">→</div><div class="club to">${club(t.toTeam,t.toTeamIcon)}</div></div><span class="type ${esc(t.type)}">${t.type==="signing"?"Free-agent signing":t.type==="release"?"Released":"Permanent transfer"}</span><div class="amount"><strong>${t.value>0?money(t.value):"Free"}</strong><span>${date(t.completedAt)}</span></div></article>`}
-async function loadSummary(){try{const s=await get("/api/transfers/history/summary");$("total").textContent=s.total||0;$("transfers").textContent=s.transfers||0;$("signings").textContent=s.signings||0;$("releases").textContent=s.releases||0;$("spent").textContent=money(s.totalSpent||0);const r=s.recordTransfer;if(r){$("recordName").textContent=r.playerName;$("recordRoute").textContent=`${r.fromTeam} → ${r.toTeam}`;$("recordValue").textContent=money(r.value);$("recordAvatar").innerHTML=img(r.avatarUrl,`${r.playerName} avatar`,initials(r.playerName),true)}}catch(e){console.error(e)}}
-async function load(){const q=new URLSearchParams({page:String(page),perPage:"24",search:$("search").value.trim(),type:$("type").value,team:$("team").value});$("status").hidden=false;$("status").className="loading";$("status").textContent="Loading transfer history…";$("timeline").hidden=true;$("pagination").hidden=true;try{const data=await get(`/api/transfers/history?${q}`);const list=data.transfers||[];pages=data.pagination?.pages||1;page=Math.min(data.pagination?.page||1,pages);fillTeams(data.teams||[]);if(!list.length){$("status").className="empty";$("status").textContent="No transfers match these filters.";return}$("status").hidden=true;$("timeline").innerHTML=list.map(card).join("");$("timeline").hidden=false;$("pagination").hidden=false;$("pageInfo").textContent=`Page ${page} of ${pages} · ${data.pagination.total} moves`;$("previous").disabled=page<=1;$("next").disabled=page>=pages}catch(e){$("status").className="error";$("status").textContent=e.message||"Could not load transfer history."}}
-function fillTeams(teams){const current=$("team").value;if($("team").options.length>1)return;$("team").innerHTML=`<option value="">Every club</option>`+teams.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("");$("team").value=current}
-function changed(){page=1;load()}$("search").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(changed,280)});$("type").addEventListener("change",changed);$("team").addEventListener("change",changed);$("clear").addEventListener("click",()=>{$("search").value="";$("type").value="all";$("team").value="";changed()});$("previous").addEventListener("click",()=>{if(page>1){page--;load();scrollTo({top:470,behavior:"smooth"})}});$("next").addEventListener("click",()=>{if(page<pages){page++;load();scrollTo({top:470,behavior:"smooth"})}});loadSummary();load();
+const $=id=>document.getElementById(id),header=$("header"),glow=$("cursorGlow");
+let page=1,pages=1,timer;
+const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const initials=v=>String(v||"?").split(/\s+/).filter(Boolean).map(x=>x[0]).join("").slice(0,3).toUpperCase();
+const money=v=>new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(Number(v||0));
+const date=v=>v?new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(v)):"Unknown date";
+
+function updateHeader(){header.classList.toggle("scrolled",scrollY>20)}updateHeader();addEventListener("scroll",updateHeader,{passive:true});
+if(matchMedia("(pointer:fine)").matches){glow.style.opacity="1";addEventListener("pointermove",e=>glow.style.transform=`translate(${e.clientX}px,${e.clientY}px)`,{passive:true})}
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add("in")}),{threshold:.12});document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+
+$("menuButton").onclick=()=>{const links=[["Home","index.html"],["Fixtures","fixtures.html"],["Standings","standings.html"],["Players","playersheet.html"],["Transfers","transfers.html"],["About","about.html"],["Player login","login.html"],["Admin","admin.html"]],menu=document.createElement("div");menu.style.cssText="position:fixed;inset:0;z-index:100;background:#0b0711;padding:24px;display:flex;flex-direction:column";menu.innerHTML=`<button style="margin-left:auto;width:44px;height:44px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:transparent;color:white;font-size:1.2rem">×</button><nav style="display:grid;gap:8px;margin:auto 0">${links.map(([l,u],i)=>`<a href="${u}" style="font-family:'Archivo Black';font-size:clamp(2.4rem,12vw,5rem);line-height:.95;letter-spacing:-.06em;text-transform:uppercase;color:${i===4?"#fff":"#6d6370"}">${l}</a>`).join("")}</nav>`;menu.querySelector("button").onclick=()=>menu.remove();document.body.appendChild(menu)};
+
+function img(url,name,cover=false){return url?`<img src="${esc(url)}" alt="${esc(name)}" style="object-fit:${cover?"cover":"contain"}" onerror="this.parentElement.textContent='${esc(initials(name))}'">`:esc(initials(name))}
+function typeLabel(type){return type==="signing"?"Free-agent signing":type==="release"?"Player release":"Club transfer"}
+function club(name,url,to=false){return `<div class="club ${to?"to":""}"><div class="club-logo">${img(url,name)}</div><strong>${esc(name||"Free Agent")}</strong></div>`}
+function row(t){return `<article class="transfer-row"><a class="player-cell" href="${esc(t.profileUrl||`player.html?id=${encodeURIComponent(t.playerId||"")}`)}"><div class="avatar">${img(t.avatarUrl,t.playerName,true)}</div><div class="player-copy"><strong>${esc(t.playerName)}</strong><span>Rating ${esc(t.rating||64)} · View profile</span></div></a><div class="route">${club(t.fromTeam,t.fromTeamIcon)}<div class="arrow">→</div>${club(t.toTeam,t.toTeamIcon,true)}</div><span class="type ${esc(t.type)}">${esc(typeLabel(t.type))}</span><div class="amount"><strong>${Number(t.value)>0?money(t.value):"Free"}</strong><span>${date(t.completedAt)}</span></div></article>`}
+
+async function getJson(url){
+const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});
+const type=response.headers.get("content-type")||"";
+if(!type.includes("application/json"))throw new Error("The transfer API returned an invalid response.");
+const body=await response.json();
+if(!response.ok)throw new Error(body.error||`Request failed (${response.status})`);
+return body;
+}
+
+async function loadSummary(){
+try{
+const s=await getJson("/api/transfers/history/summary");
+$("totalMoves").textContent=s.total||0;
+$("freeMoves").textContent=(s.signings||0)+(s.releases||0);
+$("totalSpend").textContent=money(s.totalSpent||0);
+const r=s.recordTransfer;
+if(r){
+$("recordAvatar").innerHTML=img(r.avatarUrl,r.playerName,true);
+$("recordName").textContent=r.playerName;
+$("recordRoute").textContent=`${r.fromTeam} → ${r.toTeam} · ${money(r.value)}`;
+}
+}catch(error){console.error(error)}
+}
+
+async function load(){
+const query=new URLSearchParams({page:String(page),perPage:"24",search:$("search").value.trim(),type:$("typeFilter").value,team:$("teamFilter").value});
+$("timeline").innerHTML=`<div class="loading">Loading transfer history…</div>`;
+$("pagination").hidden=true;
+try{
+const data=await getJson(`/api/transfers/history?${query}`);
+const list=data.transfers||[];
+pages=data.pagination?.pages||1;
+page=Math.min(data.pagination?.page||1,pages);
+fillTeams(data.teams||[]);
+$("moveCountMeta").textContent=`${data.pagination?.total||0} moves`;
+$("updatedMeta").textContent=`Updated ${new Intl.DateTimeFormat("en-GB",{hour:"2-digit",minute:"2-digit"}).format(new Date())}`;
+$("resultCount").textContent=`${data.pagination?.total||0} ${(data.pagination?.total||0)===1?"move":"moves"}`;
+if(!list.length){$("timeline").innerHTML=`<div class="empty">No transfers match these filters.</div>`;return}
+$("timeline").innerHTML=list.map(row).join("");
+$("pagination").hidden=false;
+$("pageInfo").textContent=`Page ${page} of ${pages}`;
+$("previous").disabled=page<=1;
+$("next").disabled=page>=pages;
+}catch(error){
+$("timeline").innerHTML=`<div class="error">${esc(error.message||"Could not load transfer history.")}</div>`;
+$("moveCountMeta").textContent="Transfers unavailable";
+}
+}
+
+function fillTeams(teams){
+const current=$("teamFilter").value;
+if($("teamFilter").options.length>1)return;
+$("teamFilter").innerHTML=`<option value="">All clubs</option>`+teams.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join("");
+$("teamFilter").value=current;
+}
+function changed(){page=1;load()}
+$("search").addEventListener("input",()=>{clearTimeout(timer);timer=setTimeout(changed,250)});
+$("typeFilter").addEventListener("change",changed);
+$("teamFilter").addEventListener("change",changed);
+$("clear").onclick=()=>{$("search").value="";$("typeFilter").value="all";$("teamFilter").value="";changed()};
+$("previous").onclick=()=>{if(page>1){page--;load();scrollTo({top:520,behavior:"smooth"})}};
+$("next").onclick=()=>{if(page<pages){page++;load();scrollTo({top:520,behavior:"smooth"})}};
+loadSummary();load();
 </script>
 </body>
 </html>

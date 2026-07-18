@@ -28,7 +28,60 @@ const $=id=>document.getElementById(id),esc=v=>String(v??"").replaceAll("&","&am
 addEventListener("scroll",()=>$("header").classList.toggle("scrolled",scrollY>20),{passive:true});
 function img(url,name,cover=false){return url?`<img src="${esc(url)}" alt="${esc(name)}" style="object-fit:${cover?"cover":"contain"}" onerror="this.parentElement.textContent='${esc(initials(name))}'">`:esc(initials(name))}
 function transferLogo(url,name){return `<div class="transfer-logo">${img(url,name)}</div>`}
-async function load(){const id=new URLSearchParams(location.search).get("id");if(!id){$("content").innerHTML=`<div class="error">No player was selected.</div>`;return}try{const r=await fetch(`/api/public/players/${encodeURIComponent(id)}`,{cache:"no-store",headers:{Accept:"application/json"}}),b=await r.json();if(!r.ok)throw new Error(b.error||"Could not load player.");const p=b.player,s=p.stats||{},transfers=Array.isArray(p.transfers)?p.transfers:[];document.title=`${p.username} — YSL`;$("content").innerHTML=`<section class="hero"><div class="portrait">${img(p.avatarUrl,p.username,true)}</div><div><div class="eyebrow">${esc(b.season||"Current season")}</div><h1 class="name">${esc(p.username)}</h1><div class="identity"><div class="club"><div class="club-logo">${img(p.teamLogo,p.team)}</div><div class="club-copy"><strong>${esc(p.team)}</strong><span>Current club</span></div></div><span class="pill">${esc(p.position||"—")}</span><span class="pill">${esc(p.role)}</span><span class="pill">${esc(p.availability)}</span><div class="rating">${esc(p.rating)}<small>Rating</small></div></div></div></section><section class="stats"><article class="stat"><span>Appearances</span><strong>${esc(s.appearances||0)}</strong></article><article class="stat"><span>Goals</span><strong>${esc(s.goals||0)}</strong></article><article class="stat"><span>Assists</span><strong>${esc(s.assists||0)}</strong></article><article class="stat"><span>Contributions</span><strong>${esc(s.contributions||0)}</strong></article><article class="stat"><span>Player of match</span><strong>${esc(s.potm||0)}</strong></article><article class="stat"><span>Clean sheets</span><strong>${esc(s.cleanSheets||0)}</strong></article></section><section class="grid"><article class="panel"><div class="panel-head"><h2>Player information</h2><span>Public profile</span></div><div class="info-grid"><div class="info"><span>Roblox ID</span><strong>${esc(p.robloxId||"Not available")}</strong></div><div class="info"><span>Market value</span><strong>${money(p.value)}</strong></div><div class="info"><span>Starts</span><strong>${esc(s.starts||0)}</strong></div><div class="info"><span>Minutes played</span><strong>${esc(s.minutesPlayed||0)}</strong></div><div class="info"><span>Wins / Draws / Losses</span><strong>${esc(s.wins||0)} / ${esc(s.draws||0)} / ${esc(s.losses||0)}</strong></div><div class="info"><span>Cards</span><strong>${esc(s.yellowCards||0)} yellow · ${esc(s.redCards||0)} red</strong></div></div><div class="note">${esc(p.note||"No public player note has been added.")}</div></article><article class="panel"><div class="panel-head"><h2>Transfer history</h2><span>${transfers.length} moves</span></div><div class="transfers">${transfers.length?transfers.map(t=>`<div class="transfer"><div class="transfer-club">${transferLogo(t.fromTeamLogo,t.fromTeam)}<span>${esc(t.fromTeam)}</span></div><span>→</span><div class="transfer-club">${transferLogo(t.toTeamLogo,t.toTeam)}<span>${esc(t.toTeam)}</span></div><div class="transfer-value">${t.value?money(t.value):"Free"}<span>${date(t.date)}</span></div></div>`).join(""):`<div class="empty">No transfer history recorded.</div>`}</div></article></section>`}catch(e){$("content").innerHTML=`<div class="error">${esc(e.message)}</div>`}}
+async function fetchJsonProfile(url){
+  const response=await fetch(url,{cache:"no-store",headers:{Accept:"application/json"}});
+  const contentType=response.headers.get("content-type")||"";
+  if(!contentType.includes("application/json")){
+    const text=await response.text();
+    throw new Error(response.status===404
+      ?"Player profile API route was not found on the server."
+      :"The server returned an HTML page instead of player data.");
+  }
+  const body=await response.json();
+  if(!response.ok)throw new Error(body.error||`Request failed (${response.status})`);
+  return body;
+}
+
+async function load(){
+  const id=new URLSearchParams(location.search).get("id");
+  if(!id){
+    $("content").innerHTML=`<div class="error">No player was selected.</div>`;
+    return;
+  }
+
+  const endpoints=[
+    `/api/public/players/${encodeURIComponent(id)}`,
+    `/api/players/${encodeURIComponent(id)}`
+  ];
+
+  let body=null;
+  let lastError=null;
+
+  for(const endpoint of endpoints){
+    try{
+      body=await fetchJsonProfile(endpoint);
+      break;
+    }catch(error){
+      lastError=error;
+    }
+  }
+
+  if(!body){
+    $("content").innerHTML=`<div class="error">${esc(lastError?.message||"Could not load player.")}</div>`;
+    return;
+  }
+
+  try{
+    const p=body.player||body;
+    const s=p.stats||{};
+    const transfers=Array.isArray(p.transfers)?p.transfers:[];
+    document.title=`${p.username} — YSL`;
+
+    $("content").innerHTML=`<section class="hero"><div class="portrait">${img(p.avatarUrl,p.username,true)}</div><div><div class="eyebrow">${esc(body.season||"Current season")}</div><h1 class="name">${esc(p.username)}</h1><div class="identity"><div class="club"><div class="club-logo">${img(p.teamLogo,p.team)}</div><div class="club-copy"><strong>${esc(p.team)}</strong><span>Current club</span></div></div><span class="pill">${esc(p.position||"—")}</span><span class="pill">${esc(p.role)}</span><span class="pill">${esc(p.availability)}</span><div class="rating">${esc(p.rating)}<small>Rating</small></div></div></div></section><section class="stats"><article class="stat"><span>Appearances</span><strong>${esc(s.appearances||0)}</strong></article><article class="stat"><span>Goals</span><strong>${esc(s.goals||0)}</strong></article><article class="stat"><span>Assists</span><strong>${esc(s.assists||0)}</strong></article><article class="stat"><span>Contributions</span><strong>${esc(s.contributions||0)}</strong></article><article class="stat"><span>Player of match</span><strong>${esc(s.potm||0)}</strong></article><article class="stat"><span>Clean sheets</span><strong>${esc(s.cleanSheets||0)}</strong></article></section><section class="grid"><article class="panel"><div class="panel-head"><h2>Player information</h2><span>Public profile</span></div><div class="info-grid"><div class="info"><span>Roblox ID</span><strong>${esc(p.robloxId||"Not available")}</strong></div><div class="info"><span>Market value</span><strong>${money(p.value)}</strong></div><div class="info"><span>Starts</span><strong>${esc(s.starts||0)}</strong></div><div class="info"><span>Minutes played</span><strong>${esc(s.minutesPlayed||0)}</strong></div><div class="info"><span>Wins / Draws / Losses</span><strong>${esc(s.wins||0)} / ${esc(s.draws||0)} / ${esc(s.losses||0)}</strong></div><div class="info"><span>Cards</span><strong>${esc(s.yellowCards||0)} yellow · ${esc(s.redCards||0)} red</strong></div></div><div class="note">${esc(p.note||"No public player note has been added.")}</div></article><article class="panel"><div class="panel-head"><h2>Transfer history</h2><span>${transfers.length} moves</span></div><div class="transfers">${transfers.length?transfers.map(t=>`<div class="transfer"><div class="transfer-club">${transferLogo(t.fromTeamLogo,t.fromTeam)}<span>${esc(t.fromTeam)}</span></div><span>→</span><div class="transfer-club">${transferLogo(t.toTeamLogo,t.toTeam)}<span>${esc(t.toTeam)}</span></div><div class="transfer-value">${t.value?money(t.value):"Free"}<span>${date(t.date)}</span></div></div>`).join(""):`<div class="empty">No transfer history recorded.</div>`}</div></article></section>`;
+  }catch(error){
+    $("content").innerHTML=`<div class="error">${esc(error.message||"Could not display player profile.")}</div>`;
+  }
+}
 load();
 </script>
 </body>

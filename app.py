@@ -734,25 +734,67 @@ def save_site():
 
 @app.get("/api/players")
 def public_playersheet():
+    """Return the live playersheet with club logos and player statistics."""
     try:
         rows = supabase_request(
             "GET",
             "players?select=id,username,roblox_user_id,team,player_role,"
-            "rating,market_value,releases,avatar_url,active,is_active"
+            "rating,market_value,releases,avatar_url,active,is_active,"
+            "position,availability,current_team_id"
             "&order=rating.desc,username.asc",
-        )
+        ) or []
+
+        try:
+            stats_rows = supabase_request(
+                "GET",
+                "player_stats?select=player_id,appearances,starts,goals,"
+                "assists,clean_sheets,player_of_the_match,yellow_cards,"
+                "red_cards,wins,draws,losses,minutes_played",
+            ) or []
+        except RuntimeError:
+            stats_rows = []
+
+        stats_by_player = {
+            str(item.get("player_id")): item
+            for item in stats_rows
+            if item.get("player_id")
+        }
+
+        content = read_site_content()
+        site_teams = content.get("teams", [])
+        settings = content.get("settings", {})
+
+        if not isinstance(site_teams, list):
+            site_teams = []
+        if not isinstance(settings, dict):
+            settings = {}
+
+        logo_by_name = {
+            str(team.get("name", "")).strip().lower(): str(
+                team.get("logo", "") or ""
+            )
+            for team in site_teams
+            if isinstance(team, dict)
+            and str(team.get("name", "")).strip()
+        }
 
         players = []
 
-        for row in rows or []:
+        for row in rows:
+            player_id = str(row.get("id") or "")
+            team_name = str(row.get("team") or "Free Agent").strip()
+            stats = stats_by_player.get(player_id, {})
+
             players.append({
                 "id": row.get("id"),
-                "username": row.get("username"),
-                "roblox_user_id": row.get("roblox_user_id"),
-                "team": row.get("team") or "Free Agent",
+                "username": row.get("username") or "Unknown Player",
+                "robloxId": row.get("roblox_user_id"),
+                "team": team_name or "Free Agent",
+                "teamLogo": logo_by_name.get(team_name.lower(), ""),
                 "role": row.get("player_role") or "Player",
-                "rating": row.get("rating") or 64,
-                "value": row.get("market_value") or 50000,
+                "position": row.get("position") or "—",
+                "rating": int(row.get("rating") or 64),
+                "value": int(row.get("market_value") or 50000),
                 "releases": (
                     1
                     if row.get("releases") is None
@@ -764,13 +806,42 @@ def public_playersheet():
                         str(row.get("roblox_user_id") or "")
                     )
                 ),
+                "availability": row.get("availability") or "Available",
                 "active": bool(
                     row.get("active", row.get("is_active", True))
                 ),
+                "stats": {
+                    "appearances": int(stats.get("appearances") or 0),
+                    "starts": int(stats.get("starts") or 0),
+                    "goals": int(stats.get("goals") or 0),
+                    "assists": int(stats.get("assists") or 0),
+                    "cleanSheets": int(stats.get("clean_sheets") or 0),
+                    "potm": int(
+                        stats.get("player_of_the_match") or 0
+                    ),
+                    "yellowCards": int(stats.get("yellow_cards") or 0),
+                    "redCards": int(stats.get("red_cards") or 0),
+                    "wins": int(stats.get("wins") or 0),
+                    "draws": int(stats.get("draws") or 0),
+                    "losses": int(stats.get("losses") or 0),
+                    "minutesPlayed": int(
+                        stats.get("minutes_played") or 0
+                    ),
+                },
+                "profileUrl": (
+                    f"player.html?id={urllib.parse.quote(player_id, safe='')}"
+                    if player_id
+                    else ""
+                ),
             })
 
-        return jsonify({"players": players})
+        return jsonify({
+            "players": players,
+            "season": settings.get("seasonName", "Current season"),
+            "count": len(players),
+        })
     except RuntimeError as exc:
+        app.logger.exception("Failed to load public playersheet.")
         return jsonify({"error": str(exc)}), 503
 
 

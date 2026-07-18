@@ -818,27 +818,27 @@ function statusType(status,homeScore,awayScore,date){
 
 function normaliseFixture(raw,index){
   const home=
-    get(raw,["home_team_name","homeTeamName","team1_name","home_name"])||
+    get(raw,["home","home_team_name","homeTeamName","team1_name","home_name"])||
     getObjectName(raw,"home_team")||
     getObjectName(raw,"homeTeam")||
     getObjectName(raw,"team1")||
     get(raw,["home_team","homeTeam","team1"],"Home");
 
   const away=
-    get(raw,["away_team_name","awayTeamName","team2_name","away_name"])||
+    get(raw,["away","away_team_name","awayTeamName","team2_name","away_name"])||
     getObjectName(raw,"away_team")||
     getObjectName(raw,"awayTeam")||
     getObjectName(raw,"team2")||
     get(raw,["away_team","awayTeam","team2"],"Away");
 
   const homeLogo=
-    get(raw,["home_team_logo","homeTeamLogo","team1_logo","home_logo"])||
+    get(raw,["homeLogo","home_team_logo","homeTeamLogo","team1_logo","home_logo"])||
     getObjectLogo(raw,"home_team")||
     getObjectLogo(raw,"homeTeam")||
     getObjectLogo(raw,"team1");
 
   const awayLogo=
-    get(raw,["away_team_logo","awayTeamLogo","team2_logo","away_logo"])||
+    get(raw,["awayLogo","away_team_logo","awayTeamLogo","team2_logo","away_logo"])||
     getObjectLogo(raw,"away_team")||
     getObjectLogo(raw,"awayTeam")||
     getObjectLogo(raw,"team2");

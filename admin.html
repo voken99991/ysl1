@@ -303,6 +303,7 @@ textarea{min-height:100px;resize:vertical}
 </main>
 </div>
 
+<script src="competition-engine.js"></script>
 <script>
 let csrf="",data=null;
 const $=id=>document.getElementById(id);
@@ -373,7 +374,7 @@ function normalize(){
   stats:{goals:Array.isArray(f.stats?.goals)?f.stats.goals:[],cards:Array.isArray(f.stats?.cards)?f.stats.cards:[],substitutions:Array.isArray(f.stats?.substitutions)?f.stats.substitutions:[],lineups:{home:Array.isArray(f.stats?.lineups?.home)?f.stats.lineups.home:[],away:Array.isArray(f.stats?.lineups?.away)?f.stats.lineups.away:[]}}
  }));
  data.players=data.players.map(p=>({id:p.id||uid(),username:p.username||p.robloxUsername||p.name||"",team:p.team||p.teamName||"",position:p.position||p.pos||"",availability:p.availability||p.status||"Available",note:p.note||p.notes||"",featured:Boolean(p.featured)}));
- syncLogos();rebuildStandings()
+ syncLogos();YSLCompetitionEngine.normalise(data);YSLCompetitionEngine.process(data);rebuildStandings()
 }
 
 function renderAll(){
@@ -467,7 +468,7 @@ function renderCompetitions(){
  $("competitionEditors").innerHTML="";
  data.competitions.forEach((c,ci)=>{
   const shell=document.createElement("article");shell.className="competition-shell";
-  shell.innerHTML=`<div class="competition-shell-head"><div><h3>${safe(c.name)}</h3><p>${c.stages.length} stage${c.stages.length===1?"":"s"} · ${c.enabled?"Public":"Hidden"}</p></div><div class="row-actions"><button class="btn small" data-add-stage="${ci}">Add stage</button><button class="btn small" data-duplicate-competition="${ci}">Duplicate</button><button class="btn danger small" data-delete-competition="${ci}">Delete</button></div></div>
+  shell.innerHTML=`<div class="competition-shell-head"><div><h3>${safe(c.name)}</h3><p>${c.stages.length} stage${c.stages.length===1?"":"s"} · ${c.enabled?"Public":"Hidden"}</p></div><div class="row-actions"><button class="btn success small" data-generate-fixtures="${ci}">Generate fixtures</button><button class="btn small" data-add-stage="${ci}">Add stage</button><button class="btn small" data-duplicate-competition="${ci}">Duplicate</button><button class="btn danger small" data-delete-competition="${ci}">Delete</button></div></div>
   <div class="competition-config grid4"><label>Name<input data-competition="${ci}" data-key="name" value="${safe(c.name)}"></label><label>Season<input data-competition="${ci}" data-key="season" value="${safe(c.season)}"></label><label>Logo URL<input data-competition="${ci}" data-key="logo" value="${safe(c.logo)}"></label><label>Colour<input type="color" data-competition="${ci}" data-key="colour" value="${safe(c.colour)}"></label><label>Style key<input data-competition="${ci}" data-key="key" value="${safe(c.key)}"></label><label>Public<select data-competition="${ci}" data-key="enabled"><option value="true" ${c.enabled?"selected":""}>Yes</option><option value="false" ${!c.enabled?"selected":""}>No</option></select></label></div>
   <div class="stage-list" id="stage-list-${ci}"></div>
   <div class="structure-preview">${c.stages.sort((a,b)=>a.order-b.order).map((s,i)=>`${i?'<span class="structure-arrow">→</span>':""}<div class="structure-node"><strong>${safe(s.name)}</strong><span>${safe(s.type)}</span></div>`).join("")||'<span>No stages yet</span>'}</div>`;
@@ -476,16 +477,34 @@ function renderCompetitions(){
   c.stages.sort((a,b)=>a.order-b.order).forEach((s,si)=>{
    const stage=document.createElement("section");stage.className="stage-card";
    stage.innerHTML=`<div class="stage-head"><div><h4>${safe(s.name)}</h4><small>Stage ${si+1} · ${safe(s.type)}</small></div><div class="row-actions"><button class="btn small" data-add-group="${ci}:${si}">Add group</button><button class="btn small" data-add-tie="${ci}:${si}">Add tie</button><button class="btn small" data-copy-stage="${ci}:${si}">Duplicate</button><button class="btn danger small" data-delete-stage="${ci}:${si}">Delete</button></div></div>
-   <div class="grid4"><label>Stage name<input data-stage="${ci}:${si}" data-key="name" value="${safe(s.name)}"></label><label>Type<select data-stage="${ci}:${si}" data-key="type"><option value="league" ${s.type==="league"?"selected":""}>League table</option><option value="groups" ${s.type==="groups"?"selected":""}>Group stage</option><option value="knockout" ${s.type==="knockout"?"selected":""}>Knockout</option><option value="swiss" ${s.type==="swiss"?"selected":""}>Swiss / league phase</option><option value="playoff" ${s.type==="playoff"?"selected":""}>Playoff</option><option value="custom" ${s.type==="custom"?"selected":""}>Custom</option></select></label><label>Order<input type="number" min="1" data-stage="${ci}:${si}" data-key="order" value="${s.order}"></label><label>Round robin<select data-stage-rule="${ci}:${si}" data-key="roundRobin"><option value="none" ${s.rules.roundRobin==="none"?"selected":""}>None</option><option value="single" ${s.rules.roundRobin==="single"?"selected":""}>Single</option><option value="double" ${s.rules.roundRobin==="double"?"selected":""}>Double</option></select></label><label>Qualifying positions<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="qualify" value="${s.rules.qualify||0}"></label><label>Relegated / eliminated<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="relegate" value="${s.rules.relegate||0}"></label><label>Number of legs<input type="number" min="1" max="9" data-stage-rule="${ci}:${si}" data-key="legs" value="${s.rules.legs||1}"></label></div>
+   <div class="grid4"><label>Stage name<input data-stage="${ci}:${si}" data-key="name" value="${safe(s.name)}"></label><label>Type<select data-stage="${ci}:${si}" data-key="type"><option value="league" ${s.type==="league"?"selected":""}>League table</option><option value="groups" ${s.type==="groups"?"selected":""}>Group stage</option><option value="knockout" ${s.type==="knockout"?"selected":""}>Knockout</option><option value="swiss" ${s.type==="swiss"?"selected":""}>Swiss / league phase</option><option value="playoff" ${s.type==="playoff"?"selected":""}>Playoff</option><option value="custom" ${s.type==="custom"?"selected":""}>Custom</option></select></label><label>Order<input type="number" min="1" data-stage="${ci}:${si}" data-key="order" value="${s.order}"></label><label>Round robin<select data-stage-rule="${ci}:${si}" data-key="roundRobin"><option value="none" ${s.rules.roundRobin==="none"?"selected":""}>None</option><option value="single" ${s.rules.roundRobin==="single"?"selected":""}>Single</option><option value="double" ${s.rules.roundRobin==="double"?"selected":""}>Double</option></select></label><label>Qualifying positions<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="qualify" value="${s.rules.qualify||0}"></label><label>Relegated / eliminated<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="relegate" value="${s.rules.relegate||0}"></label><label>Number of legs<input type="number" min="1" max="9" data-stage-rule="${ci}:${si}" data-key="legs" value="${s.rules.legs||1}"></label>
+<label>First fixture date<input type="date" data-stage-rule="${ci}:${si}" data-key="scheduleDate" value="${safe(s.rules.scheduleDate||"")}"></label>
+<label>First kickoff<input type="time" data-stage-rule="${ci}:${si}" data-key="scheduleTime" value="${safe(s.rules.scheduleTime||"")}"></label>
+<label>Minutes between fixtures<input type="number" min="0" data-stage-rule="${ci}:${si}" data-key="intervalMinutes" value="${Number(s.rules.intervalMinutes||60)}"></label></div>
    <div class="stage-rules"><div class="stage-flags">${[["aggregate","Aggregate score"],["awayGoals","Away goals"],["extraTime","Extra time"],["penalties","Penalties"],["thirdPlace","Third-place match"],["autoProgress","Automatic progression"]].map(([key,label])=>`<label class="stage-flag"><input type="checkbox" data-stage-rule="${ci}:${si}" data-key="${key}" ${s.rules[key]?"checked":""}>${label}</label>`).join("")}</div></div>
    <div class="group-grid">${s.groups.map((g,gi)=>`<div class="group-card"><div class="group-card-head"><strong>${safe(g.name)}</strong><button class="btn danger small" data-delete-group="${ci}:${si}:${gi}">Delete</button></div><label>Name<input data-group="${ci}:${si}:${gi}" data-key="name" value="${safe(g.name)}"></label><label>Teams, one per line<textarea data-group="${ci}:${si}:${gi}" data-key="teams">${safe((g.teams||[]).join("\\n"))}</textarea></label><label>Teams qualifying<input type="number" min="0" data-group="${ci}:${si}:${gi}" data-key="qualify" value="${Number(g.qualify||2)}"></label></div>`).join("")}</div>
-   <div class="tie-grid">${s.ties.map((t,ti)=>`<div class="tie-card"><strong>${safe(t.name||`Tie ${ti+1}`)}</strong><div class="grid2"><label>Name<input data-tie="${ci}:${si}:${ti}" data-key="name" value="${safe(t.name||"")}"></label><label>Next tie ID<input data-tie="${ci}:${si}:${ti}" data-key="nextTieId" value="${safe(t.nextTieId||"")}"></label><label>Home / seed A<select data-tie="${ci}:${si}:${ti}" data-key="home">${teamOptions(t.home||"")}</select></label><label>Away / seed B<select data-tie="${ci}:${si}:${ti}" data-key="away">${teamOptions(t.away||"")}</select></label></div><button class="btn danger small" data-delete-tie="${ci}:${si}:${ti}">Delete tie</button></div>`).join("")}</div>`;
+   <div class="tie-grid">${s.ties.map((t,ti)=>`<div class="tie-card"><strong>${safe(t.name||`Tie ${ti+1}`)}</strong><div class="grid2"><label>Name<input data-tie="${ci}:${si}:${ti}" data-key="name" value="${safe(t.name||"")}"></label><label>Next tie ID<input data-tie="${ci}:${si}:${ti}" data-key="nextTieId" value="${safe(t.nextTieId||"")}"></label><label>Home source<select data-tie-source="${ci}:${si}:${ti}" data-slot="home" data-key="type"><option value="team" ${t.homeSource?.type==="team"?"selected":""}>Confirmed team</option><option value="winner" ${t.homeSource?.type==="winner"?"selected":""}>Winner of tie</option><option value="loser" ${t.homeSource?.type==="loser"?"selected":""}>Loser of tie</option><option value="group-position" ${t.homeSource?.type==="group-position"?"selected":""}>Group position</option></select></label><label>Home team / source ID<input data-tie-source="${ci}:${si}:${ti}" data-slot="home" data-key="value" value="${safe(t.homeSource?.type==="team"?(t.homeSource.team||t.home):(t.homeSource?.tieId||t.homeSource?.groupId||""))}" placeholder="Team name, tie ID or group ID"></label><label>Away source<select data-tie-source="${ci}:${si}:${ti}" data-slot="away" data-key="type"><option value="team" ${t.awaySource?.type==="team"?"selected":""}>Confirmed team</option><option value="winner" ${t.awaySource?.type==="winner"?"selected":""}>Winner of tie</option><option value="loser" ${t.awaySource?.type==="loser"?"selected":""}>Loser of tie</option><option value="group-position" ${t.awaySource?.type==="group-position"?"selected":""}>Group position</option></select></label><label>Away team / source ID<input data-tie-source="${ci}:${si}:${ti}" data-slot="away" data-key="value" value="${safe(t.awaySource?.type==="team"?(t.awaySource.team||t.away):(t.awaySource?.tieId||t.awaySource?.groupId||""))}" placeholder="Team name, tie ID or group ID"></label></div><button class="btn danger small" data-delete-tie="${ci}:${si}:${ti}">Delete tie</button></div>`).join("")}</div>`;
    list.appendChild(stage)
   })
  });
  bindCompetitionBuilder()
 }
 function bindCompetitionBuilder(){
+ document.querySelectorAll("[data-generate-fixtures]").forEach(b=>b.onclick=()=>{
+  try{
+    collect();
+    const competition=data.competitions[+b.dataset.generateFixtures];
+    let created=0;
+    competition.stages.forEach(stage=>{
+      if(["league","groups","swiss"].includes(stage.type))created+=YSLCompetitionEngine.generateRoundRobinFixtures(data,competition.id,stage.id);
+    });
+    created+=YSLCompetitionEngine.generateKnockoutFixtures(data,competition.id);
+    YSLCompetitionEngine.process(data);
+    renderAll();
+    $("notice").textContent=`${created} fixture${created===1?"":"s"} generated. Existing fixtures were left untouched.`;
+    $("notice").classList.add("show");
+  }catch(error){showError(error.message)}
+});
  document.querySelectorAll("[data-add-stage]").forEach(b=>b.onclick=()=>{collect();const c=data.competitions[+b.dataset.addStage];const s=blankStage("league",`Stage ${c.stages.length+1}`);s.order=c.stages.length+1;c.stages.push(s);renderAll()});
  document.querySelectorAll("[data-delete-competition]").forEach(b=>b.onclick=()=>{if(confirm("Delete this competition and its structure?")){collect();data.competitions.splice(+b.dataset.deleteCompetition,1);renderAll()}});
  document.querySelectorAll("[data-duplicate-competition]").forEach(b=>b.onclick=()=>{collect();const c=structuredClone(data.competitions[+b.dataset.duplicateCompetition]);c.id=uid();c.name+=" Copy";c.stages.forEach(s=>{s.id=uid();s.groups.forEach(g=>g.id=uid());s.ties.forEach(t=>t.id=uid())});data.competitions.push(c);renderAll()});
@@ -512,18 +531,35 @@ function collect(){
  document.querySelectorAll("[data-player]").forEach(input=>{const key=input.dataset.key,index=Number(input.dataset.player);data.players[index][key]=key==="featured"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-competition]").forEach(input=>{const key=input.dataset.key;data.competitions[Number(input.dataset.competition)][key]=key==="enabled"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-stage]").forEach(input=>{const [ci,si]=input.dataset.stage.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si][key]=key==="order"?Number(input.value||1):input.value.trim()});
- document.querySelectorAll("[data-stage-rule]").forEach(input=>{const [ci,si]=input.dataset.stageRule.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].rules[key]=input.type==="checkbox"?input.checked:(["qualify","relegate","legs"].includes(key)?Number(input.value||0):input.value)});
+ document.querySelectorAll("[data-stage-rule]").forEach(input=>{const [ci,si]=input.dataset.stageRule.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].rules[key]=input.type==="checkbox"?input.checked:(["qualify","relegate","legs","intervalMinutes"].includes(key)?Number(input.value||0):input.value)});
  document.querySelectorAll("[data-group]").forEach(input=>{const [ci,si,gi]=input.dataset.group.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].groups[gi][key]=key==="teams"?input.value.split("\n").map(x=>x.trim()).filter(Boolean):(key==="qualify"?Number(input.value||0):input.value.trim())});
  document.querySelectorAll("[data-tie]").forEach(input=>{const [ci,si,ti]=input.dataset.tie.split(":").map(Number),key=input.dataset.key;data.competitions[ci].stages[si].ties[ti][key]=input.value.trim()});
+ document.querySelectorAll("[data-tie-source]").forEach(input=>{
+  const [ci,si,ti]=input.dataset.tieSource.split(":").map(Number),slot=input.dataset.slot,key=input.dataset.key;
+  const tie=data.competitions[ci].stages[si].ties[ti];
+  tie[`${slot}Source`]=tie[`${slot}Source`]||{type:"team",team:"",tieId:"",groupId:"",stageId:"",competitionId:data.competitions[ci].id,position:1};
+  if(key==="type")tie[`${slot}Source`].type=input.value;
+  else{
+   const type=tie[`${slot}Source`].type;
+   tie[`${slot}Source`].team=type==="team"?input.value.trim():"";
+   tie[`${slot}Source`].tieId=["winner","loser"].includes(type)?input.value.trim():"";
+   tie[`${slot}Source`].groupId=type==="group-position"?input.value.trim():"";
+   if(type==="team")tie[slot]=input.value.trim();
+  }
+ });
  document.querySelectorAll("[data-nav]").forEach(input=>{const key=input.dataset.key;data.navigation[Number(input.dataset.nav)][key]=key==="enabled"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-stats]").forEach(input=>{const i=Number(input.dataset.stats),key=input.dataset.statKey;try{const parsed=JSON.parse(input.value||"[]");if(key==="homeLineup")data.fixtures[i].stats.lineups.home=parsed;else if(key==="awayLineup")data.fixtures[i].stats.lineups.away=parsed;else data.fixtures[i].stats[key]=parsed}catch{throw new Error(`Fixture ${i+1} contains invalid ${key} JSON.`)}});
  data.hero={top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim(),tickerText:$("tickerText").value.trim(),homeFixtureLimit:Number($("homeFixtureLimit").value||3),announcement:$("announcement").value.trim()};
  data.settings={websiteName:$("websiteName").value.trim(),leagueName:$("leagueName").value.trim(),seasonName:$("seasonName").value.trim(),discordInvite:$("discordInvite").value.trim(),currency:$("currency").value,defaultVenue:$("defaultVenue").value.trim(),footerText:$("footerText").value.trim()};
  data.theme={...data.theme,mainPurple:$("mainPurple").value,accentPurple:$("accentPurple").value};
- syncLogos();rebuildStandings();updateRaw()
+ syncLogos();YSLCompetitionEngine.process(data);rebuildStandings();updateRaw()
 }
 function syncLogos(){const map=Object.fromEntries(data.teams.map(t=>[t.name,t.logo||""]));data.fixtures.forEach(f=>{f.homeLogo=map[f.home]||f.homeLogo||"";f.awayLogo=map[f.away]||f.awayLogo||""})}
 function rebuildStandings(){
+ YSLCompetitionEngine.process(data);
+ const preferred=data.competitions.find(c=>c.name==="Premier League")||data.competitions.find(c=>c.stages?.some(s=>["league","groups","swiss"].includes(s.type)));
+ const preferredStage=preferred?.stages?.find(s=>["league","groups","swiss"].includes(s.type));
+ if(preferred&&preferredStage){data.standings=YSLCompetitionEngine.calculateTable(data,preferred.id,preferredStage.id);return}
  const table=new Map();data.teams.forEach(t=>table.set(t.name,{name:t.name,logo:t.logo||"",played:0,wins:0,draws:0,losses:0,gf:0,ga:0,points:0,form:[]}));
  data.fixtures.filter(f=>f.competition==="Premier League"&&["complete","completed"].includes(f.status)&&f.homeScore!==""&&f.awayScore!=="").sort((a,b)=>`${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)).forEach(f=>{
   if(!table.has(f.home)||!table.has(f.away))return;const h=table.get(f.home),a=table.get(f.away),hs=Number(f.homeScore),as=Number(f.awayScore);h.played++;a.played++;h.gf+=hs;h.ga+=as;a.gf+=as;a.ga+=hs;

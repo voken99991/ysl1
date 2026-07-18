@@ -736,13 +736,32 @@ def save_site():
 def public_playersheet():
     """Return the live playersheet with club logos and player statistics."""
     try:
-        rows = supabase_request(
-            "GET",
-            "players?select=id,username,roblox_user_id,team,player_role,"
-            "rating,market_value,releases,avatar_url,active,is_active,"
-            "position,availability,current_team_id"
-            "&order=rating.desc,username.asc",
-        ) or []
+        try:
+            rows = supabase_request(
+                "GET",
+                "players?select=id,username,roblox_user_id,team,player_role,"
+                "rating,market_value,releases,avatar_url,active,is_active,"
+                "position,availability,current_team_id"
+                "&order=rating.desc,username.asc",
+            ) or []
+        except RuntimeError as exc:
+            # Older YSL databases may not yet have optional profile columns
+            # such as position or availability. Fall back to the core schema
+            # so the public playersheet still loads.
+            message = str(exc).lower()
+            if (
+                "column players.position does not exist" not in message
+                and "column players.availability does not exist" not in message
+                and "column players.current_team_id does not exist" not in message
+            ):
+                raise
+
+            rows = supabase_request(
+                "GET",
+                "players?select=id,username,roblox_user_id,team,player_role,"
+                "rating,market_value,releases,avatar_url,active,is_active"
+                "&order=rating.desc,username.asc",
+            ) or []
 
         try:
             stats_rows = supabase_request(

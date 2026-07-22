@@ -1,124 +1,273 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YSL Has Moved</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0711">
+<meta name="description" content="Youth Soccer League">
+<title>YSL — Youth Soccer League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Inter',sans-serif;
-}
+:root{--bg:#0b0711;--paper:#f2ede6;--ink:#121014;--text:#f7f1fb;--muted:#a69aaa;--purple:#8756e8;--purple-hot:#a47cff;--line:rgba(255,255,255,.10);--line-strong:rgba(255,255,255,.20);--max:1440px;--ease:cubic-bezier(.22,.84,.26,1)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg);color-scheme:dark}
+body{margin:0;min-height:100vh;overflow-x:hidden;color:var(--text);background:radial-gradient(circle at 15% 5%,rgba(135,86,232,.14),transparent 25rem),linear-gradient(180deg,var(--bg),#0f0917 58%,#09060e);font-family:"DM Sans",system-ui,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.09;mix-blend-mode:soft-light;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E")}
+a{color:inherit;text-decoration:none}button{font:inherit}.shell{width:min(var(--max),calc(100% - 42px));margin:auto}
 
-body{
-    background:#0d0d17;
-    color:#fff;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    overflow:hidden;
-}
+.site-header{position:fixed;inset:0 0 auto;z-index:50;border-bottom:1px solid transparent;transition:.35s}
+.site-header.scrolled{background:rgba(11,7,17,.82);border-color:var(--line);backdrop-filter:blur(18px)}
+.nav{min-height:78px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:30px}
+.brand{font-family:"Archivo Black";font-size:1.55rem;letter-spacing:-.08em;text-transform:uppercase}
+.nav-links{justify-self:center;display:flex;gap:25px}
+.nav-links a{position:relative;padding:29px 0 26px;color:#c8becb;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.nav-links a:after{content:"";position:absolute;left:0;right:0;bottom:21px;height:2px;background:var(--purple-hot);transform:scaleX(0);transform-origin:right;transition:transform .28s var(--ease)}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-links a:hover:after,.nav-links a.active:after{transform:scaleX(1);transform-origin:left}
+.nav-actions{display:flex;gap:10px}
+.nav-button{min-height:42px;display:inline-flex;align-items:center;padding:0 15px;border:1px solid var(--line-strong);border-radius:999px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;transition:.2s}
+.nav-button:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+.menu-button{display:none;width:42px;height:42px;border:1px solid var(--line-strong);border-radius:50%;background:transparent;color:#fff}
 
-body::before{
-    content:"";
-    position:absolute;
-    width:700px;
-    height:700px;
-    background:radial-gradient(circle,#7c3aed55 0%,transparent 70%);
-    filter:blur(60px);
-}
+.hero{min-height:88svh;display:grid;align-items:end;padding:155px 0 62px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.65fr);gap:70px;align-items:end}
+.hero h1{margin:0;max-width:990px;font-family:"Archivo Black";font-size:clamp(4.5rem,10.4vw,11rem);line-height:.78;letter-spacing:-.087em;text-transform:uppercase}
+.hero h1 span{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.72);transform:translateX(7vw)}
+.hero-copy{padding-bottom:9px}
+.hero-copy p{margin:0 0 26px;color:#c9becd;font-size:clamp(.9rem,1.15vw,1.04rem);line-height:1.75;max-width:410px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px}
+.cta{min-height:52px;display:inline-flex;align-items:center;gap:11px;padding:0 18px;border-radius:2px;border:1px solid var(--line-strong);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;transition:.2s}
+.cta.primary{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.cta:hover{transform:translateY(-3px)}
+.cta svg{width:16px}
+.ticker{margin-top:48px;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ticker-track{width:max-content;display:flex;gap:38px;padding:14px 0;animation:ticker 25s linear infinite;color:#bfb4c4;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+.ticker-track span{display:flex;align-items:center;gap:38px}
+.ticker-track span:after{content:"✦";color:var(--purple-hot)}
+@keyframes ticker{to{transform:translateX(-50%)}}
 
-.card{
-    position:relative;
-    z-index:1;
-    width:min(90%,650px);
-    background:rgba(20,20,35,.92);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:22px;
-    padding:55px;
-    text-align:center;
-    backdrop-filter:blur(18px);
-    box-shadow:0 20px 60px rgba(0,0,0,.45);
-}
+.section{padding:94px 0;border-top:1px solid var(--line)}
+.section-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:34px}
+.section-label{color:#cdbdff;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em}
+.section h2{margin:10px 0 0;font-family:"Archivo Black";font-size:clamp(2.3rem,5vw,5.2rem);line-height:.88;letter-spacing:-.06em;text-transform:uppercase}
+.section-link{padding-bottom:8px;color:#d9d0dc;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--line-strong)}
 
-.logo{
-    width:90px;
-    height:90px;
-    margin:0 auto 30px;
-    border-radius:20px;
-    background:#7c3aed;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:36px;
-    font-weight:800;
-}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.quick-card{min-height:220px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.018);transition:background .25s ease,transform .25s var(--ease)}
+.quick-card:hover{background:rgba(255,255,255,.045);transform:translateY(-4px)}
+.quick-index{color:#756a79;font-size:.58rem;font-weight:700;letter-spacing:.12em}
+.quick-card strong{font-family:"Archivo Black";font-size:clamp(1.5rem,2.6vw,2.6rem);line-height:.95;letter-spacing:-.05em;text-transform:uppercase}
+.quick-card span:last-child{color:#cfc5d2;font-size:1.15rem}
 
-h1{
-    font-size:42px;
-    margin-bottom:18px;
-}
+.fixture-list{display:grid}
+.fixture{display:grid;grid-template-columns:150px minmax(280px,1fr) 180px 35px;align-items:center;gap:18px;min-height:86px;padding:15px 0;border-top:1px solid var(--line);transition:padding .25s var(--ease),background .25s ease}
+.fixture:last-child{border-bottom:1px solid var(--line)}
+.fixture:hover{padding-left:15px;padding-right:15px;background:rgba(255,255,255,.025)}
+.fixture-time{color:var(--muted);font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.fixture-match{font-size:.9rem;font-weight:700}
+.fixture-match .vs{color:#736978;margin:0 10px;font-weight:500}
+.fixture-comp{color:#cdbdff;font-size:.59rem;font-weight:700;text-transform:uppercase;text-align:right}
+.fixture-arrow{font-size:1.2rem;color:#c9bdd0;text-align:right}
+.fixture-state{padding:40px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);color:var(--muted);font-size:.75rem}
+.skeleton{height:86px;border-top:1px solid var(--line);background:linear-gradient(90deg,transparent,rgba(255,255,255,.035),transparent);background-size:240% 100%;animation:loading 1.3s infinite}
+@keyframes loading{to{background-position:-240% 0}}
 
-p{
-    color:#b8b8c7;
-    font-size:18px;
-    line-height:1.7;
-    margin-bottom:35px;
-}
+.footer{padding:48px 0 32px;border-top:1px solid var(--line)}
+.footer-top{display:grid;grid-template-columns:1fr auto;align-items:end;gap:30px}
+.footer-word{font-family:"Archivo Black";font-size:clamp(5rem,15vw,13rem);line-height:.72;letter-spacing:-.09em;color:rgba(255,255,255,.07)}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:16px;color:#b9adbe;font-size:.62rem;font-weight:700;text-transform:uppercase}
+.footer-copy{margin-top:24px;color:#716775;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em}
 
-a{
-    display:inline-block;
-    text-decoration:none;
-    background:#7c3aed;
-    color:#fff;
-    padding:16px 34px;
-    border-radius:14px;
-    font-size:17px;
-    font-weight:700;
-    transition:.25s;
-}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.cursor-glow{position:fixed;width:340px;height:340px;margin:-170px 0 0 -170px;pointer-events:none;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(135,86,232,.09),transparent 66%);opacity:0;transition:opacity .25s}
 
-a:hover{
-    transform:translateY(-3px);
-    background:#8b5cf6;
+@media(max-width:1050px){
+.nav-links{display:none}.menu-button{display:grid;place-items:center}.hero-grid{grid-template-columns:1fr}.hero-copy{max-width:560px}.hero h1 span{transform:none}.quick-grid{grid-template-columns:1fr 1fr}
 }
-
-.small{
-    margin-top:28px;
-    font-size:14px;
-    color:#777;
+@media(max-width:700px){
+.shell{width:min(100% - 24px,var(--max))}.nav-actions .nav-button{display:none}.hero{min-height:auto;padding:145px 0 55px}.hero h1{font-size:clamp(3.7rem,19vw,6.5rem)}.section{padding:70px 0}.section-head{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr}.quick-card{min-height:150px}.fixture{grid-template-columns:95px 1fr 28px}.fixture-comp{display:none}.footer-top{grid-template-columns:1fr}.footer-links{justify-content:flex-start}
 }
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.reveal{opacity:1;transform:none}}
 </style>
-
 </head>
 <body>
+<div class="cursor-glow" id="cursorGlow"></div>
 
-<div class="card">
-
-    <div class="logo">YSL</div>
-
-    <h1>We've Moved!</h1>
-
-    <p>
-        The Youth Soccer League website has moved to a new home.
-        Please update your bookmarks and continue using the new website below.
-    </p>
-
-    <a href="https://ysl.wispbyte.org">
-        Visit the New Website
-    </a>
-
-    <div class="small">
-        This page will be removed soon.
-    </div>
-
+<header class="site-header" id="header">
+<div class="shell nav">
+<a class="brand" href="index.html" aria-label="YSL home">YSL</a>
+<nav class="nav-links" aria-label="Main navigation">
+<a class="active" href="index.html">Home</a>
+<a href="fixtures.html">Fixtures</a>
+<a href="standings.html">Standings</a>
+<a href="playersheet.html">Players</a>
+<a href="transfers.html">Transfers</a>
+<a href="about.html">About</a>
+</nav>
+<div class="nav-actions">
+<a class="nav-button" href="login.html">Player login</a>
+<a class="nav-button" href="admin.html">Admin</a>
+<button class="menu-button" id="menuButton" aria-label="Open navigation">☰</button>
 </div>
+</div>
+</header>
 
+<main>
+<section class="hero">
+<div class="shell">
+<div class="hero-grid">
+<div><h1 class="reveal">Youth Soccer<span>League</span></h1></div>
+<div class="hero-copy reveal">
+<p>Fixtures, standings, transfers and player profiles for the Youth Soccer League.</p>
+<div class="hero-cta">
+<a class="cta primary" href="fixtures.html">View fixtures
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+</a>
+<a class="cta" href="playersheet.html">View players</a>
+</div>
+</div>
+</div>
+<div class="ticker" aria-hidden="true">
+<div class="ticker-track">
+<span>Fixtures</span><span>Transfers</span><span>Player Profiles</span><span>League Tables</span><span>Club History</span>
+<span>Fixtures</span><span>Transfers</span><span>Player Profiles</span><span>League Tables</span><span>Club History</span>
+</div>
+</div>
+</div>
+</section>
+
+<section class="section reveal">
+<div class="shell">
+<div class="section-head">
+<div><div class="section-label">Explore YSL</div><h2>Everything in one place.</h2></div>
+</div>
+<div class="quick-grid">
+<a class="quick-card" href="fixtures.html"><span class="quick-index">01</span><strong>Fixtures</strong><span>↗</span></a>
+<a class="quick-card" href="standings.html"><span class="quick-index">02</span><strong>Standings</strong><span>↗</span></a>
+<a class="quick-card" href="playersheet.html"><span class="quick-index">03</span><strong>Players</strong><span>↗</span></a>
+<a class="quick-card" href="transfers.html"><span class="quick-index">04</span><strong>Transfers</strong><span>↗</span></a>
+</div>
+</div>
+</section>
+
+<section class="section reveal">
+<div class="shell">
+<div class="section-head">
+<div><div class="section-label">Schedule</div><h2>Upcoming fixtures.</h2></div>
+<a class="section-link" href="fixtures.html">See full season</a>
+</div>
+<div class="fixture-list" id="fixtureList">
+<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+</div>
+</div>
+</section>
+</main>
+
+<footer class="footer">
+<div class="shell">
+<div class="footer-top">
+<div class="footer-word">YSL</div>
+<nav class="footer-links" aria-label="Footer navigation">
+<a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="standings.html">Standings</a><a href="playersheet.html">Players</a><a href="transfers.html">Transfers</a><a href="about.html">About</a><a href="login.html">Login</a><a href="admin.html">Admin</a>
+</nav>
+</div>
+<div class="footer-copy">Youth Soccer League</div>
+</div>
+</footer>
+
+<script>
+const header=document.getElementById("header"),glow=document.getElementById("cursorGlow");
+function updateHeader(){header.classList.toggle("scrolled",scrollY>20)}
+updateHeader();addEventListener("scroll",updateHeader,{passive:true});
+
+if(matchMedia("(pointer:fine)").matches){
+glow.style.opacity="1";
+addEventListener("pointermove",e=>{glow.style.transform=`translate(${e.clientX}px,${e.clientY}px)`},{passive:true});
+}
+
+const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)entry.target.classList.add("in")}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+
+document.getElementById("menuButton").onclick=()=>{
+const links=[["Home","index.html"],["Fixtures","fixtures.html"],["Standings","standings.html"],["Players","playersheet.html"],["Transfers","transfers.html"],["About","about.html"],["Player login","login.html"],["Admin","admin.html"]];
+const menu=document.createElement("div");
+menu.style.cssText="position:fixed;inset:0;z-index:100;background:#0b0711;padding:24px;display:flex;flex-direction:column";
+menu.innerHTML=`<button aria-label="Close navigation" style="margin-left:auto;width:44px;height:44px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:transparent;color:white;font-size:1.2rem">×</button><nav style="display:grid;gap:8px;margin:auto 0">${links.map(([l,u],i)=>`<a href="${u}" style="font-family:'Archivo Black';font-size:clamp(2.4rem,12vw,5rem);line-height:.95;letter-spacing:-.06em;text-transform:uppercase;color:${i===0?'#fff':'#6d6370'}">${l}</a>`).join("")}</nav>`;
+menu.querySelector("button").onclick=()=>menu.remove();
+document.body.appendChild(menu);
+};
+
+const esc=value=>String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const value=(obj,keys,fallback="")=>{for(const key of keys){if(obj&&obj[key]!==undefined&&obj[key]!==null&&obj[key]!=="")return obj[key]}return fallback};
+const nestedName=(obj,key)=>typeof obj?.[key]==="object"?(obj[key].name||obj[key].team_name||obj[key].title||""):obj?.[key];
+
+function fixtureDate(f){
+const raw=value(f,["kickoff","kickoff_at","start_time","scheduled_at","fixture_date","match_date","date","datetime"]);
+if(!raw)return null;
+const d=new Date(raw);
+return Number.isNaN(d.getTime())?null:d;
+}
+
+function normaliseFixtures(payload){
+let rows=[];
+if(Array.isArray(payload))rows=payload;
+else if(Array.isArray(payload?.fixtures))rows=payload.fixtures;
+else if(Array.isArray(payload?.data))rows=payload.data;
+else if(Array.isArray(payload?.results))rows=payload.results;
+
+return rows.map(f=>{
+const home=value(f,["home_team_name","homeTeamName","team1_name","home_name"])||nestedName(f,"home_team")||nestedName(f,"homeTeam")||nestedName(f,"team1")||value(f,["home_team","homeTeam","team1"],"Home");
+const away=value(f,["away_team_name","awayTeamName","team2_name","away_name"])||nestedName(f,"away_team")||nestedName(f,"awayTeam")||nestedName(f,"team2")||value(f,["away_team","awayTeam","team2"],"Away");
+return{home:String(home),away:String(away),competition:String(value(f,["competition_name","competition","league","tournament"],"YSL")),date:fixtureDate(f),status:String(value(f,["status","fixture_status","match_status"],"")).toLowerCase()};
+}).filter(f=>f.home&&f.away);
+}
+
+function formatDate(date){
+if(!date)return"Date TBA";
+return new Intl.DateTimeFormat("en-GB",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(date);
+}
+
+async function loadFixtures(){
+const list=document.getElementById("fixtureList");
+const endpoints=[
+"/api/fixtures?limit=100",
+"/api/fixtures",
+"/api/public/fixtures",
+"/api/fixtures/upcoming"
+];
+let all=[];
+
+for(const endpoint of endpoints){
+try{
+const response=await fetch(endpoint,{cache:"no-store",headers:{Accept:"application/json"}});
+if(!response.ok)continue;
+const parsed=normaliseFixtures(await response.json());
+if(parsed.length){all=parsed;break}
+}catch{}
+}
+
+if(!all.length){
+list.innerHTML=`<div class="fixture-state">Fixtures are available on the full fixtures page.</div>`;
+return;
+}
+
+const now=Date.now();
+let upcoming=all.filter(f=>!["completed","finished","full-time","ft","cancelled","postponed"].includes(f.status)&&(!f.date||f.date.getTime()>=now-21600000));
+if(!upcoming.length)upcoming=all.filter(f=>!["cancelled"].includes(f.status));
+upcoming.sort((a,b)=>(a.date?.getTime()??Number.MAX_SAFE_INTEGER)-(b.date?.getTime()??Number.MAX_SAFE_INTEGER));
+
+list.innerHTML=upcoming.slice(0,6).map(f=>`
+<a class="fixture" href="fixtures.html">
+<span class="fixture-time">${esc(formatDate(f.date))}</span>
+<span class="fixture-match">${esc(f.home)}<span class="vs">vs</span>${esc(f.away)}</span>
+<span class="fixture-comp">${esc(f.competition)}</span>
+<span class="fixture-arrow">↗</span>
+</a>`).join("");
+}
+loadFixtures();
+</script>
 </body>
 </html>

@@ -6,6 +6,8 @@ import hmac
 import json
 import os
 import secrets
+import time
+import threading
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -42,6 +44,23 @@ app.config.update(
 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "adminson")
 BOT_API_KEY = os.getenv("BOT_API_KEY", "")
+DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN", "")
+DISCORD_GUILD_ID = os.getenv("DISCORD_GUILD_ID", "")
+ROBLOX_UNIVERSE_ID = os.getenv("ROBLOX_UNIVERSE_ID", "")
+
+WEBSITE_STARTED_AT = time.time()
+STATUS_LOCK = threading.Lock()
+BOT_STATUS: dict[str, Any] = {
+    "lastHeartbeat": None,
+    "startedAt": None,
+    "lastSync": None,
+    "discordMembers": None,
+}
+PUBLIC_STATUS_CACHE: dict[str, Any] = {
+    "expiresAt": 0.0,
+    "discordMembers": None,
+    "robloxPlayers": None,
+}
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
 SUPABASE_SECRET_KEY = (
@@ -451,6 +470,94 @@ def clear_player_session() -> None:
         session.pop(key, None)
 
 
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def parse_iso_datetime(value: Any) -> datetime | None:
+    if not value:
+        return None
+
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
+    except (TypeError, ValueError):
+        return None
+
+
+def fetch_json(url: str, *, headers: dict[str, str] | None = None) -> Any:
+    request_headers = {
+        "Accept": "application/json",
+        "User-Agent": "YSL-Website/1.0",
+    }
+    if headers:
+        request_headers.update(headers)
+
+    req = urllib.request.Request(url, headers=request_headers, method="GET")
+    with urllib.request.urlopen(req, timeout=8) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def fetch_discord_member_count() -> int | None:
+    if not DISCORD_BOT_TOKEN or not DISCORD_GUILD_ID:
+        return None
+
+    guild_id = urllib.parse.quote(DISCORD_GUILD_ID, safe="")
+    try:
+        data = fetch_json(
+            f"https://discord.com/api/v10/guilds/{guild_id}?with_counts=true",
+            headers={"Authorization": f"Bot {DISCORD_BOT_TOKEN}"},
+        )
+        count = data.get("approximate_member_count")
+        return int(count) if count is not None else None
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        print(f"Discord member-count request failed: {exc}")
+        return None
+
+
+def fetch_roblox_player_count() -> int | None:
+    if not ROBLOX_UNIVERSE_ID:
+        return None
+
+    universe_id = urllib.parse.quote(ROBLOX_UNIVERSE_ID, safe="")
+    try:
+        data = fetch_json(
+            f"https://games.roblox.com/v1/games?universeIds={universe_id}"
+        )
+        games = data.get("data", []) if isinstance(data, dict) else []
+        if not games:
+            return None
+        return int(games[0].get("playing", 0))
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        print(f"Roblox player-count request failed: {exc}")
+        return None
+
+
+def get_public_counts() -> tuple[int | None, int | None]:
+    now = time.time()
+    with STATUS_LOCK:
+        if now < float(PUBLIC_STATUS_CACHE.get("expiresAt", 0)):
+            return (
+                PUBLIC_STATUS_CACHE.get("discordMembers"),
+                PUBLIC_STATUS_CACHE.get("robloxPlayers"),
+            )
+
+    discord_members = fetch_discord_member_count()
+    roblox_players = fetch_roblox_player_count()
+
+    with STATUS_LOCK:
+        PUBLIC_STATUS_CACHE.update({
+            "expiresAt": now + 60,
+            "discordMembers": discord_members,
+            "robloxPlayers": roblox_players,
+        })
+
+    return discord_members, roblox_players
+
+
 @app.get("/")
 def homepage():
     return send_from_directory(BASE_DIR, "index.html")
@@ -470,6 +577,71 @@ def health():
         ),
         "botApiConfigured": bool(BOT_API_KEY),
     })
+
+
+
+@app.get("/api/status")
+def public_status():
+    now = datetime.now(timezone.utc)
+    discord_members, roblox_players = get_public_counts()
+
+    with STATUS_LOCK:
+        bot_snapshot = dict(BOT_STATUS)
+
+    heartbeat = parse_iso_datetime(bot_snapshot.get("lastHeartbeat"))
+    bot_started = parse_iso_datetime(bot_snapshot.get("startedAt"))
+    bot_online = bool(
+        heartbeat and (now - heartbeat).total_seconds() <= 120
+    )
+
+    bot_uptime_seconds = 0
+    if bot_online and bot_started:
+        bot_uptime_seconds = max(0, int((now - bot_started).total_seconds()))
+
+    if discord_members is None:
+        discord_members = bot_snapshot.get("discordMembers")
+
+    return jsonify({
+        "website": {
+            "online": True,
+            "uptimeSeconds": max(0, int(time.time() - WEBSITE_STARTED_AT)),
+        },
+        "bot": {
+            "online": bot_online,
+            "uptimeSeconds": bot_uptime_seconds,
+        },
+        "discordMembers": discord_members,
+        "robloxPlayers": roblox_players,
+        "lastSync": bot_snapshot.get("lastSync"),
+        "checkedAt": utc_now_iso(),
+    })
+
+
+@app.post("/api/bot/status")
+def update_bot_status():
+    if not bot_authorised():
+        return jsonify({"error": "Invalid bot API key."}), 401
+
+    payload = request.get_json(silent=True) or {}
+    now_iso = utc_now_iso()
+
+    discord_members = payload.get("discordMembers")
+    try:
+        discord_members = (
+            int(discord_members) if discord_members is not None else None
+        )
+    except (TypeError, ValueError):
+        discord_members = None
+
+    with STATUS_LOCK:
+        BOT_STATUS.update({
+            "lastHeartbeat": now_iso,
+            "startedAt": payload.get("startedAt") or BOT_STATUS.get("startedAt") or now_iso,
+            "lastSync": payload.get("lastSync") or BOT_STATUS.get("lastSync") or now_iso,
+            "discordMembers": discord_members,
+        })
+
+    return jsonify({"ok": True, "receivedAt": now_iso})
 
 
 @app.get("/api/session")

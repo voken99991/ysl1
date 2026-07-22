@@ -558,13 +558,33 @@ def get_public_counts() -> tuple[int | None, int | None]:
     return discord_members, roblox_players
 
 
+def send_html(filename: str):
+    """Serve HTML without allowing an old page to remain cached at another route."""
+    response = send_from_directory(BASE_DIR, filename)
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+
 @app.get("/")
+@app.get("/index")
+@app.get("/index.html")
 def homepage():
-    return send_from_directory(BASE_DIR, "index.html")
+    return send_html("index.html")
+
+
+@app.get("/admin")
+@app.get("/admin.html")
+def admin_page():
+    return send_html("admin.html")
 
 
 @app.get("/<path:filename>")
 def serve_file(filename: str):
+    # HTML files use no-cache headers; assets can still be cached normally.
+    if filename.lower().endswith(".html"):
+        return send_html(filename)
     return send_from_directory(BASE_DIR, filename)
 
 

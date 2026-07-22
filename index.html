@@ -37,6 +37,7 @@ a{color:inherit;text-decoration:none}button{font:inherit}.shell{width:min(var(--
 .hero h1 span{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.72);transform:translateX(7vw)}
 .hero-copy{padding-bottom:9px}
 .hero-copy p{margin:0 0 26px;color:#c9becd;font-size:clamp(.9rem,1.15vw,1.04rem);line-height:1.75;max-width:410px}
+.live-panel{padding-bottom:8px}.live-panel-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}.live-panel-title{margin:0;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:#d7cae0}.live-badge{display:inline-flex;align-items:center;gap:7px;color:#bcb0c1;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}.live-badge:before{content:"";width:7px;height:7px;border-radius:50%;background:#57d891;box-shadow:0 0 0 5px rgba(87,216,145,.09);animation:pulse 1.8s ease-in-out infinite}@keyframes pulse{50%{opacity:.45}}.status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.status-card{min-height:112px;padding:15px;border:1px solid var(--line);background:rgba(255,255,255,.025);transition:border-color .2s,transform .2s}.status-card:hover{transform:translateY(-2px);border-color:var(--line-strong)}.status-card-wide{grid-column:1/-1;min-height:92px}.status-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.status-label{color:#a99eae;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em}.status-state{display:inline-flex;align-items:center;gap:6px;font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#b9aebe}.status-state:before{content:"";width:6px;height:6px;border-radius:50%;background:#8c7d92}.status-state.online{color:#80e6ad}.status-state.online:before{background:#57d891}.status-state.offline{color:#ff9099}.status-state.offline:before{background:#ff6470}.status-value{margin:16px 0 3px;font-family:"Archivo Black";font-size:clamp(1.2rem,2vw,1.8rem);line-height:1;letter-spacing:-.04em}.status-meta{color:#796f7d;font-size:.55rem;text-transform:uppercase;letter-spacing:.07em}.status-card-wide .status-value{margin-top:11px;font-size:1rem}.status-footer{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}.status-footer .cta{min-height:43px}.status-error{color:#ff9da5}.status-loading{opacity:.65}
 .hero-cta{display:flex;flex-wrap:wrap;gap:10px}
 .cta{min-height:52px;display:inline-flex;align-items:center;gap:11px;padding:0 18px;border-radius:2px;border:1px solid var(--line-strong);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;transition:.2s}
 .cta.primary{background:var(--paper);color:var(--ink);border-color:var(--paper)}
@@ -85,10 +86,10 @@ a{color:inherit;text-decoration:none}button{font:inherit}.shell{width:min(var(--
 .cursor-glow{position:fixed;width:340px;height:340px;margin:-170px 0 0 -170px;pointer-events:none;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(135,86,232,.09),transparent 66%);opacity:0;transition:opacity .25s}
 
 @media(max-width:1050px){
-.nav-links{display:none}.menu-button{display:grid;place-items:center}.hero-grid{grid-template-columns:1fr}.hero-copy{max-width:560px}.hero h1 span{transform:none}.quick-grid{grid-template-columns:1fr 1fr}
+.nav-links{display:none}.menu-button{display:grid;place-items:center}.hero-grid{grid-template-columns:1fr}.hero-copy,.live-panel{max-width:620px}.hero h1 span{transform:none}.quick-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:700px){
-.shell{width:min(100% - 24px,var(--max))}.nav-actions .nav-button{display:none}.hero{min-height:auto;padding:145px 0 55px}.hero h1{font-size:clamp(3.7rem,19vw,6.5rem)}.section{padding:70px 0}.section-head{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr}.quick-card{min-height:150px}.fixture{grid-template-columns:95px 1fr 28px}.fixture-comp{display:none}.footer-top{grid-template-columns:1fr}.footer-links{justify-content:flex-start}
+.status-grid{grid-template-columns:1fr}.status-card-wide{grid-column:auto}.shell{width:min(100% - 24px,var(--max))}.nav-actions .nav-button{display:none}.hero{min-height:auto;padding:145px 0 55px}.hero h1{font-size:clamp(3.7rem,19vw,6.5rem)}.section{padding:70px 0}.section-head{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr}.quick-card{min-height:150px}.fixture{grid-template-columns:95px 1fr 28px}.fixture-comp{display:none}.footer-top{grid-template-columns:1fr}.footer-links{justify-content:flex-start}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.reveal{opacity:1;transform:none}}
 </style>
@@ -120,15 +121,45 @@ a{color:inherit;text-decoration:none}button{font:inherit}.shell{width:min(var(--
 <div class="shell">
 <div class="hero-grid">
 <div><h1 class="reveal">Youth Soccer<span>League</span></h1></div>
-<div class="hero-copy reveal">
-<p>Fixtures, standings, transfers and player profiles for the Youth Soccer League.</p>
-<div class="hero-cta">
+<aside class="live-panel reveal" aria-labelledby="liveStatusTitle">
+<div class="live-panel-head">
+<h2 class="live-panel-title" id="liveStatusTitle">Live status</h2>
+<span class="live-badge">Updating</span>
+</div>
+<div class="status-grid" id="statusGrid" aria-live="polite">
+<article class="status-card status-loading">
+<div class="status-card-top"><span class="status-label">Website uptime</span><span class="status-state" id="websiteState">Checking</span></div>
+<div class="status-value" id="websiteUptime">--</div>
+<div class="status-meta">Current session</div>
+</article>
+<article class="status-card status-loading">
+<div class="status-card-top"><span class="status-label">Discord bot</span><span class="status-state" id="botState">Checking</span></div>
+<div class="status-value" id="botUptime">--</div>
+<div class="status-meta">Bot uptime</div>
+</article>
+<article class="status-card status-loading">
+<div class="status-card-top"><span class="status-label">Discord members</span></div>
+<div class="status-value" id="discordMembers">--</div>
+<div class="status-meta">Server members</div>
+</article>
+<article class="status-card status-loading">
+<div class="status-card-top"><span class="status-label">Roblox players</span></div>
+<div class="status-value" id="robloxPlayers">--</div>
+<div class="status-meta">Playing now</div>
+</article>
+<article class="status-card status-card-wide status-loading">
+<div class="status-card-top"><span class="status-label">Last synced</span></div>
+<div class="status-value" id="lastSync">Waiting for bot</div>
+<div class="status-meta" id="statusChecked">Refreshing every 30 seconds</div>
+</article>
+</div>
+<div class="status-footer">
 <a class="cta primary" href="fixtures.html">View fixtures
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 </a>
 <a class="cta" href="playersheet.html">View players</a>
 </div>
-</div>
+</aside>
 </div>
 <div class="ticker" aria-hidden="true">
 <div class="ticker-track">
@@ -267,7 +298,72 @@ list.innerHTML=upcoming.slice(0,6).map(f=>`
 <span class="fixture-arrow">↗</span>
 </a>`).join("");
 }
+
+function formatDuration(totalSeconds){
+const total=Math.max(0,Number(totalSeconds)||0);
+const days=Math.floor(total/86400);
+const hours=Math.floor((total%86400)/3600);
+const minutes=Math.floor((total%3600)/60);
+const seconds=Math.floor(total%60);
+if(days)return`${days}d ${hours}h`;
+if(hours)return`${hours}h ${minutes}m`;
+if(minutes)return`${minutes}m ${seconds}s`;
+return`${seconds}s`;
+}
+
+function formatCount(value){
+return Number.isFinite(Number(value))?new Intl.NumberFormat("en-GB").format(Number(value)):"Unavailable";
+}
+
+function timeAgo(value){
+if(!value)return"Waiting for bot";
+const timestamp=new Date(value).getTime();
+if(Number.isNaN(timestamp))return"Waiting for bot";
+const seconds=Math.max(0,Math.floor((Date.now()-timestamp)/1000));
+if(seconds<10)return"Just now";
+if(seconds<60)return`${seconds}s ago`;
+const minutes=Math.floor(seconds/60);
+if(minutes<60)return`${minutes}m ago`;
+const hours=Math.floor(minutes/60);
+if(hours<24)return`${hours}h ago`;
+return`${Math.floor(hours/24)}d ago`;
+}
+
+function setServiceState(element,online){
+element.textContent=online?"Online":"Offline";
+element.className=`status-state ${online?"online":"offline"}`;
+}
+
+async function loadLiveStatus(){
+try{
+const response=await fetch("/api/status",{cache:"no-store",headers:{Accept:"application/json"}});
+if(!response.ok)throw new Error(`Status request failed (${response.status})`);
+const data=await response.json();
+setServiceState(document.getElementById("websiteState"),Boolean(data.website?.online));
+setServiceState(document.getElementById("botState"),Boolean(data.bot?.online));
+document.getElementById("websiteUptime").textContent=formatDuration(data.website?.uptimeSeconds);
+document.getElementById("botUptime").textContent=data.bot?.online?formatDuration(data.bot?.uptimeSeconds):"Offline";
+document.getElementById("discordMembers").textContent=formatCount(data.discordMembers);
+document.getElementById("robloxPlayers").textContent=formatCount(data.robloxPlayers);
+document.getElementById("lastSync").textContent=timeAgo(data.lastSync);
+document.getElementById("statusChecked").textContent=`Checked ${timeAgo(data.checkedAt)}`;
+document.querySelectorAll(".status-card").forEach(card=>card.classList.remove("status-loading"));
+}catch(error){
+console.error(error);
+document.getElementById("websiteState").textContent="Unavailable";
+document.getElementById("websiteState").className="status-state offline";
+document.getElementById("statusChecked").textContent="Could not refresh status";
+document.getElementById("statusChecked").classList.add("status-error");
+}
+}
+
 loadFixtures();
+loadLiveStatus();
+setInterval(loadLiveStatus,30000);
+setInterval(()=>{
+const value=document.getElementById("lastSync");
+if(value?.dataset.timestamp)value.textContent=timeAgo(value.dataset.timestamp);
+},1000);
 </script>
 </body>
 </html>

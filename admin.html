@@ -197,7 +197,7 @@ textarea{min-height:100px;resize:vertical}
 </section>
 
 <section class="page" id="homepage">
-<div class="heading"><div><h1>Homepage</h1><p>Edit the homepage text, buttons, ticker and featured fixture behaviour.</p></div></div>
+<div class="heading"><div><h1>Homepage</h1><p>Edit the homepage hero, announcement card and featured fixture behaviour.</p></div></div>
 <div class="card"><div class="card-head"><h3>Hero content</h3></div><div class="card-body grid2">
 <label>Top headline<input id="heroTop"></label>
 <label>Second headline<input id="heroBottom"></label>
@@ -206,9 +206,22 @@ textarea{min-height:100px;resize:vertical}
 <label>Primary button link<input id="primaryLink"></label>
 <label>Secondary button text<input id="secondaryText"></label>
 <label>Secondary button link<input id="secondaryLink"></label>
-<label class="full">Ticker text<input id="tickerText" placeholder="Fixtures • Standings • Players • Transfers"></label>
 <label>Upcoming fixture limit<input id="homeFixtureLimit" type="number" min="1" max="12"></label>
-<label>Homepage announcement<input id="announcement" placeholder="Optional short announcement"></label>
+</div></div>
+
+<div class="card"><div class="card-head"><h3>Announcement card</h3><span>Displayed below the homepage hero</span></div><div class="card-body grid2">
+<label>Show announcement<select id="announcementEnabled"><option value="true">Yes</option><option value="false">No</option></select></label>
+<label>Show button<select id="announcementShowButton"><option value="true">Yes</option><option value="false">No</option></select></label>
+<label>Small label<input id="announcementEyebrow" placeholder="League announcement"></label>
+<label>Icon or emoji<input id="announcementIcon" maxlength="8" placeholder="✦"></label>
+<label class="full">Announcement title<input id="announcementTitle" placeholder="Welcome to Youth Soccer League"></label>
+<label class="full">Message<textarea id="announcementMessage" placeholder="Write the announcement shown on the homepage..."></textarea></label>
+<label>Button text<input id="announcementButtonText" placeholder="Read announcement"></label>
+<label>Button link<input id="announcementButtonLink" placeholder="news.html or https://..."></label>
+<label>Background colour<input id="announcementBackground" type="color"></label>
+<label>Accent colour<input id="announcementAccent" type="color"></label>
+<label>Main text colour<input id="announcementTextColor" type="color"></label>
+<label>Secondary text colour<input id="announcementMutedColor" type="color"></label>
 </div></div>
 </section>
 
@@ -320,7 +333,8 @@ async function loadSite(){
 
 function normalize(){
  data=data&&typeof data==="object"?data:{};
- data.hero={top:"Youth",bottom:"Soccer League",description:"Fixtures, standings, transfers and player profiles for the Youth Soccer League.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"View Players",secondaryLink:"playersheet.html",tickerText:"Fixtures • Standings • Players • Transfers",homeFixtureLimit:3,announcement:"",...(data.hero||{})};
+ data.hero={top:"Youth",bottom:"Soccer League",description:"Fixtures, standings, transfers and player profiles for the Youth Soccer League.",primaryText:"View Fixtures",primaryLink:"fixtures.html",secondaryText:"View Players",secondaryLink:"playersheet.html",homeFixtureLimit:3,...(data.hero||{})};
+ data.hero.announcementCard={enabled:true,showButton:true,eyebrow:"League announcement",icon:"✦",title:"Welcome to Youth Soccer League",message:"The latest league news, updates and important information will appear here.",buttonText:"Read announcement",buttonLink:"news.html",backgroundColor:"#171020",accentColor:"#a47cff",textColor:"#f7f1fb",mutedColor:"#b9adbe",...(data.hero.announcementCard||{})};
  data.settings={websiteName:"YSL",leagueName:"Youth Soccer League",seasonName:"YSL Season One",discordInvite:"",currency:"GBP",defaultVenue:"",footerText:"Youth Soccer League",...(data.settings||{})};
  data.theme={mainPurple:"#8756e8",accentPurple:"#a47cff",...(data.theme||{})};
  data.teams=Array.isArray(data.teams)?data.teams:[];
@@ -345,7 +359,9 @@ function renderAll(){
 function fillHomepage(){
  $("heroTop").value=data.hero.top;$("heroBottom").value=data.hero.bottom;$("heroDescription").value=data.hero.description;
  $("primaryText").value=data.hero.primaryText;$("primaryLink").value=data.hero.primaryLink;$("secondaryText").value=data.hero.secondaryText;$("secondaryLink").value=data.hero.secondaryLink;
- $("tickerText").value=data.hero.tickerText;$("homeFixtureLimit").value=data.hero.homeFixtureLimit;$("announcement").value=data.hero.announcement
+ $("homeFixtureLimit").value=data.hero.homeFixtureLimit;
+ const a=data.hero.announcementCard;
+ $("announcementEnabled").value=String(a.enabled!==false);$("announcementShowButton").value=String(a.showButton!==false);$("announcementEyebrow").value=a.eyebrow;$("announcementIcon").value=a.icon;$("announcementTitle").value=a.title;$("announcementMessage").value=a.message;$("announcementButtonText").value=a.buttonText;$("announcementButtonLink").value=a.buttonLink;$("announcementBackground").value=a.backgroundColor;$("announcementAccent").value=a.accentColor;$("announcementTextColor").value=a.textColor;$("announcementMutedColor").value=a.mutedColor
 }
 function fillSettings(){
  $("websiteName").value=data.settings.websiteName;$("leagueName").value=data.settings.leagueName;$("seasonName").value=data.settings.seasonName;
@@ -482,7 +498,7 @@ function collect(){
  document.querySelectorAll("[data-competition]").forEach(input=>{const key=input.dataset.key;data.competitions[Number(input.dataset.competition)][key]=key==="enabled"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-nav]").forEach(input=>{const key=input.dataset.key;data.navigation[Number(input.dataset.nav)][key]=key==="enabled"?input.value==="true":input.value.trim()});
  document.querySelectorAll("[data-stats]").forEach(input=>{const i=Number(input.dataset.stats),key=input.dataset.statKey;try{const parsed=JSON.parse(input.value||"[]");if(key==="homeLineup")data.fixtures[i].stats.lineups.home=parsed;else if(key==="awayLineup")data.fixtures[i].stats.lineups.away=parsed;else data.fixtures[i].stats[key]=parsed}catch{throw new Error(`Fixture ${i+1} contains invalid ${key} JSON.`)}});
- data.hero={top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim(),tickerText:$("tickerText").value.trim(),homeFixtureLimit:Number($("homeFixtureLimit").value||3),announcement:$("announcement").value.trim()};
+ data.hero={...data.hero,top:$("heroTop").value.trim(),bottom:$("heroBottom").value.trim(),description:$("heroDescription").value.trim(),primaryText:$("primaryText").value.trim(),primaryLink:$("primaryLink").value.trim(),secondaryText:$("secondaryText").value.trim(),secondaryLink:$("secondaryLink").value.trim(),homeFixtureLimit:Number($("homeFixtureLimit").value||3),announcementCard:{enabled:$("announcementEnabled").value==="true",showButton:$("announcementShowButton").value==="true",eyebrow:$("announcementEyebrow").value.trim(),icon:$("announcementIcon").value.trim(),title:$("announcementTitle").value.trim(),message:$("announcementMessage").value.trim(),buttonText:$("announcementButtonText").value.trim(),buttonLink:$("announcementButtonLink").value.trim(),backgroundColor:$("announcementBackground").value,accentColor:$("announcementAccent").value,textColor:$("announcementTextColor").value,mutedColor:$("announcementMutedColor").value}};
  data.settings={websiteName:$("websiteName").value.trim(),leagueName:$("leagueName").value.trim(),seasonName:$("seasonName").value.trim(),discordInvite:$("discordInvite").value.trim(),currency:$("currency").value,defaultVenue:$("defaultVenue").value.trim(),footerText:$("footerText").value.trim()};
  data.theme={...data.theme,mainPurple:$("mainPurple").value,accentPurple:$("accentPurple").value};
  resolveFixtureProgression();syncLogos();rebuildStandings();updateRaw()

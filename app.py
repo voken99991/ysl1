@@ -558,76 +558,14 @@ def get_public_counts() -> tuple[int | None, int | None]:
     return discord_members, roblox_players
 
 
-def send_html(filename: str):
-    """Serve a known HTML file with cache disabled."""
-    file_path = (BASE_DIR / filename).resolve()
-    if file_path.parent != BASE_DIR.resolve() or not file_path.is_file():
-        return jsonify({"error": "Page not found."}), 404
-
-    response = app.response_class(
-        file_path.read_text(encoding="utf-8"),
-        mimetype="text/html",
-    )
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    response.headers["X-YSL-Page"] = filename
-    return response
-
-
 @app.get("/")
-@app.get("/home")
-@app.get("/home/")
-@app.get("/index")
-@app.get("/index.html")
 def homepage():
-    # Deliberately use home.html so the homepage can never be confused with admin.html.
-    return send_html("home.html")
+    return send_from_directory(BASE_DIR, "index.html")
 
 
-@app.get("/admin")
-@app.get("/admin/")
-@app.get("/admin.html")
-def admin_page():
-    return send_html("admin.html")
-
-
-PAGE_ROUTES = {
-    "fixtures": "fixtures.html",
-    "standings": "standings.html",
-    "playersheet": "playersheet.html",
-    "transfers": "transfers.html",
-    "about": "about.html",
-    "news": "news.html",
-    "login": "login.html",
-    "dashboard": "dashboard.html",
-    "player": "player.html",
-    "admin-player-stats": "admin-player-stats.html",
-}
-
-for route_name, html_name in PAGE_ROUTES.items():
-    endpoint_name = f"page_{route_name.replace('-', '_')}"
-
-    def page_handler(filename=html_name):
-        return send_html(filename)
-
-    app.add_url_rule(f"/{route_name}", endpoint_name, page_handler, methods=["GET"])
-    app.add_url_rule(
-        f"/{html_name}",
-        f"{endpoint_name}_html",
-        page_handler,
-        methods=["GET"],
-    )
-
-
-@app.get("/assets/<path:filename>")
-def assets(filename: str):
-    return send_from_directory(BASE_DIR / "assets", filename)
-
-
-@app.get("/competition-engine.js")
-def competition_engine():
-    return send_from_directory(BASE_DIR, "competition-engine.js")
+@app.get("/<path:filename>")
+def serve_file(filename: str):
+    return send_from_directory(BASE_DIR, filename)
 
 
 @app.get("/api/health")
